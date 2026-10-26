@@ -1,0 +1,15 @@
+{%- comment -%}
+  Renders one product tile for the product page it is requested from.
+  Fetched by assets/features.js as /products/<handle>?section_id=product-card-ajax
+  for recently viewed and wishlist grids. Not addable in the editor.
+{%- endcomment -%}
+{%- if product -%}
+  {% render 'product-card', product: product %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product card (AJAX)",
+  "settings": []
+}
+{% endschema %}

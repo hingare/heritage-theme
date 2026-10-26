@@ -13,7 +13,8 @@
     "view_all": "View all",
     "read_more": "Read more",
     "continue_shopping": "Continue shopping",
-    "back_home": "Back to home"
+    "back_home": "Back to home",
+    "back_to_top": "Back to top"
   },
   "accessibility": {
     "skip_to_content": "Skip to content",
@@ -53,6 +54,12 @@
       "you_may_also_like": "You may also like",
       "recently_viewed": "Recently viewed",
       "zoom": "Zoom image"
+    },
+    "pickup": {
+      "available_at": "Pickup available at {{ location }}",
+      "unavailable_at": "Pickup currently unavailable at {{ location }}",
+      "view_stores": "Check other stores",
+      "unavailable": "Unavailable"
     }
   },
   "collections": {
@@ -137,5 +144,17 @@
   "not_found": {
     "title": "Page not found",
     "text": "The page you were looking for does not exist."
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "add": "Add to wishlist",
+    "remove": "Remove from wishlist",
+    "empty": "Your wishlist is empty. Tap the heart on any product to save it here."
+  },
+  "countdown": {
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Min",
+    "seconds": "Sec"
   }
 }

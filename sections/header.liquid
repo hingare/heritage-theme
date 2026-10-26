@@ -40,6 +40,12 @@
             {% render 'icon', name: 'account' %}
           </a>
         {%- endif -%}
+        {%- if settings.wishlist_enabled and settings.wishlist_page != blank -%}
+          <a href="{{ settings.wishlist_page.url }}" class="header-icon header-icon--wishlist" aria-label="{{ 'wishlist.title' | t }}">
+            {% render 'icon', name: 'heart' %}
+            <span class="cart-count" data-wishlist-count data-count="0"></span>
+          </a>
+        {%- endif -%}
         <a href="{{ routes.cart_url }}" class="header-icon" {% if settings.cart_type == 'drawer' %}data-open="CartDrawer"{% endif %} aria-label="{{ 'general.cart' | t }}">
           {% render 'icon', name: 'cart' %}
           <span class="cart-count" data-cart-count data-count="{{ cart.item_count }}">{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>

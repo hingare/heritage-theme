@@ -1,0 +1,66 @@
+{%- liquid
+  assign end_string = section.settings.end_date | append: 'T' | append: section.settings.end_time | append: ':00'
+-%}
+<div class="countdown-banner tw-relative tw-overflow-hidden" style="background: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};" data-countdown="{{ end_string | escape }}" data-countdown-hide="{{ section.settings.hide_when_done }}">
+  {%- if section.settings.image != blank -%}
+    {%- assign cd_alt = section.settings.image.alt | escape -%}
+    <div class="tw-absolute tw-inset-0" style="opacity: {{ section.settings.image_opacity | divided_by: 100.0 }};">
+      {{ section.settings.image | image_url: width: 2400 | image_tag: loading: 'lazy', sizes: '100vw', widths: '750, 1200, 1800, 2400', alt: cd_alt, class: 'tw-w-full tw-h-full tw-object-cover' }}
+    </div>
+  {%- endif -%}
+  <div class="page-width tw-relative tw-py-14 md:tw-py-20 tw-text-center">
+    {%- if section.settings.subheading != blank -%}<span class="subheading">{{ section.settings.subheading }}</span>{%- endif -%}
+    {%- if section.settings.heading != blank -%}<h2 class="tw-mb-6">{{ section.settings.heading }}</h2>{%- endif -%}
+
+    <div class="tw-flex tw-justify-center tw-gap-3 md:tw-gap-5" data-countdown-timer role="timer" aria-live="off">
+      {%- for unit in (1..4) -%}
+        {%- liquid
+          case unit
+            when 1
+              assign key = 'days'
+            when 2
+              assign key = 'hours'
+            when 3
+              assign key = 'minutes'
+            else
+              assign key = 'seconds'
+          endcase
+          assign label_key = 'countdown.' | append: key
+        -%}
+        <div class="countdown__unit">
+          <span class="countdown__value" data-countdown-{{ key }}>00</span>
+          <span class="countdown__label">{{ label_key | t }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+    <p class="tw-mt-6 tw-hidden" data-countdown-done>{{ section.settings.done_text }}</p>
+
+    {%- if section.settings.text != blank -%}<div class="rte tw-mt-6 tw-max-w-xl tw-mx-auto">{{ section.settings.text }}</div>{%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a href="{{ section.settings.link | default: '#' }}" class="btn btn--light tw-mt-8">{{ section.settings.button_label }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Countdown timer",
+  "class": "section-countdown",
+  "settings": [
+    { "type": "text", "id": "end_date", "label": "End date", "default": "2026-12-31", "info": "Format YYYY-MM-DD" },
+    { "type": "text", "id": "end_time", "label": "End time", "default": "23:59", "info": "24-hour HH:MM, shopper's local time" },
+    { "type": "checkbox", "id": "hide_when_done", "label": "Hide section when the timer ends", "default": false },
+    { "type": "text", "id": "done_text", "label": "Text after the timer ends", "default": "This offer has ended." },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Limited time" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Holiday sale ends soon" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the sale" },
+    { "type": "url", "id": "link", "label": "Button link" },
+    { "type": "image_picker", "id": "image", "label": "Background image" },
+    { "type": "range", "id": "image_opacity", "label": "Image opacity", "min": 10, "max": 100, "step": 5, "unit": "%", "default": 35 },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#1c1a17" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#ffffff" }
+  ],
+  "presets": [ { "name": "Countdown timer" } ]
+}
+{% endschema %}

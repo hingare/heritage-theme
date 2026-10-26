@@ -9,6 +9,16 @@
       {%- if cart.item_count > 0 -%}
         {% render 'free-shipping-bar' %}
         {% render 'cart-items' %}
+        {%- if settings.cart_upsell_enabled -%}
+          {%- liquid
+            assign upsell_fetch = settings.cart_upsell_limit | plus: cart.items.size
+            assign upsell_url = routes.product_recommendations_url | append: '?section_id=product-complementary&product_id=' | append: cart.items.first.product_id | append: '&limit=' | append: upsell_fetch | append: '&intent=related'
+          -%}
+          <div class="cart-upsell tw-hidden" data-lazy-products="{{ upsell_url }}" data-limit="{{ settings.cart_upsell_limit }}" data-exclude="{{ cart.items | map: 'product_id' | join: ',' }}">
+            <p class="tw-text-sm tw-font-semibold tw-tracking-wider tw-uppercase tw-mb-3">{{ settings.cart_upsell_heading }}</p>
+            <div class="tw-flex tw-flex-col tw-gap-3" data-lazy-products-target></div>
+          </div>
+        {%- endif -%}
       {%- else -%}
         <div class="cart-empty">
           <p>{{ 'cart.empty' | t }}</p>

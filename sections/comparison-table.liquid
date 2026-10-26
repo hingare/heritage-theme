@@ -1,0 +1,89 @@
+{%- liquid
+  assign columns = 0
+  for i in (1..3)
+    assign key = 'column_' | append: i
+    if section.settings[key] != blank
+      assign columns = i
+    endif
+  endfor
+-%}
+<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="page-width page-width--narrow">
+    <div class="section-header section-header--center">
+      {%- if section.settings.subheading != blank -%}<span class="subheading">{{ section.settings.subheading }}</span>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+    </div>
+
+    <div class="tw-overflow-x-auto" data-reveal>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden">{{ section.settings.heading }}</span></th>
+            {%- for i in (1..columns) -%}
+              {%- assign key = 'column_' | append: i -%}
+              <th scope="col"{% if i == 1 and section.settings.highlight_first %} class="is-highlight"{% endif %}>{{ section.settings[key] }}</th>
+            {%- endfor -%}
+          </tr>
+        </thead>
+        <tbody>
+          {%- for block in section.blocks -%}
+            <tr {{ block.shopify_attributes }}>
+              <th scope="row">{{ block.settings.label }}</th>
+              {%- for i in (1..columns) -%}
+                {%- liquid
+                  assign key = 'value_' | append: i
+                  assign value = block.settings[key] | strip
+                  assign value_lower = value | downcase
+                -%}
+                <td{% if i == 1 and section.settings.highlight_first %} class="is-highlight"{% endif %}>
+                  {%- if value_lower == 'yes' or value == '✓' -%}
+                    <span class="compare-table__yes" aria-label="Yes">&#10003;</span>
+                  {%- elsif value_lower == 'no' or value == '✕' -%}
+                    <span class="compare-table__no" aria-label="No">&#10005;</span>
+                  {%- else -%}
+                    {{ value }}
+                  {%- endif -%}
+                </td>
+              {%- endfor -%}
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Comparison table",
+  "class": "section-comparison",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Why choose us" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "How we compare" },
+    { "type": "text", "id": "column_1", "label": "Column 1 heading", "default": "Our brand" },
+    { "type": "text", "id": "column_2", "label": "Column 2 heading", "default": "Others" },
+    { "type": "text", "id": "column_3", "label": "Column 3 heading" },
+    { "type": "checkbox", "id": "highlight_first", "label": "Highlight first column", "default": true },
+    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Feature", "default": "Feature" },
+        { "type": "text", "id": "value_1", "label": "Column 1 value", "default": "yes", "info": "Type yes or no to show a tick or cross" },
+        { "type": "text", "id": "value_2", "label": "Column 2 value", "default": "no" },
+        { "type": "text", "id": "value_3", "label": "Column 3 value" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Comparison table", "blocks": [
+      { "type": "row", "settings": { "label": "Full-grain leather" } },
+      { "type": "row", "settings": { "label": "Hand stitched" } },
+      { "type": "row", "settings": { "label": "Lifetime care support" } }
+    ] }
+  ]
+}
+{% endschema %}

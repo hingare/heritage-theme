@@ -1,0 +1,10 @@
+{%- comment -%}
+  Heart toggle that saves a product handle to the browser wishlist (assets/features.js).
+  - product: product object (required)
+  - class: extra classes
+{%- endcomment -%}
+{%- if settings.wishlist_enabled -%}
+  <button type="button" class="wishlist-btn {{ class }}" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false" aria-label="{{ 'wishlist.add' | t }}: {{ product.title | escape }}" data-label-add="{{ 'wishlist.add' | t | escape }}" data-label-remove="{{ 'wishlist.remove' | t | escape }}">
+    {% render 'icon', name: 'heart' %}
+  </button>
+{%- endif -%}

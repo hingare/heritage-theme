@@ -37,6 +37,7 @@
     {% render 'css-variables' %}
 
     {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'tailwind.css' | asset_url | stylesheet_tag }}
 
     <script>
       document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
@@ -57,11 +58,14 @@
         },
         settings: {
           cartType: {{ settings.cart_type | json }},
-          moneyFormat: {{ shop.money_format | json }}
+          moneyFormat: {{ shop.money_format | json }},
+          wishlist: {{ settings.wishlist_enabled | json }},
+          recentlyViewed: {{ settings.recently_viewed_enabled | json }}
         }
       };
     </script>
     <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'features.js' | asset_url }}" defer="defer"></script>
 
     {{ content_for_header }}
   </head>
@@ -81,5 +85,19 @@
     {% render 'quick-view-modal' %}
 
     <div class="overlay" data-overlay></div>
+
+    {%- if settings.back_to_top -%}
+      <button type="button" class="back-to-top" data-back-to-top aria-label="{{ 'general.back_to_top' | t }}">{% render 'icon', name: 'arrow-up' %}</button>
+    {%- endif -%}
+    {%- if template.name == 'product' and settings.recently_viewed_enabled -%}
+      <script>
+        try {
+          var rvKey = 'heritage-recently-viewed';
+          var rv = JSON.parse(localStorage.getItem(rvKey) || '[]').filter(function (h) { return h !== {{ product.handle | json }}; });
+          rv.unshift({{ product.handle | json }});
+          localStorage.setItem(rvKey, JSON.stringify(rv.slice(0, 12)));
+        } catch (e) {}
+      </script>
+    {%- endif -%}
   </body>
 </html>

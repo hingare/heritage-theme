@@ -1,0 +1,50 @@
+<div class="icon-bar" style="background: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};">
+  <div class="page-width">
+    <ul class="icon-bar__list" style="--items: {{ section.blocks.size }};">
+      {%- for block in section.blocks -%}
+        <li class="tw-flex tw-items-center tw-gap-3 tw-justify-center tw-text-center md:tw-text-left" {{ block.shopify_attributes }}>
+          <span class="tw-w-7 tw-h-7 tw-shrink-0">{% render 'icon', name: block.settings.icon %}</span>
+          <span>
+            <span class="tw-block tw-font-semibold tw-text-sm tw-tracking-wide">{{ block.settings.title }}</span>
+            {%- if block.settings.text != blank -%}<span class="tw-block tw-text-sm tw-opacity-75">{{ block.settings.text }}</span>{%- endif -%}
+          </span>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Text with icons",
+  "class": "section-icon-bar",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#f4efe8" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1c1a17" }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "default": "truck", "options": [
+          { "value": "truck", "label": "Truck" }, { "value": "return", "label": "Return" }, { "value": "shield", "label": "Shield" }, { "value": "lock", "label": "Lock" },
+          { "value": "leather", "label": "Leather" }, { "value": "hand", "label": "Handmade" }, { "value": "gift", "label": "Gift" }, { "value": "chat", "label": "Chat" },
+          { "value": "heart", "label": "Heart" }, { "value": "star", "label": "Star" }, { "value": "ruler", "label": "Ruler" }
+        ] },
+        { "type": "text", "id": "title", "label": "Title", "default": "Free shipping" },
+        { "type": "text", "id": "text", "label": "Text", "default": "On orders over $150" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Text with icons", "blocks": [
+      { "type": "item" },
+      { "type": "item", "settings": { "icon": "return", "title": "Easy returns", "text": "30 days to change your mind" } },
+      { "type": "item", "settings": { "icon": "hand", "title": "Handmade", "text": "Crafted by skilled artisans" } },
+      { "type": "item", "settings": { "icon": "lock", "title": "Secure checkout", "text": "Encrypted payments" } }
+    ] }
+  ]
+}
+{% endschema %}

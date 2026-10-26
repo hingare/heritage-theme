@@ -65,6 +65,8 @@
     {%- endfor -%}
   </div>
 
+  {% render 'wishlist-button', product: product, class: 'product-card__wishlist' %}
+
   {%- if settings.quick_view_enabled or settings.quick_add_enabled -%}
     <div class="product-card__actions">
       {%- if settings.quick_view_enabled -%}

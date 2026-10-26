@@ -5,14 +5,65 @@
     "footer": {
       "type": "footer",
       "blocks": {
-        "text": { "type": "text", "settings": { "title": "About us", "text": "<p>Share a short story about your brand here.</p>", "show_social": true, "wide": false, "image_width": 140 } },
-        "menu-shop": { "type": "menu", "settings": { "title": "Shop", "menu": "main-menu" } },
-        "menu-help": { "type": "menu", "settings": { "title": "Help", "menu": "footer" } },
-        "newsletter": { "type": "newsletter", "settings": { "title": "Join our newsletter", "text": "<p>New arrivals, exclusive offers and stories, straight to your inbox.</p>", "wide": true } }
+        "text": {
+          "type": "text",
+          "settings": {
+            "title": "About us",
+            "text": "<p>Share a short story about your brand here.</p>",
+            "show_social": true,
+            "wide": false,
+            "image_width": 140
+          }
+        },
+        "menu-shop": {
+          "type": "menu",
+          "settings": {
+            "title": "Shop",
+            "menu": "main-menu"
+          }
+        },
+        "menu-help": {
+          "type": "menu",
+          "settings": {
+            "title": "Help",
+            "menu": "footer"
+          }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "title": "Join our newsletter",
+            "text": "<p>New arrivals, exclusive offers and stories, straight to your inbox.</p>",
+            "wide": true
+          }
+        }
       },
-      "block_order": ["text", "menu-shop", "menu-help", "newsletter"],
-      "settings": { "copyright_text": "", "show_policies": true, "show_payment_icons": true }
+      "block_order": [
+        "text",
+        "menu-shop",
+        "menu-help",
+        "newsletter"
+      ],
+      "settings": {
+        "copyright_text": "",
+        "show_policies": true,
+        "show_payment_icons": true
+      }
+    },
+    "newsletter-popup": {
+      "type": "newsletter-popup",
+      "settings": {
+        "delay": 8,
+        "frequency": 14,
+        "subheading": "Join the list",
+        "heading": "Get 10% off your first order",
+        "text": "<p>Be first to hear about new arrivals, restocks and private sales.</p>",
+        "disclaimer": "You can unsubscribe at any time."
+      }
     }
   },
-  "order": ["footer"]
+  "order": [
+    "footer",
+    "newsletter-popup"
+  ]
 }

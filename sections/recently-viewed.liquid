@@ -1,0 +1,22 @@
+<div class="section tw-hidden" data-recently-viewed data-limit="{{ section.settings.limit }}" {% if product %}data-exclude="{{ product.handle }}"{% endif %}>
+  <div class="page-width">
+    <div class="section-header section-header--center">
+      <h2>{{ section.settings.heading }}</h2>
+    </div>
+    <div class="grid grid--scroll-mobile" style="--cols: {{ section.settings.columns }};" data-recently-viewed-grid></div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "class": "section-recently-viewed",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Recently viewed" },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 2, "max": 8, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "paragraph", "content": "Shows products the shopper opened before, saved in their browser. Hidden until there is something to show." }
+  ],
+  "presets": [ { "name": "Recently viewed" } ]
+}
+{% endschema %}

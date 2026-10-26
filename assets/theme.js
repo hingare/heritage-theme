@@ -159,6 +159,7 @@
           if (fresh && current) current.replaceWith(fresh);
         }
       });
+      document.dispatchEvent(new CustomEvent('heritage:cart:rendered'));
     },
 
     updateCount(count) {
@@ -218,6 +219,7 @@
     }
   };
   window.HeritageCart = Cart;
+  window.Heritage = { openPanel, closePanel, initReveal: (root) => initReveal(root) };
 
   function initCart() {
     document.addEventListener('submit', (e) => {

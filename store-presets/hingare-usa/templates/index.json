@@ -216,7 +216,7 @@
     "marquee": {
       "type": "scrolling-text",
       "settings": {
-        "text": "Genuine leather \u00b7 Handmade in Bangladesh \u00b7 Built to last",
+        "text": "Genuine leather · Handmade in Bangladesh · Built to last",
         "speed": 40,
         "size": 1.6,
         "bg_color": "#1c1a17",
@@ -269,6 +269,53 @@
         "text": "<p>New arrivals, leather care tips and early access to offers.</p>",
         "alt_bg": true
       }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "Is your leather genuine?",
+            "answer": "<p>Yes. Every piece is made from genuine cowhide leather, cut and finished by hand in our workshop in Bangladesh.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "How should I care for my leather bag?",
+            "answer": "<p>Keep it away from long exposure to water and direct heat, wipe it with a soft dry cloth, and condition the leather every few months. Read our full <a href=\"/pages/leather-care-guide\">leather care guide</a> for details.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "Will the leather change over time?",
+            "answer": "<p>Genuine leather softens and develops a natural patina with use. Small variations in grain and colour are a sign of real hide, so no two pieces are exactly alike.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3"
+      ],
+      "settings": {
+        "subheading": "Good to know",
+        "heading": "Questions about our leather",
+        "open_first": true,
+        "contact_text": "<p>Still have a question? <a href=\"/pages/contact\">Contact us</a>.</p>",
+        "enable_schema": true,
+        "alt_bg": true
+      }
+    },
+    "recently-viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "heading": "Recently viewed",
+        "limit": 4,
+        "columns": 4
+      }
     }
   },
   "order": [
@@ -281,6 +328,8 @@
     "marquee",
     "gifts",
     "journal",
+    "recently-viewed",
+    "faq",
     "newsletter"
   ]
 }

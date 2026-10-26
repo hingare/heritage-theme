@@ -58,9 +58,21 @@
         "show_policies": true,
         "show_payment_icons": true
       }
+    },
+    "newsletter-popup": {
+      "type": "newsletter-popup",
+      "settings": {
+        "delay": 8,
+        "frequency": 14,
+        "subheading": "Stay in touch",
+        "heading": "Join the HINGARE circle",
+        "text": "<p>New handmade arrivals, leather care tips and private offers. No spam.</p>",
+        "disclaimer": "You can unsubscribe at any time."
+      }
     }
   },
   "order": [
-    "footer"
+    "footer",
+    "newsletter-popup"
   ]
 }

@@ -1,0 +1,86 @@
+<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header section-header--center">
+        {%- if section.settings.subheading != blank -%}<span class="subheading">{{ section.settings.subheading }}</span>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="tw-grid tw-gap-8 lg:tw-grid-cols-[3fr_2fr] lg:tw-items-center" data-hotspots>
+      <div class="media media--{{ section.settings.image_ratio }} tw-overflow-visible" data-reveal>
+        {%- if section.settings.image != blank -%}
+          {%- assign look_alt = section.settings.image.alt | escape -%}
+          {{ section.settings.image | image_url: width: 1800 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 60vw, 100vw', widths: '600, 900, 1200, 1800', alt: look_alt, class: 'tw-rounded-card' }}
+        {%- else -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          <button type="button" class="hotspot" style="left: {{ block.settings.x }}%; top: {{ block.settings.y }}%;" data-hotspot="{{ forloop.index0 }}" aria-label="{{ block.settings.product.title | default: 'Product' | escape }}" {{ block.shopify_attributes }}>
+            <span class="hotspot__dot"></span>
+          </button>
+        {%- endfor -%}
+      </div>
+
+      <div class="tw-flex tw-flex-col tw-gap-3">
+        {%- for block in section.blocks -%}
+          {%- assign p = block.settings.product -%}
+          <a href="{{ p.url | default: '#' }}" class="hotspot-card" data-hotspot-card="{{ forloop.index0 }}">
+            <span class="tw-text-sm tw-font-semibold tw-w-7 tw-h-7 tw-rounded-full tw-border tw-border-line tw-grid tw-place-items-center tw-shrink-0">{{ forloop.index }}</span>
+            <span class="media media--square tw-w-20 tw-shrink-0">
+              {%- if p.featured_media -%}
+                {{ p.featured_media | image_url: width: 200 | image_tag: loading: 'lazy', sizes: '80px', alt: '' }}
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </span>
+            <span class="tw-min-w-0">
+              <span class="tw-block tw-font-heading tw-text-lg tw-leading-tight">{{ p.title | default: 'Choose a product' }}</span>
+              {%- if p -%}<span class="tw-block tw-mt-1">{% render 'price', product: p %}</span>{%- endif -%}
+            </span>
+          </a>
+        {%- endfor -%}
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.link | default: '#' }}" class="btn tw-mt-3 tw-self-start">{{ section.settings.button_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Shop the look",
+  "class": "section-shop-the-look",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Shop the look" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Styled together" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "select", "id": "image_ratio", "label": "Image shape", "default": "portrait", "options": [
+      { "value": "square", "label": "Square" }, { "value": "portrait", "label": "Portrait" }, { "value": "landscape", "label": "Landscape" }, { "value": "natural", "label": "Natural (no cropping)" }
+    ] },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "link", "label": "Button link" },
+    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Product hotspot",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "range", "id": "x", "label": "Horizontal position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 },
+        { "type": "range", "id": "y", "label": "Vertical position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Shop the look", "blocks": [
+      { "type": "hotspot", "settings": { "x": 35, "y": 40 } },
+      { "type": "hotspot", "settings": { "x": 65, "y": 65 } }
+    ] }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,56 @@
+<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="page-width">
+    <div class="tw-grid tw-gap-10 lg:tw-grid-cols-2 lg:tw-items-center">
+      <div class="media media--{{ section.settings.ratio }}{% if section.settings.layout == 'right' %} lg:tw-order-2{% endif %}" data-reveal>
+        {%- if section.settings.video != blank -%}
+          {{ section.settings.video | video_tag: autoplay: section.settings.autoplay, loop: true, muted: section.settings.autoplay, controls: section.settings.show_controls, playsinline: true, image_size: '1500x', class: 'tw-absolute tw-inset-0 tw-w-full tw-h-full tw-object-cover' }}
+        {%- elsif section.settings.video_url != blank -%}
+          {%- liquid
+            if section.settings.video_url.type == 'youtube'
+              assign embed = 'https://www.youtube-nocookie.com/embed/' | append: section.settings.video_url.id | append: '?rel=0'
+            else
+              assign embed = 'https://player.vimeo.com/video/' | append: section.settings.video_url.id
+            endif
+          -%}
+          <iframe src="{{ embed }}" title="{{ section.settings.heading | escape }}" class="tw-absolute tw-inset-0 tw-w-full tw-h-full tw-border-0" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        {%- else -%}
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+      <div data-reveal>
+        {%- if section.settings.subheading != blank -%}<span class="subheading">{{ section.settings.subheading }}</span>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+        {%- if section.settings.text != blank -%}<div class="rte">{{ section.settings.text }}</div>{%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.link | default: '#' }}" class="btn btn--secondary tw-mt-7">{{ section.settings.button_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Video with text",
+  "class": "section-video-with-text",
+  "settings": [
+    { "type": "video", "id": "video", "label": "Video", "info": "Uploaded to Shopify. Used before the video link." },
+    { "type": "video_url", "id": "video_url", "label": "Or YouTube / Vimeo link", "accept": ["youtube", "vimeo"] },
+    { "type": "checkbox", "id": "autoplay", "label": "Autoplay muted (uploaded video)", "default": true },
+    { "type": "checkbox", "id": "show_controls", "label": "Show video controls", "default": false },
+    { "type": "select", "id": "ratio", "label": "Video shape", "default": "landscape", "options": [
+      { "value": "square", "label": "Square" }, { "value": "portrait", "label": "Portrait" }, { "value": "landscape", "label": "Landscape" }, { "value": "wide", "label": "Wide (16:9)" }
+    ] },
+    { "type": "select", "id": "layout", "label": "Video position", "default": "left", "options": [
+      { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }
+    ] },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Behind the craft" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Watch how it's made" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Show customers the people and process behind your products.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "link", "label": "Button link" },
+    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false }
+  ],
+  "presets": [ { "name": "Video with text" } ]
+}
+{% endschema %}

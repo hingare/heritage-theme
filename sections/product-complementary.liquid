@@ -1,0 +1,39 @@
+{%- comment -%}
+  Compact product list returned by the Product Recommendations API.
+  Requested by assets/features.js for the "Pairs well with" product block
+  and the cart drawer upsell. Not addable in the editor.
+{%- endcomment -%}
+<div data-compact-products>
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    {%- for product in recommendations.products -%}
+      {%- assign variant = product.selected_or_first_available_variant -%}
+      <div class="compact-product" data-compact-product="{{ product.id }}">
+        <a href="{{ product.url }}" class="media media--square tw-w-16 tw-shrink-0" tabindex="-1" aria-hidden="true">
+          {%- if product.featured_media -%}
+            {{ product.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', sizes: '64px', alt: '' }}
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </a>
+        <div class="tw-min-w-0 tw-flex-1">
+          <a href="{{ product.url }}" class="tw-block tw-text-sm tw-font-medium tw-leading-snug">{{ product.title }}</a>
+          <div class="tw-text-sm">{% render 'price', product: product %}</div>
+        </div>
+        {%- if product.available -%}
+          {%- if product.has_only_default_variant -%}
+            <button type="button" class="btn btn--small btn--secondary tw-shrink-0" data-quick-add="{{ variant.id }}" aria-label="{{ 'products.product.add_to_cart' | t }}: {{ product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+          {%- else -%}
+            <button type="button" class="btn btn--small btn--secondary tw-shrink-0" data-quick-view="{{ product.url }}" aria-label="{{ 'products.product.quick_add' | t }}: {{ product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Compact products",
+  "settings": []
+}
+{% endschema %}

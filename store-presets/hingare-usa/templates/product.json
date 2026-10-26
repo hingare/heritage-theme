@@ -87,6 +87,16 @@
             "page": "leather-care-guide",
             "open": false
           }
+        },
+        "wishlist": {
+          "type": "wishlist"
+        },
+        "complementary": {
+          "type": "complementary",
+          "settings": {
+            "heading": "Pairs well with",
+            "limit": 3
+          }
         }
       },
       "block_order": [
@@ -97,11 +107,13 @@
         "divider",
         "variant_picker",
         "buy_buttons",
+        "wishlist",
         "trust_badges",
         "description",
         "tab_material",
         "tab_care",
         "tab_shipping",
+        "complementary",
         "share"
       ],
       "settings": {
@@ -122,10 +134,19 @@
         "limit": 4,
         "columns": 4
       }
+    },
+    "recently-viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "heading": "Recently viewed",
+        "limit": 4,
+        "columns": 4
+      }
     }
   },
   "order": [
     "main",
-    "recommendations"
+    "recommendations",
+    "recently-viewed"
   ]
 }

@@ -1,2 +1,7 @@
 store-presets/**
 README.md
+node_modules/**
+src/**
+package.json
+package-lock.json
+tailwind.config.js

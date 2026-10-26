@@ -1,0 +1,13 @@
+{
+  "name": "heritage-theme",
+  "version": "4.99.0",
+  "private": true,
+  "description": "Heritage 4.99 Shopify theme",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/tailwind.css -o ./assets/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./src/tailwind.css -o ./assets/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}

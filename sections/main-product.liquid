@@ -109,6 +109,85 @@
             </div>
           {%- when 'divider' -%}
             <hr class="product__divider" {{ block.shopify_attributes }}>
+          {%- when 'wishlist' -%}
+            <div {{ block.shopify_attributes }}>
+              {%- if settings.wishlist_enabled -%}
+                <button type="button" class="wishlist-btn wishlist-btn--inline" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false" data-label-add="{{ 'wishlist.add' | t | escape }}" data-label-remove="{{ 'wishlist.remove' | t | escape }}">
+                  {% render 'icon', name: 'heart' %}<span data-wishlist-label>{{ 'wishlist.add' | t }}</span>
+                </button>
+              {%- endif -%}
+            </div>
+          {%- when 'size_chart' -%}
+            {%- if block.settings.page != blank or block.settings.content != blank -%}
+              <div {{ block.shopify_attributes }}>
+                <button type="button" class="link-underline tw-inline-flex tw-items-center tw-gap-2 tw-text-sm" data-open="SizeChart-{{ block.id }}">
+                  <span class="tw-w-5 tw-h-5">{% render 'icon', name: 'ruler' %}</span>{{ block.settings.label }}
+                </button>
+                <div id="SizeChart-{{ block.id }}" class="drawer drawer--right" aria-hidden="true" role="dialog" aria-label="{{ block.settings.label | escape }}">
+                  <div class="drawer__header">
+                    <span class="drawer__title h3">{{ block.settings.label }}</span>
+                    <button type="button" class="drawer__close" data-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+                  </div>
+                  <div class="drawer__body rte size-chart">
+                    {{ block.settings.content }}
+                    {{ block.settings.page.content }}
+                  </div>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- when 'pickup' -%}
+            <div class="pickup" data-update="pickup" {{ block.shopify_attributes }}>
+              {%- assign pick_up_availabilities = current_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+              {%- if pick_up_availabilities.size > 0 -%}
+                {%- assign closest = pick_up_availabilities.first -%}
+                <div class="tw-flex tw-gap-3 tw-text-sm">
+                  <span class="tw-w-5 tw-h-5 tw-shrink-0 tw-mt-0.5">{% render 'icon', name: 'store' %}</span>
+                  <div>
+                    {%- if closest.available -%}
+                      <p class="tw-m-0">{{ 'products.pickup.available_at' | t: location: closest.location.name }}</p>
+                      <p class="tw-m-0 tw-opacity-75">{{ closest.pick_up_time }}</p>
+                    {%- else -%}
+                      <p class="tw-m-0">{{ 'products.pickup.unavailable_at' | t: location: closest.location.name }}</p>
+                    {%- endif -%}
+                    {%- if pick_up_availabilities.size > 1 -%}
+                      <details class="tw-mt-1">
+                        <summary class="link-underline tw-cursor-pointer tw-inline-block">{{ 'products.pickup.view_stores' | t }}</summary>
+                        <ul class="tw-mt-2 tw-space-y-2">
+                          {%- for availability in pick_up_availabilities -%}
+                            <li><strong>{{ availability.location.name }}</strong><br>
+                              {%- if availability.available -%}{{ availability.pick_up_time }}{%- else -%}{{ 'products.pickup.unavailable' | t }}{%- endif -%}
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </details>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+          {%- when 'delivery' -%}
+            <div class="tw-flex tw-gap-3 tw-items-start tw-text-sm" data-delivery-estimate data-min="{{ block.settings.min_days }}" data-max="{{ block.settings.max_days }}" data-skip-weekends="{{ block.settings.skip_weekends }}" data-cutoff="{{ block.settings.cutoff_hour }}" {{ block.shopify_attributes }}>
+              <span class="tw-w-5 tw-h-5 tw-shrink-0 tw-mt-0.5">{% render 'icon', name: 'truck' %}</span>
+              <p class="tw-m-0">{{ block.settings.text }} <strong data-delivery-range></strong></p>
+            </div>
+          {%- when 'complementary' -%}
+            {%- assign comp_url = routes.product_recommendations_url | append: '?section_id=product-complementary&product_id=' | append: product.id | append: '&limit=' | append: block.settings.limit | append: '&intent=complementary' -%}
+            <div class="tw-hidden" data-lazy-products="{{ comp_url }}" {{ block.shopify_attributes }}>
+              <p class="tw-text-sm tw-font-semibold tw-tracking-wider tw-uppercase tw-mb-3">{{ block.settings.heading }}</p>
+              <div class="tw-flex tw-flex-col tw-gap-3" data-lazy-products-target></div>
+            </div>
+          {%- when 'countdown' -%}
+            {%- assign pc_end = block.settings.end_date | append: 'T' | append: block.settings.end_time | append: ':00' -%}
+            <div class="product-countdown" data-countdown="{{ pc_end | escape }}" data-countdown-hide="true" {{ block.shopify_attributes }}>
+              <span class="tw-text-sm tw-font-semibold">{{ block.settings.text }}</span>
+              <span class="tw-flex tw-gap-2" data-countdown-timer>
+                <span class="countdown__unit countdown__unit--small"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">{{ 'countdown.days' | t }}</span></span>
+                <span class="countdown__unit countdown__unit--small"><span class="countdown__value" data-countdown-hours>00</span><span class="countdown__label">{{ 'countdown.hours' | t }}</span></span>
+                <span class="countdown__unit countdown__unit--small"><span class="countdown__value" data-countdown-minutes>00</span><span class="countdown__label">{{ 'countdown.minutes' | t }}</span></span>
+                <span class="countdown__unit countdown__unit--small"><span class="countdown__value" data-countdown-seconds>00</span><span class="countdown__label">{{ 'countdown.seconds' | t }}</span></span>
+              </span>
+              <span class="tw-hidden" data-countdown-done></span>
+            </div>
           {%- when 'custom_liquid' -%}
             <div {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
         {%- endcase -%}
@@ -260,6 +339,30 @@
     ] },
     { "type": "share", "name": "Share buttons", "limit": 1 },
     { "type": "divider", "name": "Divider" },
+    { "type": "wishlist", "name": "Wishlist button", "limit": 1 },
+    { "type": "size_chart", "name": "Size chart", "limit": 1, "settings": [
+      { "type": "text", "id": "label", "label": "Link label", "default": "Size guide" },
+      { "type": "richtext", "id": "content", "label": "Content" },
+      { "type": "page", "id": "page", "label": "Content from page", "info": "Tables in a page are supported" }
+    ] },
+    { "type": "pickup", "name": "Pickup availability", "limit": 1 },
+    { "type": "delivery", "name": "Estimated delivery", "limit": 1, "settings": [
+      { "type": "text", "id": "text", "label": "Text", "default": "Order today, delivered" },
+      { "type": "range", "id": "min_days", "label": "Minimum business days", "min": 0, "max": 30, "step": 1, "default": 3 },
+      { "type": "range", "id": "max_days", "label": "Maximum business days", "min": 1, "max": 45, "step": 1, "default": 7 },
+      { "type": "checkbox", "id": "skip_weekends", "label": "Skip weekends", "default": true },
+      { "type": "range", "id": "cutoff_hour", "label": "Order cut-off hour", "min": 0, "max": 23, "step": 1, "default": 14, "info": "Orders after this hour (shopper's time) start the next day" }
+    ] },
+    { "type": "complementary", "name": "Pairs well with", "limit": 1, "settings": [
+      { "type": "text", "id": "heading", "label": "Heading", "default": "Pairs well with" },
+      { "type": "range", "id": "limit", "label": "Products to show", "min": 1, "max": 5, "step": 1, "default": 3 },
+      { "type": "paragraph", "content": "Choose products in the Search & Discovery app. Hidden when there are none." }
+    ] },
+    { "type": "countdown", "name": "Countdown timer", "limit": 1, "settings": [
+      { "type": "text", "id": "text", "label": "Text", "default": "Offer ends in" },
+      { "type": "text", "id": "end_date", "label": "End date", "default": "2026-12-31", "info": "Format YYYY-MM-DD. Hidden once it ends." },
+      { "type": "text", "id": "end_time", "label": "End time", "default": "23:59", "info": "24-hour HH:MM" }
+    ] },
     { "type": "custom_liquid", "name": "Custom liquid", "settings": [
       { "type": "liquid", "id": "custom_liquid", "label": "Custom liquid" }
     ] }

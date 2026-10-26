@@ -1,0 +1,7 @@
+{
+  "sections": {
+    "main": { "type": "main-wishlist", "settings": { "columns": 4 } },
+    "recently-viewed": { "type": "recently-viewed", "settings": {} }
+  },
+  "order": ["main", "recently-viewed"]
+}
