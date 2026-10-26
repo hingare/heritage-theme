@@ -145,8 +145,13 @@
     $$('[data-countdown]', ctx).forEach((el) => {
       if (el.dataset.ready) return;
       el.dataset.ready = '1';
-      const end = new Date(el.dataset.countdown).getTime();
-      if (Number.isNaN(end)) return;
+      // A missing end time falls back to the end of that day; an unreadable date hides the timer.
+      let end = new Date(el.dataset.countdown).getTime();
+      if (Number.isNaN(end)) end = new Date(`${el.dataset.countdown.split('T')[0]}T23:59:59`).getTime();
+      if (Number.isNaN(end)) {
+        if (!window.Shopify?.designMode) el.hidden = true;
+        return;
+      }
       const pad = (n) => String(n).padStart(2, '0');
       const parts = ['days', 'hours', 'minutes', 'seconds'].map((k) => $(`[data-countdown-${k}]`, el));
       const tick = () => {

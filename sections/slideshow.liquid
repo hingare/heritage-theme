@@ -17,11 +17,15 @@
                 assign loading = 'lazy'
                 assign slide_alt = block.settings.image.alt | escape
                 assign focal = 'object-position: ' | append: block.settings.image.presentation.focal_point
-                if forloop.first
+                assign priority = 'auto'
+                if forloop.first and section.index <= 2
                   assign loading = 'eager'
+                  if section.index == 1
+                    assign priority = 'high'
+                  endif
                 endif
               -%}
-              {{ block.settings.image | image_url: width: 2400 | image_tag: loading: loading, sizes: '100vw', widths: '750, 1100, 1500, 1900, 2400', alt: slide_alt, style: focal }}
+              {{ block.settings.image | image_url: width: 2400 | image_tag: loading: loading, fetchpriority: priority, sizes: '100vw', widths: '750, 1100, 1500, 1900, 2400', alt: slide_alt, style: focal }}
             {%- else -%}
               {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}

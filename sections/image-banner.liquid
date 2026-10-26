@@ -23,7 +23,7 @@
           assign banner_loading = 'eager'
         endif
       -%}
-      {{ section.settings.image | image_url: width: 2800 | image_tag: loading: banner_loading, sizes: '100vw', widths: '750, 1100, 1500, 2000, 2800', alt: banner_alt, style: focal, class: 'image-banner__img' }}
+      {{ section.settings.image | image_url: width: 2800 | image_tag: loading: banner_loading, fetchpriority: banner_loading | replace: 'eager', 'high' | replace: 'lazy', 'auto', sizes: '100vw', widths: '750, 1100, 1500, 2000, 2800', alt: banner_alt, style: focal, class: 'image-banner__img' }}
     {%- else -%}
       {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg image-banner__img' }}
     {%- endif -%}

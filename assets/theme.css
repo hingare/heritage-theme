@@ -701,13 +701,15 @@ details[open] > .facets__summary svg { transform: rotate(180deg); }
 .gift-card__code { font-size: 1.6rem; letter-spacing: 0.1em; padding: 1rem; border: 1px dashed var(--color-border); }
 
 /* Reveal animations ------------------------------------------------------ */
-.animations-enabled [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
-.animations-enabled [data-reveal].is-revealed { opacity: 1; transform: none; }
+.js .animations-enabled [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.js .animations-enabled [data-reveal].is-revealed { opacity: 1; transform: none; }
+.js .animations-enabled .main-content > .shopify-section:first-child [data-reveal] { opacity: 1; transform: none; transition: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  .animations-enabled [data-reveal] { opacity: 1; transform: none; }
+  .js .animations-enabled [data-reveal] { opacity: 1; transform: none; }
 }
 .shopify-section-group-header-group { z-index: 30; }
+.shopify-section.has-open-panel { z-index: 61 !important; }
 
 /* Mobile filter drawer: the sidebar slides in below 990px */
 @media (max-width: 989px) {

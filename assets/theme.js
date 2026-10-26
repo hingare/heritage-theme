@@ -24,6 +24,8 @@
     activePanel = panel;
     panel.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
+    // The sticky header is its own stacking context, so lift it above the overlay while its drawer is open.
+    panel.closest('.shopify-section')?.classList.add('has-open-panel');
     if (!panel.classList.contains('modal')) overlay()?.classList.add('is-visible');
     document.body.classList.add('is-locked');
     const focusable = panel.querySelector('input:not([type=hidden]), button, a[href]');
@@ -34,6 +36,7 @@
     if (!panel) return;
     panel.classList.remove('is-open');
     panel.setAttribute('aria-hidden', 'true');
+    panel.closest('.shopify-section')?.classList.remove('has-open-panel');
     overlay()?.classList.remove('is-visible');
     document.body.classList.remove('is-locked');
     activePanel = null;
@@ -202,7 +205,9 @@
         closePanel(activePanel, false);
         openPanel($('#CartDrawer'));
       } catch (err) {
-        if (errorEl) errorEl.textContent = err.description || err.message || 'Error';
+        const message = err.description || err.message || 'Error';
+        if (errorEl) errorEl.textContent = message;
+        else window.alert(message);
       } finally {
         button?.classList.remove('is-loading');
       }
@@ -218,13 +223,15 @@
       } catch (err) {
         window.alert(err.description || err.message || 'Error');
       } finally {
-        $('.cart-drawer')?.classList.remove('is-loading');
+        container?.classList.remove('is-loading');
+        $('[data-cart-page]')?.classList.remove('is-loading');
       }
     }
   };
   window.HeritageCart = Cart;
   window.Heritage = { openPanel, closePanel, initReveal: (root) => initReveal(root) };
 
+  const qtyTimers = {};
   function initCart() {
     document.addEventListener('submit', (e) => {
       const form = e.target.closest('form[data-product-form]');
@@ -260,7 +267,12 @@
 
     document.addEventListener('change', (e) => {
       const input = e.target.closest('[data-cart-line-qty]');
-      if (input) Cart.change(Number(input.dataset.cartLineQty), Number(input.value));
+      if (input) {
+        // Wait for fast +/- clicks to settle so only the final quantity is sent.
+        const line = input.dataset.cartLineQty;
+        clearTimeout(qtyTimers[line]);
+        qtyTimers[line] = setTimeout(() => Cart.change(Number(line), Number(input.value)), 350);
+      }
       const note = e.target.closest('[data-cart-note]');
       if (note) {
         fetch(`${window.theme.routes.cart}/update.js`, {

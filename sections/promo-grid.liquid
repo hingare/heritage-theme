@@ -20,8 +20,18 @@
             <div class="promo-grid__item" data-reveal style="--span: {{ span }}; --promo-height: {{ block.settings.height }}px; --promo-height-mobile: {{ block.settings.height | times: 0.75 | round }}px; --promo-text: {{ block.settings.text_color }}; --promo-bg: {{ block.settings.bg_color }}; --overlay-opacity: {{ block.settings.overlay | divided_by: 100.0 }};" {{ block.shopify_attributes }}>
               {%- if block.settings.image != blank -%}
                 <div class="promo-grid__media">
-                  {%- assign promo_sizes = span | times: 8.33 | round | append: 'vw' -%}
-                  {{ block.settings.image | image_url: width: 1800 | image_tag: loading: 'lazy', widths: '450, 750, 1100, 1500, 1800', sizes: promo_sizes, alt: block.settings.image.alt | escape }}
+                  {%- liquid
+                    assign promo_sizes = span | times: 8.33 | round | append: 'vw'
+                    assign promo_loading = 'lazy'
+                    assign promo_priority = 'auto'
+                    if section.index == 1 and forloop.index <= 3
+                      assign promo_loading = 'eager'
+                      if forloop.first
+                        assign promo_priority = 'high'
+                      endif
+                    endif
+                  -%}
+                  {{ block.settings.image | image_url: width: 1800 | image_tag: loading: promo_loading, fetchpriority: promo_priority, widths: '450, 750, 1100, 1500, 1800', sizes: promo_sizes, alt: block.settings.image.alt | escape }}
                 </div>
                 <div class="promo-grid__overlay"></div>
               {%- elsif block.settings.bg_color == blank -%}

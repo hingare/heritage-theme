@@ -1,3 +1,9 @@
+{%- liquid
+  assign first_loading = 'lazy'
+  if section.index == 1
+    assign first_loading = 'eager'
+  endif
+-%}
 <div class="hero-video" style="min-height: {{ section.settings.height }}px;">
   {%- if section.settings.video != blank -%}
     {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, image_size: '1920x' }}
@@ -8,7 +14,7 @@
       <iframe src="https://player.vimeo.com/video/{{ section.settings.video_url.id }}?autoplay=1&muted=1&loop=1&background=1" allow="autoplay" title="{{ section.settings.heading | escape }}" loading="lazy"></iframe>
     {%- endif -%}
   {%- elsif section.settings.image != blank -%}
-    {{ section.settings.image | image_url: width: 2000 | image_tag: loading: 'lazy', sizes: '100vw' }}
+    {{ section.settings.image | image_url: width: 2000 | image_tag: loading: first_loading, sizes: '100vw' }}
   {%- else -%}
     {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
   {%- endif -%}

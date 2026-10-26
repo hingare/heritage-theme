@@ -8,10 +8,13 @@
 <{{ tag }} class="site-header__logo">
   <a href="{{ routes.root_url }}">
     {%- if section.settings.logo != blank -%}
-      {%- assign logo_alt = section.settings.logo.alt | default: shop.name | escape -%}
-      {{ section.settings.logo | image_url: width: 700 | image_tag: alt: logo_alt, widths: '150, 250, 350, 500, 700', sizes: '(min-width: 990px) 350px, 250px', loading: 'eager', class: 'site-header__logo-default' }}
+      {%- liquid
+        assign logo_alt = section.settings.logo.alt | default: shop.name | escape
+        assign logo_sizes = '(min-width: 990px) ' | append: section.settings.logo_width | append: 'px, ' | append: section.settings.logo_width_mobile | append: 'px'
+      -%}
+      {{ section.settings.logo | image_url: width: 700 | image_tag: alt: logo_alt, widths: '100, 150, 200, 300, 400, 600', sizes: logo_sizes, loading: 'eager', class: 'site-header__logo-default' }}
       {%- if section.settings.logo_transparent != blank and section.settings.transparent_home and request.page_type == 'index' -%}
-        {{ section.settings.logo_transparent | image_url: width: 700 | image_tag: alt: logo_alt, widths: '150, 250, 350, 500, 700', sizes: '(min-width: 990px) 350px, 250px', loading: 'eager', class: 'site-header__logo-transparent' }}
+        {{ section.settings.logo_transparent | image_url: width: 700 | image_tag: alt: logo_alt, widths: '100, 150, 200, 300, 400, 600', sizes: logo_sizes, loading: 'eager', class: 'site-header__logo-transparent' }}
       {%- endif -%}
     {%- else -%}
       {{ shop.name }}

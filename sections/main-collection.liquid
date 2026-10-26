@@ -11,7 +11,7 @@
   {%- if section.settings.show_image and collection.image -%}
     <div class="collection-hero">
       <div class="collection-hero__media">
-        {{ collection.image | image_url: width: 2400 | image_tag: loading: 'eager', sizes: '100vw', widths: '750, 1100, 1500, 2000, 2400', alt: collection.title | escape }}
+        {{ collection.image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '100vw', widths: '750, 1100, 1500, 2000, 2400', alt: collection.title | escape }}
       </div>
       <div class="page-width collection-hero__content">
         <h1>{{ collection.title }}</h1>

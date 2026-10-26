@@ -1,4 +1,10 @@
 {%- liquid
+  assign first_loading = 'lazy'
+  if section.index == 1
+    assign first_loading = 'eager'
+  endif
+-%}
+{%- liquid
   assign ratio = 'media--' | append: section.settings.image_ratio
   assign style_class = 'collection-card--' | append: section.settings.style
 -%}
@@ -14,7 +20,7 @@
         <a href="{{ c.url | default: '#' }}" class="collection-card {{ style_class }}" data-reveal {{ block.shopify_attributes }}>
           <div class="media {% if section.settings.style == 'circle' %}media--square{% else %}{{ ratio }}{% endif %}">
             {%- if card_image -%}
-              {{ card_image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, 70vw', widths: '300, 450, 600, 900', alt: c.title | escape }}
+              {{ card_image | image_url: width: 900 | image_tag: loading: first_loading, sizes: '(min-width: 990px) 25vw, 70vw', widths: '300, 450, 600, 900', alt: c.title | escape }}
             {%- else -%}
               {%- assign ph = forloop.index0 | modulo: 6 | plus: 1 -%}
               {{ 'collection-' | append: ph | placeholder_svg_tag: 'placeholder-svg' }}
