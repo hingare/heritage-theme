@@ -1,0 +1,94 @@
+{%- liquid
+  assign first_collection = section.blocks.first.settings.collection
+-%}
+<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="page-width">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="section-header section-header--center">
+        {%- if section.settings.subheading != blank -%}<span class="subheading">{{ section.settings.subheading }}</span>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div data-react-island="collection-tabs">
+      <script type="application/json" data-island-props>
+        {
+          "tabs": [
+            {%- assign sep = '' -%}
+            {%- for block in section.blocks -%}
+              {%- assign c = block.settings.collection -%}
+              {%- if c != blank -%}
+                {{ sep }}{
+                  "id": {{ block.id | json }},
+                  "handle": {{ c.handle | json }},
+                  "title": {{ block.settings.label | default: c.title | json }},
+                  "url": {{ c.url | json }}
+                }
+                {%- assign sep = ',' -%}
+              {%- endif -%}
+            {%- endfor -%}
+          ],
+          "limit": {{ section.settings.limit }},
+          "columns": {{ section.settings.columns }},
+          "showViewAll": {{ section.settings.show_view_all }},
+          "strings": {
+            {% render 'island-card-strings' %},
+            "label": {{ section.settings.heading | default: 'Collections' | json }},
+            "viewAll": {{ 'general.view_all' | t | json }},
+            "empty": {{ 'collections.empty' | t | json }}
+          }
+        }
+      </script>
+
+      {%- comment -%} Shown until React loads, and to shoppers without JavaScript. {%- endcomment -%}
+      <div class="tw-flex tw-flex-wrap tw-justify-center tw-gap-6 tw-mb-8">
+        {%- for block in section.blocks -%}
+          {%- if block.settings.collection != blank -%}
+            <a href="{{ block.settings.collection.url }}" class="tw-font-heading tw-text-xl md:tw-text-2xl{% unless forloop.first %} tw-opacity-40{% endunless %}" {{ block.shopify_attributes }}>{{ block.settings.label | default: block.settings.collection.title }}</a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      <div class="grid grid--scroll-mobile" style="--cols: {{ section.settings.columns }};">
+        {%- if first_collection != blank -%}
+          {%- for product in first_collection.products limit: section.settings.limit -%}
+            {% render 'product-card', product: product %}
+          {%- endfor -%}
+        {%- else -%}
+          {%- for i in (1..section.settings.columns) -%}
+            <div class="media media--product">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection tabs",
+  "class": "section-collection-tabs",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Shop the edit" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Find your favourite" },
+    { "type": "range", "id": "limit", "label": "Products per tab", "min": 2, "max": 12, "step": 1, "default": 8 },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "show_view_all", "label": "Show \"View all\" button", "default": true },
+    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false },
+    { "type": "paragraph", "content": "Tabs switch instantly without reloading the page (React)." }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "label", "label": "Tab label", "info": "Defaults to the collection title" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Collection tabs", "blocks": [ { "type": "collection" }, { "type": "collection" }, { "type": "collection" } ] }
+  ]
+}
+{% endschema %}

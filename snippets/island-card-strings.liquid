@@ -1,0 +1,11 @@
+{%- comment -%}
+  JSON members with the product tile strings used by the React islands (src/react/ProductTile.jsx).
+  Output goes inside a JSON object: { {% render 'island-card-strings' %}, "other": "..." }
+{%- endcomment -%}
+"soldOut": {{ 'products.product.sold_out' | t | json }},
+"quickAdd": {{ 'products.product.quick_add' | t | json }},
+"quickView": {{ 'products.product.quick_view' | t | json }},
+"wishlistAdd": {{ 'wishlist.add' | t | json }},
+"wishlistRemove": {{ 'wishlist.remove' | t | json }},
+"from": {{ 'islands.from' | t | json }},
+"error": {{ 'islands.error' | t | json }}

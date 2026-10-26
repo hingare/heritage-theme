@@ -25,6 +25,8 @@ look lives in its theme settings and JSON templates, so the same code can run on
 - Product page extras: wishlist button, size chart drawer, store pickup availability, estimated delivery date,
   "Pairs well with" (Search & Discovery complementary products), countdown
 - Newsletter popup (footer group), cart drawer upsell, back-to-top button
+- React islands: live header search (suggestions, recent and popular searches, keyboard control),
+  collection tabs that switch without reloading, and a gift finder quiz that ranks products by tag
 
 ## Structure
 Standard Shopify theme folders (`assets`, `config`, `layout`, `locales`, `sections`, `snippets`, `templates`).
@@ -33,13 +35,20 @@ Standard Shopify theme folders (`assets`, `config`, `layout`, `locales`, `sectio
 home page) that are uploaded on top of the base theme for that store. They are not part of the theme package.
 
 ## Languages and tooling
-Liquid, HTML, CSS, JavaScript (no runtime libraries), JSON and JSON-LD. Tailwind CSS is compiled at
-build time: utilities use the `tw-` prefix and preflight is off, so they sit beside `assets/theme.css`.
-Colours and fonts in `tailwind.config.js` read the CSS variables set from theme settings.
+Liquid, HTML, CSS, Tailwind CSS, JavaScript, React, JSON and JSON-LD.
+
+- Tailwind CSS is compiled at build time: utilities use the `tw-` prefix and preflight is off, so they
+  sit beside `assets/theme.css`. Colours and fonts in `tailwind.config.js` read the CSS variables set from theme settings.
+- React 18 powers a few "islands" (`src/react/`), bundled by esbuild into `assets/react-islands.js`.
+  Liquid renders each island with its props as JSON and plain HTML that shows until React loads.
+  `assets/features.js` loads the bundle only on pages that have an island, as it nears the viewport
+  (or, for search, when the shopper reaches for the search icon), so other pages stay light.
+- Next.js is not used: Shopify themes run on Liquid. A Next.js storefront would be a separate headless
+  site (Hydrogen/Storefront API) with its own hosting.
 
 ```sh
 npm install
-npm run build:css   # src/tailwind.css -> assets/tailwind.css (commit the output)
+npm run build       # React islands + Tailwind -> assets/ (commit the output)
 ```
 
 `package.json`, `tailwind.config.js` and `src/` are build files only and are excluded by `.shopifyignore`.

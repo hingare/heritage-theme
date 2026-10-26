@@ -1,0 +1,252 @@
+<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="page-width">
+    <div data-react-island="gift-finder" class="gift-finder">
+      <script type="application/json" data-island-props>
+        {
+          "intro": {%- if section.settings.show_intro -%}{ "subheading": {{ section.settings.subheading | json }}, "heading": {{ section.settings.heading | json }}, "text": {{ section.settings.text | json }} }{%- else -%}null{%- endif -%},
+          "collection": {{ section.settings.collection.handle | default: 'all' | json }},
+          "limit": {{ section.settings.limit }},
+          "questions": [
+            {%- assign q_sep = '' -%}
+            {%- for block in section.blocks -%}
+              {{ q_sep }}{ "title": {{ block.settings.title | json }}, "answers": [
+                {%- assign a_sep = '' -%}
+                {%- for i in (1..4) -%}
+                  {%- liquid
+                    assign label_key = 'answer_' | append: i
+                    assign tags_key = 'tags_' | append: i
+                    assign image_key = 'image_' | append: i
+                    assign label = block.settings[label_key]
+                    assign tags = block.settings[tags_key] | downcase | split: ','
+                  -%}
+                  {%- if label != blank -%}
+                    {{ a_sep }}{ "label": {{ label | json }}, "tags": [
+                      {%- for tag in tags -%}{{ tag | strip | json }}{% unless forloop.last %},{% endunless %}{%- endfor -%}
+                    ], "image": {%- if block.settings[image_key] != blank -%}{{ block.settings[image_key] | image_url: width: 500 | json }}{%- else -%}null{%- endif -%} }
+                    {%- assign a_sep = ',' -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              ] }
+              {%- assign q_sep = ',' -%}
+            {%- endfor -%}
+          ],
+          "strings": {
+            {% render 'island-card-strings' %},
+            "start": {{ 'islands.start' | t | json }},
+            "back": {{ 'islands.back' | t | json }},
+            "restart": {{ 'islands.restart' | t | json }},
+            "step": {{ 'islands.step' | t | json }},
+            "resultSubheading": {{ 'islands.result_subheading' | t | json }},
+            "resultHeading": {{ 'islands.result_heading' | t | json }},
+            "empty": {{ 'islands.no_match' | t | json }}
+          }
+        }
+      </script>
+
+      {%- comment -%} Shown until React loads. {%- endcomment -%}
+      <div class="tw-text-center tw-max-w-xl tw-mx-auto">
+        {%- if section.settings.subheading != blank -%}<span class="subheading">{{ section.settings.subheading }}</span>{%- endif -%}
+        <h2>{{ section.settings.heading }}</h2>
+        {%- if section.settings.text != blank -%}<p class="tw-opacity-80">{{ section.settings.text }}</p>{%- endif -%}
+        {%- if section.settings.collection != blank -%}
+          <a href="{{ section.settings.collection.url }}" class="btn tw-mt-6">{{ 'general.view_all' | t }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Gift finder",
+  "class": "section-gift-finder",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_intro",
+      "label": "Show intro screen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Gift finder"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Find the perfect gift in 30 seconds"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "Answer a few quick questions and we'll pick products for you."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Recommend products from",
+      "info": "Usually your all products collection"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Products to recommend",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Use alternate background",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "Interactive quiz built with React. Answers match product tags."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Question",
+          "default": "Who is it for?"
+        },
+        {
+          "type": "header",
+          "content": "Answer 1"
+        },
+        {
+          "type": "text",
+          "id": "answer_1",
+          "label": "Label",
+          "default": "For her"
+        },
+        {
+          "type": "text",
+          "id": "tags_1",
+          "label": "Product tags",
+          "info": "Comma separated. Products with these tags rank higher.",
+          "default": "women"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Image"
+        },
+        {
+          "type": "header",
+          "content": "Answer 2"
+        },
+        {
+          "type": "text",
+          "id": "answer_2",
+          "label": "Label",
+          "default": "For him"
+        },
+        {
+          "type": "text",
+          "id": "tags_2",
+          "label": "Product tags",
+          "info": "Comma separated. Products with these tags rank higher.",
+          "default": "men"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Image"
+        },
+        {
+          "type": "header",
+          "content": "Answer 3"
+        },
+        {
+          "type": "text",
+          "id": "answer_3",
+          "label": "Label",
+          "default": "For anyone"
+        },
+        {
+          "type": "text",
+          "id": "tags_3",
+          "label": "Product tags",
+          "info": "Comma separated. Products with these tags rank higher.",
+          "default": "unisex"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_3",
+          "label": "Image"
+        },
+        {
+          "type": "header",
+          "content": "Answer 4"
+        },
+        {
+          "type": "text",
+          "id": "answer_4",
+          "label": "Label"
+        },
+        {
+          "type": "text",
+          "id": "tags_4",
+          "label": "Product tags",
+          "info": "Comma separated. Products with these tags rank higher."
+        },
+        {
+          "type": "image_picker",
+          "id": "image_4",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gift finder",
+      "blocks": [
+        {
+          "type": "question"
+        },
+        {
+          "type": "question",
+          "settings": {
+            "title": "What will they use it for?",
+            "answer_1": "Everyday",
+            "tags_1": "everyday",
+            "answer_2": "Work",
+            "tags_2": "work",
+            "answer_3": "Travel",
+            "tags_3": "travel",
+            "answer_4": "Evenings out",
+            "tags_4": "evening"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "title": "What's your budget?",
+            "answer_1": "Under $50",
+            "tags_1": "under-50",
+            "answer_2": "$50 to $150",
+            "tags_2": "50-150",
+            "answer_3": "Over $150",
+            "tags_3": "over-150"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

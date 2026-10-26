@@ -182,4 +182,30 @@
   .back-to-top svg { @apply tw-w-5 tw-h-5; }
   .back-to-top.is-visible { @apply tw-opacity-100 tw-visible tw-translate-y-0; }
   body:has(.sticky-atc.is-visible) .back-to-top { bottom: 6rem; }
+
+  /* React live search ------------------------------------------------- */
+  .search-chip {
+    @apply tw-inline-block tw-px-4 tw-py-1.5 tw-text-sm tw-rounded-full tw-border tw-border-line tw-transition-colors;
+    border-style: solid;
+  }
+  .search-chip:hover,
+  .search-chip[aria-selected="true"] { @apply tw-border-text tw-bg-alt; color: inherit; }
+  .search-row { @apply tw-block tw-py-1.5 tw-px-2 -tw-mx-2 tw-rounded; }
+  .search-row mark { background: none; color: inherit; font-weight: 600; }
+  .search-row[aria-selected="true"],
+  .search-product[aria-selected="true"] { @apply tw-bg-alt; color: inherit; }
+  .search-product { @apply tw-p-1.5 -tw-m-1.5 tw-rounded-card; }
+  .search-panel__spinner {
+    @apply tw-w-4 tw-h-4 tw-rounded-full tw-shrink-0;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    animation: spin 0.7s linear infinite;
+  }
+
+  /* Islands ----------------------------------------------------------- */
+  [data-react-island] .modal__loading { padding: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .tw-animate-tile-in,
+    .tw-animate-fade-up { animation: none; }
+  }
 }

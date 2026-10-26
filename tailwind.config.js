@@ -8,7 +8,8 @@ module.exports = {
     './sections/*.liquid',
     './snippets/*.liquid',
     './templates/**/*.liquid',
-    './assets/features.js'
+    './assets/features.js',
+    './src/react/**/*.{js,jsx}'
   ],
   corePlugins: { preflight: false },
   theme: {
@@ -32,7 +33,15 @@ module.exports = {
         btn: 'var(--button-radius)'
       },
       maxWidth: { page: 'var(--page-width)' },
-      screens: { md: '750px', lg: '990px' }
+      screens: { md: '750px', lg: '990px' },
+      keyframes: {
+        'tile-in': { from: { opacity: '0', transform: 'translateY(14px)' }, to: { opacity: '1', transform: 'none' } },
+        'fade-up': { from: { opacity: '0', transform: 'translateY(10px)' }, to: { opacity: '1', transform: 'none' } }
+      },
+      animation: {
+        'tile-in': 'tile-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both',
+        'fade-up': 'fade-up 0.4s ease-out both'
+      }
     }
   }
 };

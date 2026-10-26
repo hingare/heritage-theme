@@ -94,7 +94,12 @@
     "no_results": "No results found for \"{{ terms }}\". Try another search.",
     "products": "Products",
     "pages": "Pages",
-    "articles": "Articles"
+    "articles": "Articles",
+    "recent": "Recent searches",
+    "popular": "Popular searches",
+    "suggestions": "Suggestions",
+    "collections": "Collections & pages",
+    "clear": "Clear"
   },
   "blogs": {
     "by": "by {{ author }}",
@@ -156,5 +161,16 @@
     "hours": "Hours",
     "minutes": "Min",
     "seconds": "Sec"
+  },
+  "islands": {
+    "from": "From",
+    "error": "Something went wrong. Please refresh the page.",
+    "start": "Start",
+    "back": "Back",
+    "restart": "Start again",
+    "step": "Question {{ current }} of {{ total }}",
+    "result_subheading": "Our picks for you",
+    "result_heading": "We think you'll love these",
+    "no_match": "No products to show yet. Try different answers."
   }
 }

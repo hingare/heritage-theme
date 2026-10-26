@@ -116,6 +116,29 @@
 
 {%- comment -%} Search overlay {%- endcomment -%}
 <div id="SearchModal" class="search-modal" aria-hidden="true" role="dialog" aria-label="{{ 'general.search' | t }}">
+  {%- comment -%} React live search (src/react/SearchPanel.jsx) replaces this markup once loaded. {%- endcomment -%}
+  <div data-react-island="search" data-island-lazy>
+  <script type="application/json" data-island-props>
+    {
+      "popular": [
+        {%- assign popular = section.settings.popular_searches | split: ',' -%}
+        {%- for term in popular -%}{{ term | strip | json }}{% unless forloop.last %},{% endunless %}{%- endfor -%}
+      ],
+      "strings": {
+        "search": {{ 'general.search' | t | json }},
+        "placeholder": {{ 'header.search_placeholder' | t | json }},
+        "close": {{ 'general.close' | t | json }},
+        "clear": {{ 'search.clear' | t | json }},
+        "recent": {{ 'search.recent' | t | json }},
+        "popular": {{ 'search.popular' | t | json }},
+        "suggestions": {{ 'search.suggestions' | t | json }},
+        "collections": {{ 'search.collections' | t | json }},
+        "products": {{ 'search.products' | t | json }},
+        "viewAll": {{ 'header.search_view_all' | t | json }},
+        "noResults": {{ 'search.no_results' | t | json }}
+      }
+    }
+  </script>
   <div class="page-width">
     <form action="{{ routes.search_url }}" method="get" role="search" class="search-modal__form">
       {% render 'icon', name: 'search' %}
@@ -124,6 +147,7 @@
       <button type="button" class="header-icon" data-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
     </form>
     <div class="predictive-search" data-predictive-results></div>
+  </div>
   </div>
 </div>
 
@@ -146,30 +170,116 @@
   "name": "Header",
   "class": "section-header",
   "settings": [
-    { "type": "image_picker", "id": "logo", "label": "Logo image" },
-    { "type": "range", "id": "logo_width", "label": "Logo width", "min": 60, "max": 350, "step": 5, "unit": "px", "default": 160 },
-    { "type": "range", "id": "logo_width_mobile", "label": "Mobile logo width", "min": 50, "max": 250, "step": 5, "unit": "px", "default": 110 },
-    { "type": "select", "id": "logo_position", "label": "Layout", "default": "center-below", "options": [
-      { "value": "left", "label": "Logo left, menu inline" },
-      { "value": "center-below", "label": "Logo center, menu below" }
-    ] },
-    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
-    { "type": "checkbox", "id": "sticky", "label": "Enable sticky header", "default": true }
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width",
+      "min": 60,
+      "max": 350,
+      "step": 5,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "logo_width_mobile",
+      "label": "Mobile logo width",
+      "min": 50,
+      "max": 250,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "label": "Layout",
+      "default": "center-below",
+      "options": [
+        {
+          "value": "left",
+          "label": "Logo left, menu inline"
+        },
+        {
+          "value": "center-below",
+          "label": "Logo center, menu below"
+        }
+      ]
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Enable sticky header",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "popular_searches",
+      "label": "Popular searches",
+      "default": "Tote bag, Wallet, Belt",
+      "info": "Comma separated. Shown when the search box is empty."
+    }
   ],
   "blocks": [
     {
       "type": "mega_menu",
       "name": "Mega menu",
       "settings": [
-        { "type": "text", "id": "menu_item", "label": "Menu item", "info": "Enter the top-level menu title that should open this mega menu, e.g. Women" },
-        { "type": "header", "content": "Promotion 1" },
-        { "type": "image_picker", "id": "image_1", "label": "Image" },
-        { "type": "text", "id": "title_1", "label": "Heading" },
-        { "type": "url", "id": "link_1", "label": "Link" },
-        { "type": "header", "content": "Promotion 2" },
-        { "type": "image_picker", "id": "image_2", "label": "Image" },
-        { "type": "text", "id": "title_2", "label": "Heading" },
-        { "type": "url", "id": "link_2", "label": "Link" }
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Menu item",
+          "info": "Enter the top-level menu title that should open this mega menu, e.g. Women"
+        },
+        {
+          "type": "header",
+          "content": "Promotion 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title_1",
+          "label": "Heading"
+        },
+        {
+          "type": "url",
+          "id": "link_1",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Promotion 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title_2",
+          "label": "Heading"
+        },
+        {
+          "type": "url",
+          "id": "link_2",
+          "label": "Link"
+        }
       ]
     }
   ]

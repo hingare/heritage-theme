@@ -124,20 +124,6 @@
         "alt_bg": false
       }
     },
-    "new": {
-      "type": "featured-collection",
-      "settings": {
-        "subheading": "Just in",
-        "heading": "New arrivals",
-        "center_heading": false,
-        "collection": "new-arrivals",
-        "limit": 8,
-        "columns": 4,
-        "mobile_scroll": true,
-        "view_all": true,
-        "alt_bg": false
-      }
-    },
     "categories": {
       "type": "collection-list",
       "blocks": {
@@ -316,15 +302,122 @@
         "limit": 4,
         "columns": 4
       }
+    },
+    "tabs": {
+      "type": "collection-tabs",
+      "blocks": {
+        "t1": {
+          "type": "collection",
+          "settings": {
+            "collection": "new-arrivals",
+            "label": "New arrivals"
+          }
+        },
+        "t2": {
+          "type": "collection",
+          "settings": {
+            "collection": "womens-bags",
+            "label": "Women"
+          }
+        },
+        "t3": {
+          "type": "collection",
+          "settings": {
+            "collection": "men",
+            "label": "Men"
+          }
+        },
+        "t4": {
+          "type": "collection",
+          "settings": {
+            "collection": "accessories",
+            "label": "Accessories"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "settings": {
+        "subheading": "Just in",
+        "heading": "Shop the collection",
+        "limit": 8,
+        "columns": 4,
+        "show_view_all": true,
+        "alt_bg": false
+      }
+    },
+    "finder": {
+      "type": "gift-finder",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "title": "Who are you shopping for?",
+            "answer_1": "For her",
+            "tags_1": "gift for her, women's bags",
+            "answer_2": "For him",
+            "tags_2": "gift for him, men's bags",
+            "answer_3": "For me",
+            "tags_3": "",
+            "answer_4": ""
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "title": "Where will it go?",
+            "answer_1": "Everyday",
+            "tags_1": "everyday bag",
+            "answer_2": "Work",
+            "tags_2": "work bag",
+            "answer_3": "Travel",
+            "tags_3": "travel bag",
+            "answer_4": "Evenings out",
+            "tags_4": "evening bag"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "title": "Pick a look",
+            "answer_1": "Classic black",
+            "tags_1": "black",
+            "answer_2": "Warm brown",
+            "tags_2": "brown, red brown",
+            "answer_3": "Crocodile texture",
+            "tags_3": "crocodile pattern",
+            "answer_4": ""
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3"
+      ],
+      "settings": {
+        "show_intro": true,
+        "subheading": "Gift finder",
+        "heading": "Find the right leather piece in 30 seconds",
+        "text": "Three quick questions and we'll pick the bags that suit you best.",
+        
+        "limit": 4,
+        "alt_bg": true
+      }
     }
   },
   "order": [
     "hero",
     "values",
-    "new",
+    "tabs",
     "categories",
     "story",
     "spotlight",
+    "finder",
     "marquee",
     "gifts",
     "journal",

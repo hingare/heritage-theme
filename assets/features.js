@@ -296,6 +296,39 @@
   }
 
   /* ------------------------------------------------------------------ */
+  /* React islands (assets/react-islands.js, built from src/react)       */
+  /* Loaded only when a page has an island: as it nears the viewport, or */
+  /* for the header search, the first time the shopper reaches for it.  */
+  /* ------------------------------------------------------------------ */
+  let islandsRequested = false;
+  function loadIslands() {
+    if (window.HeritageIslands) { window.HeritageIslands.scan(); return; }
+    if (islandsRequested || !window.theme?.assets?.reactIslands) return;
+    islandsRequested = true;
+    const script = document.createElement('script');
+    script.src = window.theme.assets.reactIslands;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
+  let islandObserver;
+  function initIslands(ctx = document) {
+    const islands = $$('[data-react-island]:not([data-island-lazy])', ctx);
+    if (!islands.length) return;
+    if (!('IntersectionObserver' in window)) { loadIslands(); return; }
+    islandObserver = islandObserver || new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { islandObserver.disconnect(); loadIslands(); }
+    }, { rootMargin: '600px 0px' });
+    islands.forEach((el) => islandObserver.observe(el));
+  }
+
+  function initLazySearch() {
+    if (!$('#SearchModal [data-react-island]')) return;
+    const warm = (e) => { if (e.target.closest && e.target.closest('[data-open="SearchModal"]')) loadIslands(); };
+    ['pointerover', 'focusin', 'touchstart', 'click'].forEach((type) => document.addEventListener(type, warm, { passive: true }));
+  }
+
+  /* ------------------------------------------------------------------ */
   /* Boot + theme editor hooks                                           */
   /* ------------------------------------------------------------------ */
   function initSection(ctx = document) {
@@ -306,6 +339,7 @@
     initHotspots(ctx);
     initBeforeAfter(ctx);
     initBanners(ctx);
+    initIslands(ctx);
     syncWishlistButtons(ctx);
   }
 
@@ -314,10 +348,18 @@
     initSection();
     initPopup();
     initBackToTop();
+    initLazySearch();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+
+  // React islands render product tiles after load; update their wishlist hearts and reveal them.
+  document.addEventListener('heritage:cards:rendered', (e) => {
+    const el = e.detail && e.detail.el;
+    syncWishlistButtons(el || document);
+    if (el) reveal(el);
+  });
 
   // The cart drawer is replaced after every cart change; load its upsell again.
   document.addEventListener('heritage:cart:rendered', () => initLazyProducts($('#CartDrawer') || document));
