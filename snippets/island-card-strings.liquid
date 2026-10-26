@@ -2,6 +2,7 @@
   JSON members with the product tile strings used by the React islands (src/react/ProductTile.jsx).
   Output goes inside a JSON object: { {% render 'island-card-strings' %}, "other": "..." }
 {%- endcomment -%}
+"sale": {{ 'products.product.sale' | t | json }},
 "soldOut": {{ 'products.product.sold_out' | t | json }},
 "quickAdd": {{ 'products.product.quick_add' | t | json }},
 "quickView": {{ 'products.product.quick_view' | t | json }},

@@ -9,7 +9,7 @@
             <a href="{{ product.url }}" class="predictive-search__item">
               <div class="media media--product">
                 {%- if product.featured_media -%}
-                  {{ product.featured_media | image_url: width: 300 | image_tag: loading: 'lazy', sizes: '150px', alt: product.title | escape }}
+                  {{ product.featured_media | image_url: width: 300 | image_tag: loading: 'lazy', sizes: '150px', alt: product.title }}
                 {%- else -%}
                   {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
                 {%- endif -%}

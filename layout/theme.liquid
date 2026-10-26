@@ -64,7 +64,16 @@
           cartType: {{ settings.cart_type | json }},
           moneyFormat: {{ shop.money_format | json }},
           wishlist: {{ settings.wishlist_enabled | json }},
-          recentlyViewed: {{ settings.recently_viewed_enabled | json }}
+          recentlyViewed: {{ settings.recently_viewed_enabled | json }},
+          cards: {
+            align: {{ settings.product_card_align | json }},
+            hoverZoom: {{ settings.image_hover_zoom | json }},
+            quickAdd: {{ settings.quick_add_enabled | json }},
+            quickView: {{ settings.quick_view_enabled | json }},
+            mobileAdd: {{ settings.product_card_mobile_add | json }},
+            soldOutBadge: {{ settings.badge_show_sold_out | json }},
+            salePercent: {{ settings.sale_badge_percent | json }}
+          }
         },
         assets: {
           reactIslands: {{ 'react-islands.js' | asset_url | json }}

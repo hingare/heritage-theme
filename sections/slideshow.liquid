@@ -32,7 +32,7 @@
           </div>
           {%- if block.settings.image_mobile != blank -%}
             <div class="slide__media--mobile" style="position:absolute;inset:0;">
-              {{ block.settings.image_mobile | image_url: width: 1100 | image_tag: loading: 'lazy', sizes: '100vw', widths: '550, 750, 1100', alt: block.settings.image_mobile.alt | escape }}
+              {{ block.settings.image_mobile | image_url: width: 1100 | image_tag: loading: 'lazy', sizes: '100vw', widths: '550, 750, 1100', alt: block.settings.image_mobile.alt }}
             </div>
           {%- endif -%}
         </div>

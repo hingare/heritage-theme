@@ -10,7 +10,7 @@
       <div class="image-with-text__media" data-reveal>
         <div class="media media--{{ section.settings.image_ratio }}">
           {%- if section.settings.image != blank -%}
-            {{ section.settings.image | image_url: width: 1500 | image_tag: loading: first_loading, sizes: '(min-width: 750px) 50vw, 100vw', widths: '450, 750, 1100, 1500', alt: section.settings.image.alt | escape }}
+            {{ section.settings.image | image_url: width: 1500 | image_tag: loading: first_loading, sizes: '(min-width: 750px) 50vw, 100vw', widths: '450, 750, 1100, 1500', alt: section.settings.image.alt }}
           {%- else -%}
             {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
           {%- endif -%}

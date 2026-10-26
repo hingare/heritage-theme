@@ -3,7 +3,18 @@
     {%- if section.settings.heading != blank -%}
       <div class="section-header section-header--center"><h2>{{ section.settings.heading }}</h2></div>
     {%- endif -%}
-    <div class="text-columns" style="--cols: {{ section.blocks.size | at_least: 1 | at_most: 4 }}; --align: {{ section.settings.align }};">
+    {%- liquid
+      assign tc_compact = false
+      if section.blocks.size >= 3 and section.settings.mobile_compact
+        assign tc_compact = true
+        for block in section.blocks
+          if block.settings.image != blank
+            assign tc_compact = false
+          endif
+        endfor
+      endif
+    -%}
+    <div class="text-columns{% if tc_compact %} text-columns--compact{% endif %}" style="--cols: {{ section.blocks.size | at_least: 1 | at_most: 4 }}; --align: {{ section.settings.align }};">
       {%- for block in section.blocks -%}
         <div class="text-column" data-reveal {{ block.shopify_attributes }}>
           {%- if block.settings.image != blank -%}
@@ -82,6 +93,13 @@
       "id": "color_scheme",
       "label": "Color scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_compact",
+      "label": "Two columns on mobile",
+      "default": true,
+      "info": "For icon columns without images."
     }
   ],
   "blocks": [

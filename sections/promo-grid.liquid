@@ -4,7 +4,7 @@
 {%- endcomment -%}
 <div class="section color-{{ section.settings.color_scheme }}{% if section.settings.full_width %} section--flush{% endif %}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
   <div class="{% if section.settings.full_width %}{% else %}page-width{% endif %}">
-    <div class="promo-grid" style="--promo-gap: {{ section.settings.gap }}px;">
+    <div class="promo-grid{% if section.settings.mobile_layout == 'swipe' and section.blocks.size > 1 %} promo-grid--swipe{% endif %}" style="--promo-gap: {{ section.settings.gap }}px;">
       {%- for block in section.blocks -%}
         {%- liquid
           assign span = block.settings.width | default: 6
@@ -31,7 +31,7 @@
                       endif
                     endif
                   -%}
-                  {{ block.settings.image | image_url: width: 1800 | image_tag: loading: promo_loading, fetchpriority: promo_priority, widths: '450, 750, 1100, 1500, 1800', sizes: promo_sizes, alt: block.settings.image.alt | escape }}
+                  {{ block.settings.image | image_url: width: 1800 | image_tag: loading: promo_loading, fetchpriority: promo_priority, widths: '450, 750, 1100, 1500, 1800', sizes: promo_sizes, alt: block.settings.image.alt }}
                 </div>
                 <div class="promo-grid__overlay"></div>
               {%- elsif block.settings.bg_color == blank -%}
@@ -65,7 +65,7 @@
               <div class="promo-grid__product">
                 <a href="{{ promo_product.url }}" class="media media--square">
                   {%- if promo_product.featured_media -%}
-                    {{ promo_product.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '30vw', widths: '300, 600, 900', alt: promo_product.title | escape }}
+                    {{ promo_product.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '30vw', widths: '300, 600, 900', alt: promo_product.title }}
                   {%- else -%}
                     {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
                   {%- endif -%}
@@ -95,6 +95,22 @@
       "id": "full_width",
       "label": "Full page width",
       "default": false
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "default": "swipe",
+      "options": [
+        {
+          "value": "swipe",
+          "label": "Swipe"
+        },
+        {
+          "value": "stack",
+          "label": "Stack"
+        }
+      ]
     },
     {
       "type": "range",

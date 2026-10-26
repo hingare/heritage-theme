@@ -31,6 +31,7 @@
   endif
 -%}
 <div class="product-card{% if settings.image_hover_zoom %} product-card--zoom{% endif %}{% if settings.product_card_align == 'center' %} product-card--center{% endif %}" data-reveal>
+  <div class="product-card__media-wrap">
   <a href="{{ product.url }}" class="product-card__media" tabindex="-1" aria-hidden="true">
     <div class="media media--product{% if secondary %} media--has-secondary{% endif %}">
       {%- if product.featured_media -%}
@@ -43,6 +44,28 @@
       {%- endif -%}
     </div>
   </a>
+  {%- if settings.quick_add_enabled and settings.product_card_mobile_add and product.available -%}
+    {%- if product.has_only_default_variant -%}
+      <button type="button" class="product-card__mobile-add" data-quick-add="{{ product.selected_or_first_available_variant.id }}" aria-label="{{ 'products.product.quick_add' | t }}: {{ product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+    {%- else -%}
+      <button type="button" class="product-card__mobile-add" data-quick-view="{{ product.url }}" aria-label="{{ 'products.product.quick_add' | t }}: {{ product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+    {%- endif -%}
+  {%- endif -%}
+  {%- if settings.quick_view_enabled or settings.quick_add_enabled -%}
+    <div class="product-card__actions">
+      {%- if settings.quick_view_enabled -%}
+        <button type="button" class="btn btn--small" data-quick-view="{{ product.url }}">{{ 'products.product.quick_view' | t }}</button>
+      {%- endif -%}
+      {%- if settings.quick_add_enabled and product.available -%}
+        {%- if product.has_only_default_variant -%}
+          <button type="button" class="btn btn--small" data-quick-add="{{ product.selected_or_first_available_variant.id }}">{{ 'products.product.quick_add' | t }}</button>
+        {%- else -%}
+          <button type="button" class="btn btn--small" data-quick-view="{{ product.url }}">{{ 'products.product.quick_add' | t }}</button>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+  </div>
 
   <div class="product-card__badges">
     {%- if product.available == false and settings.badge_show_sold_out -%}
@@ -69,29 +92,6 @@
   </div>
 
   {% render 'wishlist-button', product: product, class: 'product-card__wishlist' %}
-
-  {%- if settings.quick_add_enabled and settings.product_card_mobile_add and product.available -%}
-    {%- if product.has_only_default_variant -%}
-      <button type="button" class="product-card__mobile-add" data-quick-add="{{ product.selected_or_first_available_variant.id }}" aria-label="{{ 'products.product.quick_add' | t }}: {{ product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
-    {%- else -%}
-      <button type="button" class="product-card__mobile-add" data-quick-view="{{ product.url }}" aria-label="{{ 'products.product.quick_add' | t }}: {{ product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
-    {%- endif -%}
-  {%- endif -%}
-
-  {%- if settings.quick_view_enabled or settings.quick_add_enabled -%}
-    <div class="product-card__actions">
-      {%- if settings.quick_view_enabled -%}
-        <button type="button" class="btn btn--small" data-quick-view="{{ product.url }}">{{ 'products.product.quick_view' | t }}</button>
-      {%- endif -%}
-      {%- if settings.quick_add_enabled and product.available -%}
-        {%- if product.has_only_default_variant -%}
-          <button type="button" class="btn btn--small" data-quick-add="{{ product.selected_or_first_available_variant.id }}">{{ 'products.product.quick_add' | t }}</button>
-        {%- else -%}
-          <button type="button" class="btn btn--small" data-quick-view="{{ product.url }}">{{ 'products.product.quick_add' | t }}</button>
-        {%- endif -%}
-      {%- endif -%}
-    </div>
-  {%- endif -%}
 
   <div class="product-card__info">
     {%- if settings.product_card_vendor -%}

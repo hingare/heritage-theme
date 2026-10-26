@@ -7,7 +7,7 @@
       {%- for block in section.blocks -%}
         <a {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} class="logo-list__item" {{ block.shopify_attributes }}>
           {%- if block.settings.image != blank -%}
-            {{ block.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '140px', alt: block.settings.image.alt | escape }}
+            {{ block.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', sizes: '140px', alt: block.settings.image.alt }}
           {%- else -%}
             {{ 'logo' | placeholder_svg_tag: 'placeholder-svg' }}
           {%- endif -%}

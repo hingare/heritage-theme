@@ -7,7 +7,7 @@
           <div class="media media--portrait">
             {%- assign card_image = collection.featured_image | default: collection.products.first.featured_media -%}
             {%- if card_image -%}
-              {{ card_image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, 50vw', widths: '300, 600, 900', alt: collection.title | escape }}
+              {{ card_image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, 50vw', widths: '300, 600, 900', alt: collection.title }}
             {%- else -%}
               {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}

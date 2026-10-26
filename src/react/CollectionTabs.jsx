@@ -45,8 +45,8 @@ export default function CollectionTabs({ tabs, limit, columns, strings, showView
 
   return (
     <div>
-      <div className="tw-relative tw-flex tw-justify-center tw-mb-8 tw-overflow-x-auto" role="tablist" aria-label={strings.label} onKeyDown={onKeyDown}>
-        <div className="tw-relative tw-flex tw-gap-6 md:tw-gap-10 tw-px-2">
+      <div className="tab-row tw-mb-8" role="tablist" aria-label={strings.label} onKeyDown={onKeyDown}>
+        <div className="tw-relative tw-flex tw-gap-6 md:tw-gap-10 tw-px-2 tw-mx-auto">
           {tabs.map((t, i) => (
             <button
               key={t.handle}

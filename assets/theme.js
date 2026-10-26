@@ -705,8 +705,15 @@
   /* ------------------------------------------------------------------ */
   /* Boot + theme editor hooks                                           */
   /* ------------------------------------------------------------------ */
+  // Footer menus start open (for desktop and no-JS) and fold up on phones.
+  function initFooter(root = document) {
+    if (!window.matchMedia('(max-width: 749px)').matches) return;
+    $$('[data-footer-collapsible]', root).forEach((d) => { d.open = false; });
+  }
+
   function init() {
     initHeader();
+    initFooter();
     initAnnouncements();
     initSearch();
     initCart();
@@ -723,6 +730,7 @@
 
   document.addEventListener('shopify:section:load', (e) => {
     initAnnouncements(e.target);
+    initFooter(e.target);
     initSlideshows(e.target);
     initRecommendations(e.target);
     $$('[data-reveal]', e.target).forEach((el) => el.classList.add('is-revealed'));
