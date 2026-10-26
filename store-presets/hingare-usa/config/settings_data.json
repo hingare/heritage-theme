@@ -35,7 +35,53 @@
     "cart_type": "drawer",
     "cart_notes_enabled": true,
     "free_shipping_threshold": 150,
-    "favicon": "shopify://shop_images/Hingare_Icon_Only_Transparent.png"
+    "favicon": "shopify://shop_images/Hingare_Icon_Only_Transparent.png",
+    "color_schemes": {
+      "scheme-1": {
+        "settings": {
+          "background": "#faf7f2",
+          "alt_background": "#f1ebe1",
+          "text": "#1c1a17",
+          "border": "#e3dbcf",
+          "button": "#1c1a17",
+          "button_label": "#ffffff",
+          "accent": "#9a5b2e"
+        }
+      },
+      "scheme-2": {
+        "settings": {
+          "background": "#f1ebe1",
+          "alt_background": "#faf7f2",
+          "text": "#1c1a17",
+          "border": "#d9cfc0",
+          "button": "#1c1a17",
+          "button_label": "#ffffff",
+          "accent": "#9a5b2e"
+        }
+      },
+      "scheme-3": {
+        "settings": {
+          "background": "#1c1a17",
+          "alt_background": "#2a2622",
+          "text": "#f1ebe1",
+          "border": "#3d3832",
+          "button": "#f1ebe1",
+          "button_label": "#1c1a17",
+          "accent": "#d2a170"
+        }
+      },
+      "scheme-4": {
+        "settings": {
+          "background": "#9a5b2e",
+          "alt_background": "#86502a",
+          "text": "#ffffff",
+          "border": "#b47a4f",
+          "button": "#ffffff",
+          "button_label": "#9a5b2e",
+          "accent": "#f6e3cf"
+        }
+      }
+    }
   },
   "presets": {
     "Default": {}

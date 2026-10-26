@@ -5,11 +5,23 @@
     assign logo_left = true
   endif
 -%}
+{%- liquid
+  assign transparent = false
+  if section.settings.transparent_home and request.page_type == 'index'
+    assign transparent = true
+  endif
+-%}
 <style>
   #shopify-section-{{ section.id }} { --logo-width: {{ section.settings.logo_width }}px; --logo-width-mobile: {{ section.settings.logo_width_mobile }}px; }
+  {%- if section.settings.sticky %}
+  #shopify-section-{{ section.id }} { position: sticky; top: 0; z-index: 30; }
+  {%- endif %}
+  {%- if transparent %}
+  #shopify-section-{{ section.id }} { margin-bottom: calc(-1 * var(--header-height, 76px)); --transparent-header-text: {{ section.settings.transparent_text_color }}; }
+  {%- endif %}
 </style>
 
-<div class="site-header-wrapper{% if section.settings.sticky %} is-sticky{% endif %}" data-header-wrapper>
+<div class="site-header-wrapper{% if section.settings.sticky %} is-sticky{% endif %}{% if transparent %} site-header-wrapper--transparent{% endif %}" data-header-wrapper>
   <header class="site-header{% if logo_left %} site-header--logo-left{% endif %}" role="banner">
     <div class="page-width site-header__inner">
       <div class="site-header__left">
@@ -222,6 +234,29 @@
       "id": "sticky",
       "label": "Enable sticky header",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Transparent header"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_home",
+      "label": "Transparent header on home page",
+      "default": false,
+      "info": "Sits over the first section. Works best with a slideshow, image banner or video first."
+    },
+    {
+      "type": "color",
+      "id": "transparent_text_color",
+      "label": "Text and icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_transparent",
+      "label": "Logo on transparent header",
+      "info": "Optional light version of your logo"
     },
     {
       "type": "text",

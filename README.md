@@ -15,7 +15,9 @@ look lives in its theme settings and JSON templates, so the same code can run on
 - Product tiles with hover image, sale/sold-out/new badges, colour swatches, quick view and quick add
 - Product page: thumbnail or stacked gallery, image zoom, button/swatch/dropdown variant picker, inventory status,
   trust badges, collapsible tabs, share buttons, sticky add-to-cart bar, recommendations
-- Collection page: storefront filters (Search & Discovery), sorting, grid-size toggle, AJAX updates, mobile filter drawer
+- Collection page: storefront filters (Search & Discovery), sorting, grid-size toggle, AJAX updates, mobile filter drawer,
+  page numbers, a "Load more" button or infinite scroll
+- Color schemes (Theme settings > Color schemes) picked per section, and a transparent header over the homepage hero
 - Cart drawer with free-shipping progress bar, order notes, terms checkbox; full cart page
 - Customer account, blog, article, search, contact, 404, password and gift card templates
 - Prestige-style sections: image banner with scroll zoom/parallax, shop the look (product hotspots),

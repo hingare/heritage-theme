@@ -1,4 +1,4 @@
-<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+<div class="section color-{{ section.settings.color_scheme }}{% if section.settings.alt_bg %} section--alt{% endif %}">
   <div class="page-width">
     {%- if section.settings.heading != blank -%}
       <div class="section-header section-header--center"><h2 class="h3">{{ section.settings.heading }}</h2></div>
@@ -23,15 +23,61 @@
   "class": "section-logo-list",
   "max_blocks": 12,
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "As seen in" },
-    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false }
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "As seen in"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Use alternate background",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
   ],
   "blocks": [
-    { "type": "logo", "name": "Logo", "settings": [
-      { "type": "image_picker", "id": "image", "label": "Image" },
-      { "type": "url", "id": "link", "label": "Link" }
-    ] }
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
   ],
-  "presets": [ { "name": "Logo list", "blocks": [ { "type": "logo" }, { "type": "logo" }, { "type": "logo" }, { "type": "logo" } ] } ]
+  "presets": [
+    {
+      "name": "Logo list",
+      "blocks": [
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}

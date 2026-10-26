@@ -65,10 +65,14 @@
   /* ------------------------------------------------------------------ */
   function initHeader() {
     const wrapper = $('[data-header-wrapper]');
-    if (wrapper && wrapper.classList.contains('is-sticky')) {
+    if (wrapper && (wrapper.classList.contains('is-sticky') || wrapper.classList.contains('site-header-wrapper--transparent'))) {
       const onScroll = () => wrapper.classList.toggle('is-scrolled', window.scrollY > 10);
       window.addEventListener('scroll', onScroll, { passive: true });
       onScroll();
+    }
+    // The transparent header overlaps the first section by its own height.
+    if (wrapper && 'ResizeObserver' in window) {
+      new ResizeObserver(() => document.documentElement.style.setProperty('--header-height', `${wrapper.offsetHeight}px`)).observe(wrapper);
     }
     document.addEventListener('click', (e) => {
       const toggle = e.target.closest('[data-mobile-toggle]');
@@ -500,6 +504,8 @@
         window.history.replaceState({}, '', url);
         applyGridCols();
         initReveal(container);
+        container.dispatchEvent(new CustomEvent('heritage:collection:rendered'));
+        document.dispatchEvent(new CustomEvent('heritage:cards:rendered', { detail: { el: $('[data-collection-results]') } }));
       } finally {
         $('[data-collection-results]')?.classList.remove('is-loading');
       }
@@ -547,6 +553,58 @@
       applyGridCols();
     });
     applyGridCols();
+
+    // Load more / infinite scroll. The block is re-rendered by the filters, so it is looked up on each use.
+    let loading = false;
+    let observer;
+    const loadMore = async () => {
+      const wrap = $('[data-load-more]', container);
+      const btn = wrap && $('[data-load-more-btn]', wrap);
+      if (!btn || loading) return;
+      loading = true;
+      wrap.classList.add('is-loading');
+      try {
+        const url = new URL(btn.href, window.location.origin);
+        url.searchParams.set('section_id', sectionId);
+        const doc = parseHTML(await (await fetch(url)).text());
+        const grid = $('[data-collection-results] .grid', container);
+        const freshGrid = doc.querySelector('[data-collection-results] .grid');
+        const freshWrap = doc.querySelector('[data-load-more]');
+        if (grid && freshGrid) {
+          const added = Array.from(freshGrid.children);
+          added.forEach((card) => grid.appendChild(card));
+          initReveal(grid);
+          document.dispatchEvent(new CustomEvent('heritage:cards:rendered', { detail: { el: grid } }));
+          added[0]?.querySelector('a')?.focus({ preventScroll: true });
+        }
+        if (freshWrap) wrap.replaceWith(freshWrap);
+        else wrap.remove();
+        url.searchParams.delete('section_id');
+        window.history.replaceState({}, '', url.pathname + url.search);
+      } catch (err) {
+        wrap.classList.remove('is-loading');
+        window.location.href = btn.href;
+      } finally {
+        loading = false;
+        watchInfinite();
+      }
+    };
+    const watchInfinite = () => {
+      observer?.disconnect();
+      const wrap = $('[data-load-more][data-infinite]', container);
+      if (!wrap || !$('[data-load-more-btn]', wrap) || !('IntersectionObserver' in window)) return;
+      observer = new IntersectionObserver((entries) => {
+        if (entries.some((en) => en.isIntersecting)) loadMore();
+      }, { rootMargin: '600px 0px' });
+      observer.observe(wrap);
+    };
+    container.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-load-more-btn]')) return;
+      e.preventDefault();
+      loadMore();
+    });
+    container.addEventListener('heritage:collection:rendered', watchInfinite);
+    watchInfinite();
   }
 
   /* ------------------------------------------------------------------ */

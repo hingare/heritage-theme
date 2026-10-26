@@ -2,7 +2,7 @@
   assign ratio = 'media--' | append: section.settings.image_ratio
   assign style_class = 'collection-card--' | append: section.settings.style
 -%}
-<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+<div class="section color-{{ section.settings.color_scheme }}{% if section.settings.alt_bg %} section--alt{% endif %}">
   <div class="page-width">
     {%- if section.settings.heading != blank -%}
       <div class="section-header section-header--center"><h2>{{ section.settings.heading }}</h2></div>
@@ -34,31 +34,115 @@
   "class": "section-collection-list",
   "max_blocks": 12,
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by category" },
-    { "type": "select", "id": "style", "label": "Style", "default": "below", "options": [
-      { "value": "below", "label": "Title below image" },
-      { "value": "overlay", "label": "Title on image" },
-      { "value": "circle", "label": "Circle" }
-    ] },
-    { "type": "select", "id": "image_ratio", "label": "Image shape", "default": "portrait", "options": [
-      { "value": "square", "label": "Square" }, { "value": "portrait", "label": "Portrait" }, { "value": "landscape", "label": "Landscape" }
-    ] },
-    { "type": "range", "id": "columns", "label": "Per row", "min": 2, "max": 6, "step": 1, "default": 4 },
-    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false }
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by category"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Style",
+      "default": "below",
+      "options": [
+        {
+          "value": "below",
+          "label": "Title below image"
+        },
+        {
+          "value": "overlay",
+          "label": "Title on image"
+        },
+        {
+          "value": "circle",
+          "label": "Circle"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image shape",
+      "default": "portrait",
+      "options": [
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Per row",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Use alternate background",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
   ],
   "blocks": [
     {
       "type": "collection",
       "name": "Collection",
       "settings": [
-        { "type": "collection", "id": "collection", "label": "Collection" },
-        { "type": "text", "id": "title", "label": "Custom title" },
-        { "type": "image_picker", "id": "image", "label": "Custom image" }
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Custom title"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom image"
+        }
       ]
     }
   ],
   "presets": [
-    { "name": "Collection list", "blocks": [ { "type": "collection" }, { "type": "collection" }, { "type": "collection" }, { "type": "collection" } ] }
+    {
+      "name": "Collection list",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    }
   ]
 }
 {% endschema %}

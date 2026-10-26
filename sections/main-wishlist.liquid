@@ -1,4 +1,4 @@
-<div class="section">
+<div class="section color-{{ section.settings.color_scheme }}">
   <div class="page-width" data-wishlist-page>
     <div class="section-header section-header--center">
       <h1 class="h2">{{ section.settings.heading | default: page.title }}</h1>
@@ -17,8 +17,27 @@
   "name": "Wishlist",
   "class": "section-main-wishlist",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "info": "Leave blank to use the page title" },
-    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 }
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Leave blank to use the page title"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
   ]
 }
 {% endschema %}

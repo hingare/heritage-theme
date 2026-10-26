@@ -73,7 +73,9 @@
     },
     "empty": "No products found",
     "from": "From",
-    "to": "To"
+    "to": "To",
+    "load_more": "Load more",
+    "showing": "Showing {{ shown }} of {{ total }}"
   },
   "cart": {
     "title": "Your cart",

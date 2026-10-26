@@ -88,7 +88,20 @@
                 {% render 'product-card', product: product, lazy: lazy %}
               {%- endfor -%}
             </div>
-            {% render 'pagination', paginate: paginate %}
+            {%- if section.settings.pagination_type == 'numbers' or paginate.pages <= 1 -%}
+              {% render 'pagination', paginate: paginate %}
+            {%- else -%}
+              {%- liquid
+                assign shown = paginate.current_offset | plus: collection.products.size
+              -%}
+              <div class="load-more" data-load-more{% if section.settings.pagination_type == 'infinite' %} data-infinite{% endif %}>
+                <p class="load-more__status" data-load-more-status>{{ 'collections.showing' | t: shown: shown, total: paginate.items }}</p>
+                <div class="load-more__bar" aria-hidden="true"><span style="width: {{ shown | times: 100 | divided_by: paginate.items }}%;" data-load-more-bar></span></div>
+                {%- if paginate.next -%}
+                  <a href="{{ paginate.next.url }}" class="btn btn--secondary load-more__btn" data-load-more-btn>{{ 'collections.load_more' | t }}</a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
           {%- else -%}
             <div class="collection-empty">
               <p>{{ 'collections.empty' | t }}</p>
@@ -112,6 +125,7 @@
     { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
     { "type": "header", "content": "Products" },
     { "type": "range", "id": "per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "select", "id": "pagination_type", "label": "Pagination", "default": "load_more", "options": [ { "value": "numbers", "label": "Page numbers" }, { "value": "load_more", "label": "Load more button" }, { "value": "infinite", "label": "Infinite scroll" } ] },
     { "type": "range", "id": "columns", "label": "Products per row (desktop)", "min": 2, "max": 5, "step": 1, "default": 3 },
     { "type": "select", "id": "columns_mobile", "label": "Products per row (mobile)", "default": "2", "options": [ { "value": "1", "label": "1" }, { "value": "2", "label": "2" } ] },
     { "type": "header", "content": "Filtering and sorting" },

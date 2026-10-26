@@ -33,4 +33,18 @@
     --page-width: {{ settings.page_width }}px;
     --product-image-ratio: {% case settings.product_card_ratio %}{% when 'square' %}1{% when 'portrait' %}0.8{% when 'tall' %}0.6667{% else %}1{% endcase %};
   }
+  {%- for scheme in settings.color_schemes %}
+  .color-{{ scheme.id }} {
+    --color-body-bg: {{ scheme.settings.background }};
+    --color-alt-bg: {{ scheme.settings.alt_background }};
+    --color-body-text: {{ scheme.settings.text }};
+    --color-body-text-rgb: {{ scheme.settings.text.red }}, {{ scheme.settings.text.green }}, {{ scheme.settings.text.blue }};
+    --color-border: {{ scheme.settings.border }};
+    --color-primary: {{ scheme.settings.button }};
+    --color-primary-text: {{ scheme.settings.button_label }};
+    --color-accent: {{ scheme.settings.accent }};
+    background-color: var(--color-body-bg);
+    color: var(--color-body-text);
+  }
+  {%- endfor %}
 </style>

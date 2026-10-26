@@ -1,4 +1,4 @@
-<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+<div class="section color-{{ section.settings.color_scheme }}{% if section.settings.alt_bg %} section--alt{% endif %}">
   <div class="page-width">
     <div class="tw-grid tw-gap-10 lg:tw-grid-cols-2 lg:tw-items-center">
       <div class="media media--{{ section.settings.ratio }}{% if section.settings.layout == 'right' %} lg:tw-order-2{% endif %}" data-reveal>
@@ -34,23 +34,118 @@
   "name": "Video with text",
   "class": "section-video-with-text",
   "settings": [
-    { "type": "video", "id": "video", "label": "Video", "info": "Uploaded to Shopify. Used before the video link." },
-    { "type": "video_url", "id": "video_url", "label": "Or YouTube / Vimeo link", "accept": ["youtube", "vimeo"] },
-    { "type": "checkbox", "id": "autoplay", "label": "Autoplay muted (uploaded video)", "default": true },
-    { "type": "checkbox", "id": "show_controls", "label": "Show video controls", "default": false },
-    { "type": "select", "id": "ratio", "label": "Video shape", "default": "landscape", "options": [
-      { "value": "square", "label": "Square" }, { "value": "portrait", "label": "Portrait" }, { "value": "landscape", "label": "Landscape" }, { "value": "wide", "label": "Wide (16:9)" }
-    ] },
-    { "type": "select", "id": "layout", "label": "Video position", "default": "left", "options": [
-      { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }
-    ] },
-    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Behind the craft" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Watch how it's made" },
-    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Show customers the people and process behind your products.</p>" },
-    { "type": "text", "id": "button_label", "label": "Button label" },
-    { "type": "url", "id": "link", "label": "Button link" },
-    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false }
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video",
+      "info": "Uploaded to Shopify. Used before the video link."
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "Or YouTube / Vimeo link",
+      "accept": [
+        "youtube",
+        "vimeo"
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay muted (uploaded video)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "Show video controls",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "Video shape",
+      "default": "landscape",
+      "options": [
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape"
+        },
+        {
+          "value": "wide",
+          "label": "Wide (16:9)"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Video position",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Behind the craft"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Watch how it's made"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Show customers the people and process behind your products.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Use alternate background",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
   ],
-  "presets": [ { "name": "Video with text" } ]
+  "presets": [
+    {
+      "name": "Video with text"
+    }
+  ]
 }
 {% endschema %}

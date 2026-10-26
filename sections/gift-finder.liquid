@@ -1,4 +1,4 @@
-<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+<div class="section color-{{ section.settings.color_scheme }}{% if section.settings.alt_bg %} section--alt{% endif %}">
   <div class="page-width">
     <div data-react-island="gift-finder" class="gift-finder">
       <script type="application/json" data-island-props>
@@ -110,6 +110,12 @@
     {
       "type": "paragraph",
       "content": "Interactive quiz built with React. Answers match product tags."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     }
   ],
   "blocks": [

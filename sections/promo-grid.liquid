@@ -2,7 +2,7 @@
   Promotional grid: flexible tiles with a width (in 12ths) and height each,
   plus banner and product tiles.
 {%- endcomment -%}
-<div class="section{% if section.settings.full_width %} section--flush{% endif %}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+<div class="section color-{{ section.settings.color_scheme }}{% if section.settings.full_width %} section--flush{% endif %}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
   <div class="{% if section.settings.full_width %}{% else %}page-width{% endif %}">
     <div class="promo-grid" style="--promo-gap: {{ section.settings.gap }}px;">
       {%- for block in section.blocks -%}
@@ -80,59 +80,272 @@
   "class": "section-promo-grid",
   "max_blocks": 12,
   "settings": [
-    { "type": "checkbox", "id": "full_width", "label": "Full page width", "default": false },
-    { "type": "range", "id": "gap", "label": "Space between tiles", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 12 },
-    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 }
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full page width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Space between tiles",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
   ],
   "blocks": [
     {
       "type": "advanced",
       "name": "Image tile",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "select", "id": "width", "label": "Width (desktop)", "default": "6", "options": [
-          { "value": "3", "label": "25%" }, { "value": "4", "label": "33%" }, { "value": "6", "label": "50%" },
-          { "value": "8", "label": "66%" }, { "value": "9", "label": "75%" }, { "value": "12", "label": "100%" }
-        ] },
-        { "type": "range", "id": "height", "label": "Height", "min": 200, "max": 800, "step": 20, "unit": "px", "default": 420 },
-        { "type": "text", "id": "subheading", "label": "Subheading" },
-        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop the collection" },
-        { "type": "richtext", "id": "text", "label": "Text" },
-        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
-        { "type": "url", "id": "link", "label": "Link" },
-        { "type": "select", "id": "text_position", "label": "Text position", "default": "bottom", "options": [
-          { "value": "top", "label": "Top" }, { "value": "center", "label": "Center" }, { "value": "bottom", "label": "Bottom" }
-        ] },
-        { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
-        { "type": "color", "id": "bg_color", "label": "Background color" },
-        { "type": "range", "id": "overlay", "label": "Image overlay opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 20 }
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": "Width (desktop)",
+          "default": "6",
+          "options": [
+            {
+              "value": "3",
+              "label": "25%"
+            },
+            {
+              "value": "4",
+              "label": "33%"
+            },
+            {
+              "value": "6",
+              "label": "50%"
+            },
+            {
+              "value": "8",
+              "label": "66%"
+            },
+            {
+              "value": "9",
+              "label": "75%"
+            },
+            {
+              "value": "12",
+              "label": "100%"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "height",
+          "label": "Height",
+          "min": 200,
+          "max": 800,
+          "step": 20,
+          "unit": "px",
+          "default": 420
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Shop the collection"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Shop now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "default": "bottom",
+          "options": [
+            {
+              "value": "top",
+              "label": "Top"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "bottom",
+              "label": "Bottom"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background color"
+        },
+        {
+          "type": "range",
+          "id": "overlay",
+          "label": "Image overlay opacity",
+          "min": 0,
+          "max": 80,
+          "step": 5,
+          "unit": "%",
+          "default": 20
+        }
       ]
     },
     {
       "type": "banner",
       "name": "Banner",
       "settings": [
-        { "type": "text", "id": "heading", "label": "Heading", "default": "Use code WELCOME10 for 10% off" },
-        { "type": "text", "id": "text", "label": "Text" },
-        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
-        { "type": "url", "id": "link", "label": "Link" },
-        { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
-        { "type": "color", "id": "bg_color", "label": "Background color", "default": "#9a5b2e" }
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Use code WELCOME10 for 10% off"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Shop now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background color",
+          "default": "#9a5b2e"
+        }
       ]
     },
     {
       "type": "product",
       "name": "Product tile",
       "settings": [
-        { "type": "product", "id": "product", "label": "Product" },
-        { "type": "text", "id": "label", "label": "Label", "default": "Best seller" },
-        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
-        { "type": "select", "id": "width", "label": "Width (desktop)", "default": "6", "options": [
-          { "value": "4", "label": "33%" }, { "value": "6", "label": "50%" }, { "value": "8", "label": "66%" }, { "value": "12", "label": "100%" }
-        ] },
-        { "type": "range", "id": "height", "label": "Height", "min": 200, "max": 800, "step": 20, "unit": "px", "default": 420 },
-        { "type": "color", "id": "bg_color", "label": "Background color", "default": "#f1ebe1" }
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Best seller"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Shop now"
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": "Width (desktop)",
+          "default": "6",
+          "options": [
+            {
+              "value": "4",
+              "label": "33%"
+            },
+            {
+              "value": "6",
+              "label": "50%"
+            },
+            {
+              "value": "8",
+              "label": "66%"
+            },
+            {
+              "value": "12",
+              "label": "100%"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "height",
+          "label": "Height",
+          "min": 200,
+          "max": 800,
+          "step": 20,
+          "unit": "px",
+          "default": 420
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background color",
+          "default": "#f1ebe1"
+        }
       ]
     }
   ],
@@ -140,9 +353,23 @@
     {
       "name": "Promotion grid",
       "blocks": [
-        { "type": "advanced", "settings": { "width": "8", "heading": "New arrivals" } },
-        { "type": "advanced", "settings": { "width": "4", "heading": "Best sellers" } },
-        { "type": "banner" }
+        {
+          "type": "advanced",
+          "settings": {
+            "width": "8",
+            "heading": "New arrivals"
+          }
+        },
+        {
+          "type": "advanced",
+          "settings": {
+            "width": "4",
+            "heading": "Best sellers"
+          }
+        },
+        {
+          "type": "banner"
+        }
       ]
     }
   ]

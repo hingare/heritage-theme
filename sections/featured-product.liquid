@@ -1,5 +1,5 @@
 {%- assign product = section.settings.product -%}
-<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+<div class="section color-{{ section.settings.color_scheme }}{% if section.settings.alt_bg %} section--alt{% endif %}">
   {%- if product != blank -%}
     {%- assign current_variant = product.selected_or_first_available_variant -%}
     <div id="Product-{{ section.id }}" class="page-width product-wrapper" data-product-root data-url="{{ product.url }}" data-section-id="{{ section.id }}" data-update-url="false">
@@ -34,12 +34,46 @@
   "name": "Featured product",
   "class": "section-featured-product",
   "settings": [
-    { "type": "product", "id": "product", "label": "Product" },
-    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Best seller" },
-    { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
-    { "type": "checkbox", "id": "show_dynamic", "label": "Show dynamic checkout buttons", "default": false },
-    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false }
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Best seller"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic",
+      "label": "Show dynamic checkout buttons",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_bg",
+      "label": "Use alternate background",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
   ],
-  "presets": [ { "name": "Featured product" } ]
+  "presets": [
+    {
+      "name": "Featured product"
+    }
+  ]
 }
 {% endschema %}
