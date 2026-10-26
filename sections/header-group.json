@@ -1,0 +1,27 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-1": { "type": "announcement", "settings": { "text": "Free shipping on orders over $150", "link": "" } },
+        "announcement-2": { "type": "announcement", "settings": { "text": "Secure checkout with all major cards", "link": "" } },
+        "announcement-3": { "type": "announcement", "settings": { "text": "Easy 30-day returns", "link": "" } }
+      },
+      "block_order": ["announcement-1", "announcement-2", "announcement-3"],
+      "settings": { "speed": 5, "show_social": true, "right_text": "" }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_width": 160,
+        "logo_width_mobile": 110,
+        "logo_position": "center-below",
+        "menu": "main-menu",
+        "sticky": true
+      }
+    }
+  },
+  "order": ["announcement-bar", "header"]
+}

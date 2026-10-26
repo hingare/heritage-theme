@@ -1,0 +1,29 @@
+<article class="page-width" style="padding-bottom: 4rem;">
+  <div class="article">
+    <div class="page-header">
+      <span class="article-card__meta">{{ article.published_at | time_tag: format: 'month_day_year' }}{% if section.settings.show_author %} · {{ 'blogs.by' | t: author: article.author }}{% endif %}</span>
+      <h1>{{ article.title }}</h1>
+    </div>
+    {%- if article.image -%}
+      <div class="article__image media media--wide">
+        {{ article.image | image_url: width: 1800 | image_tag: loading: 'eager', sizes: '(min-width: 820px) 800px, 100vw', widths: '600, 900, 1200, 1800', alt: article.title | escape }}
+      </div>
+    {%- endif -%}
+    <div class="rte">{{ article.content }}</div>
+    {%- if article.tags.size > 0 -%}
+      <p style="margin-top: 2rem; font-size: 0.85rem;">
+        {%- for tag in article.tags -%}<a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="badge" style="margin-right: 0.4rem;">{{ tag }}</a>{%- endfor -%}
+      </p>
+    {%- endif -%}
+    <p style="margin-top: 2.5rem;"><a href="{{ blog.url }}" class="link-underline">{{ 'blogs.back' | t: title: blog.title }}</a></p>
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Blog post",
+  "settings": [
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,37 @@
+<div data-predictive-content>
+  {%- if predictive_search.performed -%}
+    {%- assign res = predictive_search.resources -%}
+    {%- if res.products.size > 0 or res.collections.size > 0 or res.pages.size > 0 or res.articles.size > 0 -%}
+      {%- if res.products.size > 0 -%}
+        <p class="predictive-search__heading">{{ 'search.products' | t }}</p>
+        <div class="predictive-search__products">
+          {%- for product in res.products -%}
+            <a href="{{ product.url }}" class="predictive-search__item">
+              <div class="media media--product">
+                {%- if product.featured_media -%}
+                  {{ product.featured_media | image_url: width: 300 | image_tag: loading: 'lazy', sizes: '150px', alt: product.title | escape }}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </div>
+              <span>{{ product.title }}</span>
+              {% render 'price', product: product %}
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+      {%- if res.collections.size > 0 or res.pages.size > 0 or res.articles.size > 0 -%}
+        <div class="predictive-search__links" style="margin-top: 1.5rem;">
+          {%- for collection in res.collections -%}<a href="{{ collection.url }}">{{ collection.title }}</a>{%- endfor -%}
+          {%- for page in res.pages -%}<a href="{{ page.url }}">{{ page.title }}</a>{%- endfor -%}
+          {%- for article in res.articles -%}<a href="{{ article.url }}">{{ article.title }}</a>{%- endfor -%}
+        </div>
+      {%- endif -%}
+      <div class="predictive-search__footer">
+        <a href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&options[prefix]=last" class="btn btn--secondary">{{ 'header.search_view_all' | t }}</a>
+      </div>
+    {%- else -%}
+      <p>{{ 'search.no_results' | t: terms: predictive_search.terms }}</p>
+    {%- endif -%}
+  {%- endif -%}
+</div>

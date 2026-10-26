@@ -1,0 +1,150 @@
+{%- comment -%}
+  Promotional grid: flexible tiles with a width (in 12ths) and height each,
+  plus banner and product tiles.
+{%- endcomment -%}
+<div class="section{% if section.settings.full_width %} section--flush{% endif %}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+  <div class="{% if section.settings.full_width %}{% else %}page-width{% endif %}">
+    <div class="promo-grid" style="--promo-gap: {{ section.settings.gap }}px;">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign span = block.settings.width | default: 6
+          assign content_class = ''
+          if block.settings.text_position == 'center'
+            assign content_class = 'promo-grid__content--center'
+          elsif block.settings.text_position == 'top'
+            assign content_class = 'promo-grid__content--top'
+          endif
+        -%}
+        {%- case block.type -%}
+          {%- when 'advanced' -%}
+            <div class="promo-grid__item" data-reveal style="--span: {{ span }}; --promo-height: {{ block.settings.height }}px; --promo-height-mobile: {{ block.settings.height | times: 0.75 | round }}px; --promo-text: {{ block.settings.text_color }}; --promo-bg: {{ block.settings.bg_color }}; --overlay-opacity: {{ block.settings.overlay | divided_by: 100.0 }};" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                <div class="promo-grid__media">
+                  {%- assign promo_sizes = span | times: 8.33 | round | append: 'vw' -%}
+                  {{ block.settings.image | image_url: width: 1800 | image_tag: loading: 'lazy', widths: '450, 750, 1100, 1500, 1800', sizes: promo_sizes, alt: block.settings.image.alt | escape }}
+                </div>
+                <div class="promo-grid__overlay"></div>
+              {%- elsif block.settings.bg_color == blank -%}
+                <div class="promo-grid__media">{{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+                <div class="promo-grid__overlay"></div>
+              {%- endif -%}
+              {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="promo-grid__link-cover" aria-label="{{ block.settings.heading | escape }}"></a>{%- endif -%}
+              <div class="promo-grid__content {{ content_class }}">
+                {%- if block.settings.subheading != blank -%}<span class="subheading">{{ block.settings.subheading }}</span>{%- endif -%}
+                {%- if block.settings.heading != blank -%}<h3 class="promo-grid__heading">{{ block.settings.heading }}</h3>{%- endif -%}
+                {%- if block.settings.text != blank -%}<div class="rte">{{ block.settings.text }}</div>{%- endif -%}
+                {%- if block.settings.button_label != blank -%}
+                  <a href="{{ block.settings.link | default: '#' }}" class="btn btn--light">{{ block.settings.button_label }}</a>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- when 'banner' -%}
+            <div class="promo-grid__item promo-grid__item--banner" data-reveal style="--span: 12; --promo-text: {{ block.settings.text_color }}; --promo-bg: {{ block.settings.bg_color }};" {{ block.shopify_attributes }}>
+              {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="promo-grid__link-cover" aria-label="{{ block.settings.heading | escape }}"></a>{%- endif -%}
+              <div class="promo-grid__content" style="padding: 1.5rem 2rem;">
+                <h3 class="promo-grid__heading">{{ block.settings.heading }}</h3>
+                {%- if block.settings.text != blank -%}<div>{{ block.settings.text }}</div>{%- endif -%}
+                {%- if block.settings.button_label != blank -%}
+                  <a href="{{ block.settings.link | default: '#' }}" class="btn btn--small btn--secondary" style="color: inherit; margin: 0;">{{ block.settings.button_label }}</a>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- when 'product' -%}
+            {%- assign promo_product = block.settings.product -%}
+            <div class="promo-grid__item promo-grid__item--product" data-reveal style="--span: {{ span }}; --promo-height: {{ block.settings.height }}px; --promo-bg: {{ block.settings.bg_color }};" {{ block.shopify_attributes }}>
+              <div class="promo-grid__product">
+                <a href="{{ promo_product.url }}" class="media media--square">
+                  {%- if promo_product.featured_media -%}
+                    {{ promo_product.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '30vw', widths: '300, 600, 900', alt: promo_product.title | escape }}
+                  {%- else -%}
+                    {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {%- endif -%}
+                </a>
+                <div>
+                  {%- if block.settings.label != blank -%}<span class="subheading">{{ block.settings.label }}</span>{%- endif -%}
+                  <h3 class="promo-grid__heading" style="color: inherit;">{{ promo_product.title | default: 'Your product' }}</h3>
+                  {%- if promo_product -%}{% render 'price', product: promo_product %}{%- endif -%}
+                  <a href="{{ promo_product.url | default: '#' }}" class="btn" style="margin-top: 1rem;">{{ block.settings.button_label }}</a>
+                </div>
+              </div>
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Promotion grid",
+  "class": "section-promo-grid",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "checkbox", "id": "full_width", "label": "Full page width", "default": false },
+    { "type": "range", "id": "gap", "label": "Space between tiles", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 12 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "advanced",
+      "name": "Image tile",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "select", "id": "width", "label": "Width (desktop)", "default": "6", "options": [
+          { "value": "3", "label": "25%" }, { "value": "4", "label": "33%" }, { "value": "6", "label": "50%" },
+          { "value": "8", "label": "66%" }, { "value": "9", "label": "75%" }, { "value": "12", "label": "100%" }
+        ] },
+        { "type": "range", "id": "height", "label": "Height", "min": 200, "max": 800, "step": 20, "unit": "px", "default": 420 },
+        { "type": "text", "id": "subheading", "label": "Subheading" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop the collection" },
+        { "type": "richtext", "id": "text", "label": "Text" },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "select", "id": "text_position", "label": "Text position", "default": "bottom", "options": [
+          { "value": "top", "label": "Top" }, { "value": "center", "label": "Center" }, { "value": "bottom", "label": "Bottom" }
+        ] },
+        { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+        { "type": "color", "id": "bg_color", "label": "Background color" },
+        { "type": "range", "id": "overlay", "label": "Image overlay opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 20 }
+      ]
+    },
+    {
+      "type": "banner",
+      "name": "Banner",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Use code WELCOME10 for 10% off" },
+        { "type": "text", "id": "text", "label": "Text" },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+        { "type": "color", "id": "bg_color", "label": "Background color", "default": "#9a5b2e" }
+      ]
+    },
+    {
+      "type": "product",
+      "name": "Product tile",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Best seller" },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+        { "type": "select", "id": "width", "label": "Width (desktop)", "default": "6", "options": [
+          { "value": "4", "label": "33%" }, { "value": "6", "label": "50%" }, { "value": "8", "label": "66%" }, { "value": "12", "label": "100%" }
+        ] },
+        { "type": "range", "id": "height", "label": "Height", "min": 200, "max": 800, "step": 20, "unit": "px", "default": 420 },
+        { "type": "color", "id": "bg_color", "label": "Background color", "default": "#f1ebe1" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotion grid",
+      "blocks": [
+        { "type": "advanced", "settings": { "width": "8", "heading": "New arrivals" } },
+        { "type": "advanced", "settings": { "width": "4", "heading": "Best sellers" } },
+        { "type": "banner" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,17 @@
+<div class="section{% if section.settings.full_width %} section--flush{% endif %}">
+  <div class="{% unless section.settings.full_width %}page-width{% endunless %}">
+    {{ section.settings.custom_liquid }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Liquid",
+  "class": "section-custom-liquid",
+  "settings": [
+    { "type": "liquid", "id": "custom_liquid", "label": "Custom Liquid", "info": "Add app snippets or other Liquid code." },
+    { "type": "checkbox", "id": "full_width", "label": "Full page width", "default": false }
+  ],
+  "presets": [ { "name": "Custom Liquid" } ]
+}
+{% endschema %}

@@ -1,0 +1,33 @@
+<div class="page-width">
+  <div class="customer customer--wide">
+    <p><a href="{{ routes.account_url }}" class="link-underline">{{ 'customer.account' | t }}</a></p>
+    <h1>{{ 'customer.addresses' | t }}</h1>
+    {%- paginate customer.addresses by 10 -%}
+      <div class="grid" style="--cols: 3; --cols-mobile: 1;">
+        {%- for address in customer.addresses -%}
+          <div style="padding: 1.25rem; border: 1px solid var(--color-border);">
+            {%- if address == customer.default_address -%}<span class="badge">Default</span>{%- endif -%}
+            {{ address | format_address }}
+            <details style="margin-top: 1rem;">
+              <summary style="cursor:pointer;text-decoration:underline;">{{ 'customer.edit' | t }}</summary>
+              {%- form 'customer_address', address -%}
+                {% render 'address-fields', form: form, address: address %}
+              {%- endform -%}
+            </details>
+            <form method="post" action="{{ routes.account_addresses_url }}/{{ address.id }}" style="margin-top: 0.5rem;">
+              <input type="hidden" name="_method" value="delete">
+              <button type="submit" class="link-underline" onclick="return confirm('Delete this address?');">{{ 'customer.delete' | t }}</button>
+            </form>
+          </div>
+        {%- endfor -%}
+      </div>
+      {% render 'pagination', paginate: paginate %}
+    {%- endpaginate -%}
+    <details style="margin-top: 2rem; max-width: 520px;">
+      <summary class="btn">{{ 'customer.add_address' | t }}</summary>
+      {%- form 'customer_address', customer.new_address -%}
+        {% render 'address-fields', form: form, address: customer.new_address %}
+      {%- endform -%}
+    </details>
+  </div>
+</div>

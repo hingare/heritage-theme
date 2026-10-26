@@ -1,0 +1,43 @@
+{
+  "current": {
+    "color_body_bg": "#faf7f2",
+    "color_body_text": "#1c1a17",
+    "color_alt_bg": "#f1ebe1",
+    "color_border": "#e3dbcf",
+    "color_primary": "#1c1a17",
+    "color_primary_text": "#ffffff",
+    "color_accent": "#9a5b2e",
+    "color_sale": "#b23a2b",
+    "color_announcement_bg": "#1c1a17",
+    "color_announcement_text": "#f1ebe1",
+    "color_header_bg": "#ffffff",
+    "color_header_text": "#1c1a17",
+    "color_footer_bg": "#1c1a17",
+    "color_footer_text": "#e9e1d4",
+    "type_header_font": "playfair_display_n4",
+    "type_header_size": 100,
+    "type_header_spacing": 0,
+    "type_header_uppercase": false,
+    "type_body_font": "jost_n4",
+    "type_body_size": 16,
+    "page_width": 1400,
+    "button_radius": 0,
+    "card_radius": 0,
+    "animations_enabled": true,
+    "product_card_ratio": "portrait",
+    "product_card_hover_image": true,
+    "product_card_vendor": false,
+    "quick_view_enabled": true,
+    "quick_add_enabled": true,
+    "sale_badge_percent": true,
+    "swatches_enabled": true,
+    "swatch_option_name": "Color",
+    "cart_type": "drawer",
+    "cart_notes_enabled": true,
+    "free_shipping_threshold": 150,
+    "favicon": "shopify://shop_images/Hingare_Icon_Only_Transparent.png"
+  },
+  "presets": {
+    "Default": {}
+  }
+}

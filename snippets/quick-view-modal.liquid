@@ -1,0 +1,9 @@
+{%- if settings.quick_view_enabled or settings.quick_add_enabled -%}
+  <div id="QuickViewModal" class="modal quick-view" aria-hidden="true" role="dialog" aria-label="{{ 'products.product.quick_view' | t }}">
+    <div class="modal__backdrop"></div>
+    <div class="modal__dialog">
+      <button type="button" class="modal__close" data-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+      <div data-quick-view-body></div>
+    </div>
+  </div>
+{%- endif -%}

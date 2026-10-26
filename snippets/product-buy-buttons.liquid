@@ -1,0 +1,35 @@
+{%- comment -%}
+  Add to cart form.
+  - product (required), section (required)
+  - show_quantity: boolean
+  - show_dynamic: boolean (dynamic checkout buttons)
+{%- endcomment -%}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign form_id = 'ProductForm-' | append: section.id
+-%}
+{%- form 'product', product, id: form_id, data-product-form: 'true', novalidate: 'novalidate' -%}
+  <input type="hidden" name="id" value="{{ current_variant.id }}">
+  <div class="product-form__buttons">
+    <div class="product-form__row">
+      {%- if show_quantity -%}
+        <div class="quantity">
+          <button type="button" data-qty-btn="minus" aria-label="-">{% render 'icon', name: 'minus' %}</button>
+          <input type="number" name="quantity" min="1" value="1" aria-label="{{ 'products.product.quantity' | t }}">
+          <button type="button" data-qty-btn="plus" aria-label="+">{% render 'icon', name: 'plus' %}</button>
+        </div>
+      {%- endif -%}
+      <button type="submit" name="add" class="btn{% if show_dynamic %} btn--secondary{% endif %}" {% unless current_variant.available %}disabled{% endunless %}>
+        {%- if current_variant.available -%}
+          {{ 'products.product.add_to_cart' | t }}
+        {%- else -%}
+          {{ 'products.product.sold_out' | t }}
+        {%- endif -%}
+      </button>
+    </div>
+    {%- if show_dynamic -%}
+      {{ form | payment_button }}
+    {%- endif -%}
+    <p class="product-form__error" data-form-error role="alert"></p>
+  </div>
+{%- endform -%}

@@ -1,0 +1,17 @@
+{%- liquid
+  if request.page_type == 'index'
+    assign tag = 'h1'
+  else
+    assign tag = 'div'
+  endif
+-%}
+<{{ tag }} class="site-header__logo">
+  <a href="{{ routes.root_url }}">
+    {%- if section.settings.logo != blank -%}
+      {%- assign logo_alt = section.settings.logo.alt | default: shop.name | escape -%}
+      {{ section.settings.logo | image_url: width: 700 | image_tag: alt: logo_alt, widths: '150, 250, 350, 500, 700', sizes: '(min-width: 990px) 350px, 250px', loading: 'eager' }}
+    {%- else -%}
+      {{ shop.name }}
+    {%- endif -%}
+  </a>
+</{{ tag }}>

@@ -1,0 +1,141 @@
+{
+  "general": {
+    "tagged_with": "Tagged \"{{ tags }}\"",
+    "page": "Page {{ page }}",
+    "home": "Home",
+    "close": "Close",
+    "menu": "Menu",
+    "search": "Search",
+    "account": "Account",
+    "cart": "Cart",
+    "previous": "Previous",
+    "next": "Next",
+    "view_all": "View all",
+    "read_more": "Read more",
+    "continue_shopping": "Continue shopping",
+    "back_home": "Back to home"
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "slide": "Slide {{ number }}",
+    "pause": "Pause slideshow",
+    "play": "Play slideshow"
+  },
+  "header": {
+    "search_placeholder": "Search our store",
+    "search_view_all": "View all results"
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "added": "Added",
+      "sale": "Sale",
+      "save": "Save {{ amount }}",
+      "save_percent": "Save {{ percent }}%",
+      "new": "New",
+      "regular_price": "Regular price",
+      "sale_price": "Sale price",
+      "from_price": "From {{ price }}",
+      "quantity": "Quantity",
+      "quick_view": "Quick view",
+      "quick_add": "Quick add",
+      "view_details": "View full details",
+      "in_stock": "In stock, ready to ship",
+      "low_stock": "Only {{ count }} left",
+      "share": "Share",
+      "pickup_available": "Pickup available",
+      "sku": "SKU",
+      "vendor": "Vendor",
+      "tax_included": "Tax included.",
+      "shipping_calculated": "Shipping calculated at checkout.",
+      "you_may_also_like": "You may also like",
+      "recently_viewed": "Recently viewed",
+      "zoom": "Zoom image"
+    }
+  },
+  "collections": {
+    "filter": "Filter",
+    "sort_by": "Sort by",
+    "clear_all": "Clear all",
+    "apply": "Apply",
+    "products_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    },
+    "empty": "No products found",
+    "from": "From",
+    "to": "To"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is currently empty.",
+    "subtotal": "Subtotal",
+    "checkout": "Check out",
+    "note": "Add a note to your order",
+    "remove": "Remove",
+    "taxes": "Shipping, taxes, and discount codes calculated at checkout.",
+    "free_shipping_remaining": "You're {{ amount }} away from free shipping",
+    "free_shipping_reached": "You've unlocked free shipping!",
+    "view_cart": "View cart",
+    "terms_required": "You must agree to the terms before checking out."
+  },
+  "search": {
+    "title": "Search",
+    "results_for": "Results for \"{{ terms }}\"",
+    "no_results": "No results found for \"{{ terms }}\". Try another search.",
+    "products": "Products",
+    "pages": "Pages",
+    "articles": "Articles"
+  },
+  "blogs": {
+    "by": "by {{ author }}",
+    "comments": "{{ count }} comments",
+    "back": "Back to {{ title }}"
+  },
+  "newsletter": {
+    "email": "Email address",
+    "subscribe": "Subscribe",
+    "success": "Thanks for subscribing!"
+  },
+  "customer": {
+    "login": "Log in",
+    "logout": "Log out",
+    "register": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "forgot_password": "Forgot your password?",
+    "reset_password": "Reset your password",
+    "submit": "Submit",
+    "account": "My account",
+    "orders": "Order history",
+    "no_orders": "You haven't placed any orders yet.",
+    "addresses": "Addresses",
+    "order": "Order",
+    "date": "Date",
+    "payment_status": "Payment status",
+    "fulfillment_status": "Fulfillment status",
+    "total": "Total",
+    "activate": "Activate account",
+    "add_address": "Add a new address",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "password": {
+    "enter": "Enter store using password",
+    "opening_soon": "Opening soon"
+  },
+  "gift_card": {
+    "title": "Your gift card",
+    "code": "Gift card code",
+    "print": "Print"
+  },
+  "not_found": {
+    "title": "Page not found",
+    "text": "The page you were looking for does not exist."
+  }
+}

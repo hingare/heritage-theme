@@ -1,0 +1,12 @@
+<div class="page-width">
+  <div class="customer">
+    <h1 class="text-center">{{ 'customer.activate' | t }}</h1>
+    {%- form 'activate_customer_password' -%}
+      {{ form.errors | default_errors }}
+      <div class="field"><label for="ActivatePassword">{{ 'customer.password' | t }}</label><input class="input" type="password" name="customer[password]" id="ActivatePassword" autocomplete="new-password" required></div>
+      <div class="field"><label for="ActivatePasswordConfirm">Confirm password</label><input class="input" type="password" name="customer[password_confirmation]" id="ActivatePasswordConfirm" autocomplete="new-password" required></div>
+      <button type="submit" class="btn btn--full">{{ 'customer.activate' | t }}</button>
+      <button type="submit" name="decline" class="btn btn--secondary btn--full" style="margin-top: 0.75rem;">Decline invitation</button>
+    {%- endform -%}
+  </div>
+</div>

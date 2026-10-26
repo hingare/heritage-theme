@@ -1,0 +1,94 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "a1": {
+          "type": "announcement",
+          "settings": {
+            "text": "Free US shipping on orders over $150",
+            "link": "shopify://collections/all"
+          }
+        },
+        "a2": {
+          "type": "announcement",
+          "settings": {
+            "text": "Handmade genuine leather from Bangladesh",
+            "link": "/pages/handmade-promise"
+          }
+        },
+        "a3": {
+          "type": "announcement",
+          "settings": {
+            "text": "Easy 30-day returns",
+            "link": "/policies/refund-policy"
+          }
+        }
+      },
+      "block_order": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "settings": {
+        "speed": 5,
+        "show_social": false,
+        "right_text": ""
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "mega-women": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "Women",
+            "image_1": "shopify://shop_images/Crocodile_Pattern_Genuine_Leather_Women_Handbag_Large_Capacity_Tote_Bag_Crocodile_Tote_Bag_With_Fashion_Model.webp",
+            "title_1": "The large crocodile tote",
+            "link_1": "shopify://collections/womens-tote-bags",
+            "image_2": "shopify://shop_images/B7765663-119F-4DD6-A080-FA7A02E7E64C.jpg",
+            "title_2": "Top-handle handbags",
+            "link_2": "shopify://collections/womens-bags"
+          }
+        },
+        "mega-men": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "Men",
+            "image_1": "shopify://shop_images/hingare-leather-wallet-and-belt-combo.webp",
+            "title_1": "Wallet & belt sets",
+            "link_1": "shopify://collections/men"
+          }
+        },
+        "mega-acc": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "Accessories",
+            "image_1": "shopify://shop_images/hingare-black-leather-card-holder-wallet.webp",
+            "title_1": "Slim card holders",
+            "link_1": "shopify://collections/card-holders"
+          }
+        }
+      },
+      "block_order": [
+        "mega-women",
+        "mega-men",
+        "mega-acc"
+      ],
+      "settings": {
+        "logo": "shopify://shop_images/Hingare-PNG-Logo.png",
+        "logo_width": 90,
+        "logo_width_mobile": 65,
+        "logo_position": "center-below",
+        "menu": "main-menu",
+        "sticky": true
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header"
+  ]
+}

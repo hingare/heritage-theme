@@ -1,0 +1,45 @@
+{%- assign product = section.settings.product -%}
+<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  {%- if product != blank -%}
+    {%- assign current_variant = product.selected_or_first_available_variant -%}
+    <div id="Product-{{ section.id }}" class="page-width product-wrapper" data-product-root data-url="{{ product.url }}" data-section-id="{{ section.id }}" data-update-url="false">
+      <div class="product" style="padding-top: 0; padding-bottom: 0;">
+        <div>{% render 'product-gallery', product: product, section: section, layout: 'thumbnails', zoom: false %}</div>
+        <div class="product__info">
+          {%- if section.settings.subheading != blank -%}<span class="subheading">{{ section.settings.subheading }}</span>{%- endif -%}
+          <h2 class="product__title">{{ product.title }}</h2>
+          <div data-update="price">{% render 'price', product: product, variant: current_variant, large: true, show_save: true %}</div>
+          {% render 'product-variant-picker', product: product, section: section, picker_type: 'button', use_swatches: true %}
+          {% render 'product-buy-buttons', product: product, section: section, show_quantity: true, show_dynamic: section.settings.show_dynamic %}
+          {%- if section.settings.show_description and product.description != blank -%}
+            <div class="product__description rte">{{ product.description | strip_html | truncatewords: 50 }}</div>
+          {%- endif -%}
+          <a href="{{ product.url }}" class="link-underline" style="align-self: flex-start;">{{ 'products.product.view_details' | t }}</a>
+        </div>
+      </div>
+      <script type="application/json" data-product-json>{{ product | json }}</script>
+    </div>
+  {%- else -%}
+    <div class="page-width">
+      <div class="product" style="padding: 0;">
+        <div class="media media--product">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+        <div class="product__info"><h2>Your product's name</h2><div class="price price--large">$19.99</div></div>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Featured product",
+  "class": "section-featured-product",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Best seller" },
+    { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
+    { "type": "checkbox", "id": "show_dynamic", "label": "Show dynamic checkout buttons", "default": false },
+    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false }
+  ],
+  "presets": [ { "name": "Featured product" } ]
+}
+{% endschema %}

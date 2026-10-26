@@ -1,0 +1,15 @@
+{%- form 'customer', id: form_id, class: 'newsletter-form-wrapper' -%}
+  <input type="hidden" name="contact[tags]" value="newsletter">
+  {%- if form.posted_successfully? -%}
+    <p class="form-message">{{ 'newsletter.success' | t }}</p>
+  {%- else -%}
+    {%- if form.errors -%}
+      <p class="form-message form-message--error">{{ form.errors.messages['email'] | default: form.errors | default_errors }}</p>
+    {%- endif -%}
+    <div class="newsletter-form">
+      <label for="Email-{{ form_id }}" class="visually-hidden">{{ 'newsletter.email' | t }}</label>
+      <input type="email" id="Email-{{ form_id }}" name="contact[email]" class="input" placeholder="{{ 'newsletter.email' | t }}" autocomplete="email" required>
+      <button type="submit" class="btn">{{ 'newsletter.subscribe' | t }}</button>
+    </div>
+  {%- endif -%}
+{%- endform -%}

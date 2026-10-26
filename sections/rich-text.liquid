@@ -1,0 +1,44 @@
+<div class="section{% if section.settings.alt_bg %} section--alt{% endif %}">
+  <div class="page-width">
+    <div class="rich-text" data-reveal>
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'subheading' -%}
+            <span class="subheading" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+          {%- when 'heading' -%}
+            <h2 class="{{ block.settings.size }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</h2>
+          {%- when 'text' -%}
+            <div class="rte" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+          {%- when 'button' -%}
+            <div class="rich-text__buttons" {{ block.shopify_attributes }}>
+              <a href="{{ block.settings.link | default: '#' }}" class="btn{% if block.settings.secondary %} btn--secondary{% endif %}">{{ block.settings.label }}</a>
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "class": "section-rich-text",
+  "settings": [
+    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false }
+  ],
+  "blocks": [
+    { "type": "subheading", "name": "Subheading", "settings": [ { "type": "text", "id": "text", "label": "Text", "default": "Subheading" } ] },
+    { "type": "heading", "name": "Heading", "settings": [
+      { "type": "text", "id": "text", "label": "Text", "default": "Talk about your brand" },
+      { "type": "select", "id": "size", "label": "Size", "default": "h2", "options": [ { "value": "h3", "label": "Small" }, { "value": "h2", "label": "Medium" }, { "value": "h1", "label": "Large" } ] }
+    ] },
+    { "type": "text", "name": "Text", "settings": [ { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Share information about your brand with your customers.</p>" } ] },
+    { "type": "button", "name": "Button", "settings": [
+      { "type": "text", "id": "label", "label": "Label", "default": "Shop now" },
+      { "type": "url", "id": "link", "label": "Link" },
+      { "type": "checkbox", "id": "secondary", "label": "Outline style", "default": false }
+    ] }
+  ],
+  "presets": [ { "name": "Rich text", "blocks": [ { "type": "subheading" }, { "type": "heading" }, { "type": "text" } ] } ]
+}
+{% endschema %}

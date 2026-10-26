@@ -1,0 +1,27 @@
+<div class="page-width">
+  <div class="customer">
+    <div id="RecoverPassword" style="display: none;">
+      <h1 class="text-center">{{ 'customer.reset_password' | t }}</h1>
+      {%- form 'recover_customer_password' -%}
+        {%- if form.posted_successfully? -%}<p class="form-message">We've sent you an email with a link to update your password.</p>{%- endif -%}
+        {{ form.errors | default_errors }}
+        <div class="field"><label for="RecoverEmail">{{ 'customer.email' | t }}</label><input class="input" type="email" id="RecoverEmail" name="email" autocomplete="email" required></div>
+        <button type="submit" class="btn btn--full">{{ 'customer.submit' | t }}</button>
+        <p class="text-center" style="margin-top: 1rem;"><a href="#login" onclick="document.getElementById('RecoverPassword').style.display='none';document.getElementById('CustomerLogin').style.display='block';return false;">{{ 'customer.login' | t }}</a></p>
+      {%- endform -%}
+    </div>
+    <div id="CustomerLogin">
+      <h1 class="text-center">{{ 'customer.login' | t }}</h1>
+      {%- form 'customer_login', novalidate: 'novalidate' -%}
+        {{ form.errors | default_errors }}
+        <div class="field"><label for="CustomerEmail">{{ 'customer.email' | t }}</label><input class="input" type="email" name="customer[email]" id="CustomerEmail" autocomplete="email" required></div>
+        {%- if form.password_needed -%}
+          <div class="field"><label for="CustomerPassword">{{ 'customer.password' | t }}</label><input class="input" type="password" name="customer[password]" id="CustomerPassword" autocomplete="current-password" required></div>
+          <p><a href="#recover" onclick="document.getElementById('CustomerLogin').style.display='none';document.getElementById('RecoverPassword').style.display='block';return false;">{{ 'customer.forgot_password' | t }}</a></p>
+        {%- endif -%}
+        <button type="submit" class="btn btn--full">{{ 'customer.login' | t }}</button>
+        <p class="text-center" style="margin-top: 1rem;"><a href="{{ routes.account_register_url }}" class="link-underline">{{ 'customer.register' | t }}</a></p>
+      {%- endform -%}
+    </div>
+  </div>
+</div>

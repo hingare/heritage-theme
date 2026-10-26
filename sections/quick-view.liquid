@@ -1,0 +1,32 @@
+{%- comment -%}
+  Rendered on demand via ?section_id=quick-view from a product URL.
+{%- endcomment -%}
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+<div data-quick-view-content>
+  <div id="Product-{{ section.id }}" data-product-root data-url="{{ product.url }}" data-section-id="{{ section.id }}" data-update-url="false">
+    <div class="product">
+      <div>
+        {% render 'product-gallery', product: product, section: section, layout: 'thumbnails', zoom: false %}
+      </div>
+      <div class="product__info">
+        {%- if settings.product_card_vendor -%}<div class="product__vendor">{{ product.vendor }}</div>{%- endif -%}
+        <h2 class="product__title">{{ product.title }}</h2>
+        <div data-update="price">{% render 'price', product: product, variant: current_variant, large: true, show_save: true %}</div>
+        {% render 'product-variant-picker', product: product, section: section, picker_type: 'button', use_swatches: true %}
+        {% render 'product-buy-buttons', product: product, section: section, show_quantity: true, show_dynamic: false %}
+        {%- if product.description != blank -%}
+          <div class="product__description rte">{{ product.description | strip_html | truncatewords: 40 }}</div>
+        {%- endif -%}
+        <a href="{{ product.url }}" class="link-underline" style="align-self: flex-start;">{{ 'products.product.view_details' | t }}</a>
+      </div>
+    </div>
+    <script type="application/json" data-product-json>{{ product | json }}</script>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Quick view",
+  "settings": []
+}
+{% endschema %}

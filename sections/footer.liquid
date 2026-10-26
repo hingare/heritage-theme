@@ -1,0 +1,126 @@
+<style>
+  .footer-localization .select { background: transparent; color: inherit; border-color: rgba(255, 255, 255, 0.3); min-height: 38px; width: auto; }
+  .footer-localization option { color: #1c1a17; }
+</style>
+<footer class="site-footer" role="contentinfo">
+  <div class="page-width">
+    <div class="site-footer__grid">
+      {%- for block in section.blocks -%}
+        <div class="site-footer__block{% if block.settings.wide %} site-footer__block--wide{% endif %}" {{ block.shopify_attributes }}>
+          {%- case block.type -%}
+            {%- when 'menu' -%}
+              {%- if block.settings.title != blank -%}<h2 class="site-footer__heading">{{ block.settings.title }}</h2>{%- endif -%}
+              <ul class="site-footer__links">
+                {%- for link in block.settings.menu.links -%}
+                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {%- endfor -%}
+              </ul>
+            {%- when 'text' -%}
+              {%- if block.settings.image != blank -%}
+                <div style="max-width: {{ block.settings.image_width }}px; margin-bottom: 1rem;">
+                  {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '300px' }}
+                </div>
+              {%- endif -%}
+              {%- if block.settings.title != blank -%}<h2 class="site-footer__heading">{{ block.settings.title }}</h2>{%- endif -%}
+              <div class="rte">{{ block.settings.text }}</div>
+              {%- if block.settings.show_social -%}
+                <div style="margin-top: 1.25rem;">{% render 'social-icons' %}</div>
+              {%- endif -%}
+            {%- when 'newsletter' -%}
+              {%- if block.settings.title != blank -%}<h2 class="site-footer__heading">{{ block.settings.title }}</h2>{%- endif -%}
+              {%- if block.settings.text != blank -%}<div class="rte">{{ block.settings.text }}</div>{%- endif -%}
+              {% render 'newsletter-form', form_id: block.id %}
+          {%- endcase -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="site-footer__bottom">
+      {%- if section.settings.show_country and localization.available_countries.size > 1 -%}
+        {%- form 'localization', class: 'footer-localization' -%}
+          <label for="FooterCountry" class="visually-hidden">Country/region</label>
+          <select id="FooterCountry" name="country_code" class="select" onchange="this.form.submit()">
+            {%- for country in localization.available_countries -%}
+              <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>{{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})</option>
+            {%- endfor -%}
+          </select>
+          <input type="hidden" name="return_to" value="{{ request.path }}">
+        {%- endform -%}
+      {%- endif -%}
+      {%- if section.settings.show_language and localization.available_languages.size > 1 -%}
+        {%- form 'localization', class: 'footer-localization' -%}
+          <label for="FooterLanguage" class="visually-hidden">Language</label>
+          <select id="FooterLanguage" name="locale_code" class="select" onchange="this.form.submit()">
+            {%- for language in localization.available_languages -%}
+              <option value="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>{{ language.endonym_name | capitalize }}</option>
+            {%- endfor -%}
+          </select>
+          <input type="hidden" name="return_to" value="{{ request.path }}">
+        {%- endform -%}
+      {%- endif -%}
+      <div>
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name | link_to: routes.root_url }}
+        {%- if section.settings.copyright_text != blank %} &middot; {{ section.settings.copyright_text }}{% endif -%}
+        {%- if section.settings.show_policies -%}
+          {%- for policy in shop.policies -%}
+            &middot; <a href="{{ policy.url }}">{{ policy.title }}</a>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+      {%- if section.settings.show_payment_icons -%}
+        <ul class="payment-icons">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "section-footer",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "copyright_text", "label": "Copyright text" },
+    { "type": "checkbox", "id": "show_policies", "label": "Show policy links", "default": true },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true },
+    { "type": "checkbox", "id": "show_country", "label": "Show country/currency selector", "default": true, "info": "Add markets in Settings > Markets" },
+    { "type": "checkbox", "id": "show_language", "label": "Show language selector", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "Shop" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "range", "id": "image_width", "label": "Image width", "min": 50, "max": 300, "step": 10, "unit": "px", "default": 140 },
+        { "type": "text", "id": "title", "label": "Heading", "default": "About us" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Share a short story about your brand here.</p>" },
+        { "type": "checkbox", "id": "show_social", "label": "Show social icons", "default": true },
+        { "type": "checkbox", "id": "wide", "label": "Make wider", "default": false }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "Join our newsletter" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>New arrivals, exclusive offers and stories, straight to your inbox.</p>" },
+        { "type": "checkbox", "id": "wide", "label": "Make wider", "default": true }
+      ]
+    }
+  ]
+}
+{% endschema %}

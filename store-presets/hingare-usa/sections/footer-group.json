@@ -1,0 +1,66 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "about": {
+          "type": "text",
+          "settings": {
+            "image": "shopify://shop_images/Hingare_Icon_Only_Transparent.png",
+            "image_width": 60,
+            "title": "HINGARE",
+            "text": "<p>Genuine cowhide leather goods, cut and finished by hand in our own workshop in Bangladesh. Heritage meets rare.</p>",
+            "show_social": true,
+            "wide": false
+          }
+        },
+        "shop": {
+          "type": "menu",
+          "settings": {
+            "title": "Shop",
+            "menu": "footer-shop"
+          }
+        },
+        "about-menu": {
+          "type": "menu",
+          "settings": {
+            "title": "About",
+            "menu": "footer-about"
+          }
+        },
+        "care": {
+          "type": "menu",
+          "settings": {
+            "title": "Customer care",
+            "menu": "footer"
+          }
+        },
+        "news": {
+          "type": "newsletter",
+          "settings": {
+            "title": "Join the HINGARE list",
+            "text": "<p>New arrivals, leather care tips and early access to offers.</p>",
+            "wide": false
+          }
+        }
+      },
+      "block_order": [
+        "about",
+        "shop",
+        "about-menu",
+        "care",
+        "news"
+      ],
+      "settings": {
+        "copyright_text": "",
+        "show_policies": true,
+        "show_payment_icons": true
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

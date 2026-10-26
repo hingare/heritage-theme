@@ -1,0 +1,48 @@
+{%- comment -%}
+  Variant picker: buttons, colour swatches or dropdowns.
+  - product (required), section (required)
+  - picker_type: 'button' | 'dropdown'
+  - use_swatches: boolean
+{%- endcomment -%}
+{%- unless product.has_only_default_variant -%}
+  <div class="variant-picker" data-variant-picker>
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign option_lower = option.name | downcase
+        assign swatch_lower = settings.swatch_option_name | downcase
+        assign is_swatch = false
+        if use_swatches and option_lower == swatch_lower
+          assign is_swatch = true
+        endif
+        assign option_index = forloop.index0
+      -%}
+      {%- if picker_type == 'dropdown' and is_swatch == false -%}
+        <div class="field" data-option-index="{{ option_index }}">
+          <label for="Option-{{ section.id }}-{{ option_index }}">{{ option.name }}</label>
+          <select id="Option-{{ section.id }}-{{ option_index }}" class="select" name="options[{{ option.name | escape }}]">
+            {%- for value in option.values -%}
+              <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>{{ value }}</option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- else -%}
+        <fieldset data-option-index="{{ option_index }}">
+          <legend>{{ option.name }}:<span data-selected-value>{{ option.selected_value }}</span></legend>
+          <div class="variant-picker__options">
+            {%- for value in option.values -%}
+              <label class="{% if is_swatch %}variant-swatch{% else %}variant-pill{% endif %}" title="{{ value | escape }}">
+                <input type="radio" name="{{ section.id }}-{{ option.name | handle }}" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %}>
+                {%- if is_swatch -%}
+                  <span style="--swatch-color: {% render 'swatch-color', value: value %}"></span>
+                  <span class="visually-hidden">{{ value }}</span>
+                {%- else -%}
+                  <span>{{ value }}</span>
+                {%- endif -%}
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endunless -%}

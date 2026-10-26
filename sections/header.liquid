@@ -1,0 +1,171 @@
+{%- liquid
+  assign menu = section.settings.menu
+  assign logo_left = false
+  if section.settings.logo_position == 'left'
+    assign logo_left = true
+  endif
+-%}
+<style>
+  #shopify-section-{{ section.id }} { --logo-width: {{ section.settings.logo_width }}px; --logo-width-mobile: {{ section.settings.logo_width_mobile }}px; }
+</style>
+
+<div class="site-header-wrapper{% if section.settings.sticky %} is-sticky{% endif %}" data-header-wrapper>
+  <header class="site-header{% if logo_left %} site-header--logo-left{% endif %}" role="banner">
+    <div class="page-width site-header__inner">
+      <div class="site-header__left">
+        <button type="button" class="header-icon site-header__mobile-toggle" data-open="MobileNav" aria-controls="MobileNav" aria-label="{{ 'general.menu' | t }}">
+          {% render 'icon', name: 'menu' %}
+        </button>
+        {%- if logo_left -%}
+          {% render 'header-logo', section: section, request: request %}
+        {%- else -%}
+          <button type="button" class="header-icon" data-open="SearchModal" aria-label="{{ 'general.search' | t }}">{% render 'icon', name: 'search' %}</button>
+        {%- endif -%}
+      </div>
+
+      {%- if logo_left -%}
+        <nav class="site-nav--desktop" aria-label="Primary">
+          {% render 'header-nav', menu: menu, section: section, inline: true %}
+        </nav>
+      {%- else -%}
+        {% render 'header-logo', section: section, request: request %}
+      {%- endif -%}
+
+      <div class="site-header__icons">
+        {%- if logo_left -%}
+          <button type="button" class="header-icon" data-open="SearchModal" aria-label="{{ 'general.search' | t }}">{% render 'icon', name: 'search' %}</button>
+        {%- endif -%}
+        {%- if shop.customer_accounts_enabled -%}
+          <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header-icon header-icon--account" aria-label="{{ 'general.account' | t }}">
+            {% render 'icon', name: 'account' %}
+          </a>
+        {%- endif -%}
+        <a href="{{ routes.cart_url }}" class="header-icon" {% if settings.cart_type == 'drawer' %}data-open="CartDrawer"{% endif %} aria-label="{{ 'general.cart' | t }}">
+          {% render 'icon', name: 'cart' %}
+          <span class="cart-count" data-cart-count data-count="{{ cart.item_count }}">{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
+        </a>
+      </div>
+    </div>
+
+    {%- unless logo_left -%}
+      <div class="site-header__nav-row">
+        <nav class="page-width site-nav--desktop" aria-label="Primary">
+          {% render 'header-nav', menu: menu, section: section, inline: false %}
+        </nav>
+      </div>
+    {%- endunless -%}
+  </header>
+</div>
+
+{%- comment -%} Mobile navigation drawer {%- endcomment -%}
+<div id="MobileNav" class="drawer drawer--left" aria-hidden="true" role="dialog" aria-label="{{ 'general.menu' | t }}">
+  <div class="drawer__header">
+    <span class="drawer__title h3">{{ 'general.menu' | t }}</span>
+    <button type="button" class="drawer__close" data-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+  </div>
+  <div class="drawer__body">
+    <ul class="mobile-nav">
+      {%- for link in menu.links -%}
+        <li class="mobile-nav__item">
+          {%- if link.links != blank -%}
+            <button type="button" class="mobile-nav__toggle" data-mobile-toggle aria-expanded="false" aria-controls="MobileSub-{{ forloop.index }}">
+              {{ link.title }} {% render 'icon', name: 'chevron-down' %}
+            </button>
+            <div class="mobile-nav__sub" id="MobileSub-{{ forloop.index }}">
+              <a href="{{ link.url }}"><strong>{{ 'general.view_all' | t }}</strong></a>
+              {%- for child in link.links -%}
+                {%- if child.links != blank -%}
+                  <button type="button" class="mobile-nav__toggle" data-mobile-toggle aria-expanded="false" aria-controls="MobileSub-{{ forloop.parentloop.index }}-{{ forloop.index }}">
+                    {{ child.title }} {% render 'icon', name: 'chevron-down' %}
+                  </button>
+                  <div class="mobile-nav__sub" id="MobileSub-{{ forloop.parentloop.index }}-{{ forloop.index }}">
+                    <a href="{{ child.url }}">{{ 'general.view_all' | t }}</a>
+                    {%- for grandchild in child.links -%}
+                      <a href="{{ grandchild.url }}">{{ grandchild.title }}</a>
+                    {%- endfor -%}
+                  </div>
+                {%- else -%}
+                  <a href="{{ child.url }}">{{ child.title }}</a>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- else -%}
+            <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+    <div class="mobile-nav__footer">
+      {%- if shop.customer_accounts_enabled -%}
+        {%- if customer -%}
+          <a href="{{ routes.account_url }}" class="btn btn--secondary btn--full">{{ 'customer.account' | t }}</a>
+        {%- else -%}
+          <a href="{{ routes.account_login_url }}" class="btn btn--secondary btn--full">{{ 'customer.login' | t }}</a>
+        {%- endif -%}
+      {%- endif -%}
+      {% render 'social-icons' %}
+    </div>
+  </div>
+</div>
+
+{%- comment -%} Search overlay {%- endcomment -%}
+<div id="SearchModal" class="search-modal" aria-hidden="true" role="dialog" aria-label="{{ 'general.search' | t }}">
+  <div class="page-width">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-modal__form">
+      {% render 'icon', name: 'search' %}
+      <input type="hidden" name="options[prefix]" value="last">
+      <input type="search" name="q" class="search-modal__input" placeholder="{{ 'header.search_placeholder' | t }}" aria-label="{{ 'general.search' | t }}" autocomplete="off" data-predictive-input>
+      <button type="button" class="header-icon" data-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+    </form>
+    <div class="predictive-search" data-predictive-results></div>
+  </div>
+</div>
+
+{%- if request.page_type == 'index' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "Organization",
+      "name": {{ shop.name | json }},
+      {%- if section.settings.logo -%}
+        "logo": {{ section.settings.logo | image_url: width: 500 | prepend: 'https:' | json }},
+      {%- endif -%}
+      "url": {{ request.origin | append: routes.root_url | json }}
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo image" },
+    { "type": "range", "id": "logo_width", "label": "Logo width", "min": 60, "max": 350, "step": 5, "unit": "px", "default": 160 },
+    { "type": "range", "id": "logo_width_mobile", "label": "Mobile logo width", "min": 50, "max": 250, "step": 5, "unit": "px", "default": 110 },
+    { "type": "select", "id": "logo_position", "label": "Layout", "default": "center-below", "options": [
+      { "value": "left", "label": "Logo left, menu inline" },
+      { "value": "center-below", "label": "Logo center, menu below" }
+    ] },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "sticky", "label": "Enable sticky header", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "mega_menu",
+      "name": "Mega menu",
+      "settings": [
+        { "type": "text", "id": "menu_item", "label": "Menu item", "info": "Enter the top-level menu title that should open this mega menu, e.g. Women" },
+        { "type": "header", "content": "Promotion 1" },
+        { "type": "image_picker", "id": "image_1", "label": "Image" },
+        { "type": "text", "id": "title_1", "label": "Heading" },
+        { "type": "url", "id": "link_1", "label": "Link" },
+        { "type": "header", "content": "Promotion 2" },
+        { "type": "image_picker", "id": "image_2", "label": "Image" },
+        { "type": "text", "id": "title_2", "label": "Heading" },
+        { "type": "url", "id": "link_2", "label": "Link" }
+      ]
+    }
+  ]
+}
+{% endschema %}

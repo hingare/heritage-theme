@@ -1,0 +1,131 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "vendor"
+        },
+        "title": {
+          "type": "title"
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "show_save": true,
+            "show_tax_note": true
+          }
+        },
+        "inventory": {
+          "type": "inventory",
+          "settings": {
+            "low_threshold": 5
+          }
+        },
+        "divider": {
+          "type": "divider"
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "use_swatches": true
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_quantity": true,
+            "show_dynamic": true
+          }
+        },
+        "trust_badges": {
+          "type": "trust_badges",
+          "settings": {
+            "icon_1": "truck",
+            "text_1": "Free shipping over $150",
+            "icon_2": "return",
+            "text_2": "30-day returns",
+            "icon_3": "lock",
+            "text_3": "Secure checkout"
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "collapsible": true,
+            "title": "Description",
+            "open": true
+          }
+        },
+        "tab_shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & returns",
+            "icon": "truck",
+            "content": "<p>Free US shipping on orders over $150. Returns accepted within 30 days of delivery. See our <a href=\"/policies/shipping-policy\">shipping policy</a> and <a href=\"/policies/refund-policy\">refund policy</a>.</p>",
+            "open": false
+          }
+        },
+        "share": {
+          "type": "share"
+        },
+        "tab_material": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Leather & craftsmanship",
+            "icon": "leather",
+            "content": "<p>Genuine cowhide leather, cut and finished by hand in the HINGARE workshop in Bangladesh. Every piece develops its own patina over time.</p>",
+            "open": false
+          }
+        },
+        "tab_care": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Leather care",
+            "icon": "hand",
+            "page": "leather-care-guide",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "price",
+        "inventory",
+        "divider",
+        "variant_picker",
+        "buy_buttons",
+        "trust_badges",
+        "description",
+        "tab_material",
+        "tab_care",
+        "tab_shipping",
+        "share"
+      ],
+      "settings": {
+        "gallery_layout": "thumbnails",
+        "media_size": "large",
+        "image_ratio": "product",
+        "enable_zoom": true,
+        "sticky_info": true,
+        "sticky_atc": true,
+        "show_breadcrumbs": true
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You may also like",
+        "intent": "related",
+        "limit": 4,
+        "columns": 4
+      }
+    }
+  },
+  "order": [
+    "main",
+    "recommendations"
+  ]
+}

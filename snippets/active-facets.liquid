@@ -1,0 +1,31 @@
+{%- liquid
+  assign has_active = false
+  for filter in results.filters
+    if filter.active_values.size > 0
+      assign has_active = true
+    endif
+    if filter.type == 'price_range'
+      if filter.min_value.value or filter.max_value.value
+        assign has_active = true
+      endif
+    endif
+  endfor
+-%}
+{%- if has_active -%}
+  <div class="active-facets">
+    {%- for filter in results.filters -%}
+      {%- for value in filter.active_values -%}
+        <a href="{{ value.url_to_remove }}" class="active-facets__pill" data-facet-remove>{{ filter.label }}: {{ value.label }} {% render 'icon', name: 'close' %}</a>
+      {%- endfor -%}
+      {%- if filter.type == 'price_range' -%}
+        {%- if filter.min_value.value or filter.max_value.value -%}
+          <a href="{{ filter.url_to_remove }}" class="active-facets__pill" data-facet-remove>
+            {{ filter.min_value.value | default: 0 | money }} – {{ filter.max_value.value | default: filter.range_max | money }}
+            {% render 'icon', name: 'close' %}
+          </a>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    <a href="{{ clear_url }}" class="active-facets__clear" data-facet-remove>{{ 'collections.clear_all' | t }}</a>
+  </div>
+{%- endif -%}

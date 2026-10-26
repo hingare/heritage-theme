@@ -1,0 +1,94 @@
+{%- comment -%}
+  Desktop navigation with dropdowns and mega menus.
+  A top-level link becomes a mega menu when it has grandchildren, or when a
+  "Mega menu" block in the header names it.
+{%- endcomment -%}
+<ul class="site-nav{% if inline %} site-nav--inline{% endif %}">
+  {%- for link in menu.links -%}
+    {%- liquid
+      assign mega_block = nil
+      for block in section.blocks
+        assign a = block.settings.menu_item | downcase | strip
+        assign b = link.title | downcase | strip
+        if a == b
+          assign mega_block = block
+        endif
+      endfor
+      assign has_grandchildren = false
+      for child in link.links
+        if child.links != blank
+          assign has_grandchildren = true
+        endif
+      endfor
+      assign is_mega = false
+      if mega_block or has_grandchildren
+        assign is_mega = true
+      endif
+    -%}
+    <li class="site-nav__item{% if link.links != blank and is_mega == false %} site-nav__item--dropdown{% endif %}">
+      <a href="{{ link.url }}" class="site-nav__link{% if link.active %} site-nav__link--active{% endif %}" {% if link.links != blank %}aria-haspopup="true"{% endif %}>
+        {{ link.title }}
+        {%- if link.links != blank %}{% render 'icon', name: 'chevron-down' %}{% endif -%}
+      </a>
+
+      {%- if link.links != blank -%}
+        {%- if is_mega -%}
+          <div class="mega-menu" {% if mega_block %}{{ mega_block.shopify_attributes }}{% endif %}>
+            {%- liquid
+              assign has_promo = false
+              if mega_block
+                if mega_block.settings.image_1 != blank or mega_block.settings.image_2 != blank
+                  assign has_promo = true
+                endif
+              endif
+            -%}
+            <div class="page-width mega-menu__inner{% if has_promo %} mega-menu__inner--with-promo{% endif %}">
+              <div class="mega-menu__columns">
+                {%- for child in link.links -%}
+                  <div>
+                    <a href="{{ child.url }}" class="mega-menu__heading">{{ child.title }}</a>
+                    {%- if child.links != blank -%}
+                      <ul class="mega-menu__list">
+                        {%- for grandchild in child.links -%}
+                          <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                  </div>
+                {%- endfor -%}
+              </div>
+              {%- if has_promo -%}
+                <div class="mega-menu__promos">
+                  {%- for i in (1..2) -%}
+                    {%- liquid
+                      assign image_key = 'image_' | append: i
+                      assign title_key = 'title_' | append: i
+                      assign link_key = 'link_' | append: i
+                      assign promo_image = mega_block.settings[image_key]
+                    -%}
+                    {%- if promo_image != blank -%}
+                      <a href="{{ mega_block.settings[link_key] | default: link.url }}" class="mega-menu__promo">
+                        <div class="media media--portrait">
+                          {{ promo_image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '300px', widths: '300, 450, 600' }}
+                        </div>
+                        {%- if mega_block.settings[title_key] != blank -%}
+                          <p class="mega-menu__promo-title">{{ mega_block.settings[title_key] }}</p>
+                        {%- endif -%}
+                      </a>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- else -%}
+          <div class="site-nav__dropdown">
+            {%- for child in link.links -%}
+              <a href="{{ child.url }}">{{ child.title }}</a>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    </li>
+  {%- endfor -%}
+</ul>

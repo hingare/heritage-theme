@@ -1,0 +1,123 @@
+{%- liquid
+  assign show_filters = false
+  if section.settings.enable_filtering and collection.filters.size > 0
+    assign show_filters = true
+  endif
+  assign sort_by = collection.sort_by | default: collection.default_sort_by
+  assign clear_url = collection.url | append: '?sort_by=' | append: sort_by
+-%}
+
+{%- if section.settings.show_header -%}
+  {%- if section.settings.show_image and collection.image -%}
+    <div class="collection-hero">
+      <div class="collection-hero__media">
+        {{ collection.image | image_url: width: 2400 | image_tag: loading: 'eager', sizes: '100vw', widths: '750, 1100, 1500, 2000, 2400', alt: collection.title | escape }}
+      </div>
+      <div class="page-width collection-hero__content">
+        <h1>{{ collection.title }}</h1>
+        {%- if section.settings.show_description and collection.description != blank -%}<div class="rte">{{ collection.description }}</div>{%- endif -%}
+      </div>
+    </div>
+  {%- else -%}
+    <div class="page-width collection-header">
+      <h1>{{ collection.title }}</h1>
+      {%- if section.settings.show_description and collection.description != blank -%}
+        <div class="collection-header__description rte">{{ collection.description }}</div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+{%- endif -%}
+
+<div class="page-width" data-collection-container data-section-id="{{ section.id }}" style="padding-bottom: 4rem;">
+  {%- paginate collection.products by section.settings.per_page -%}
+    <div class="collection-toolbar">
+      <div class="collection-toolbar__left" style="display:flex;align-items:center;gap:1.25rem;">
+        {%- if show_filters -%}
+          <button type="button" class="collection-toolbar__filter-btn collection-toolbar__filter-btn--mobile" data-open="FilterDrawer">
+            {% render 'icon', name: 'filter' %} {{ 'collections.filter' | t }}
+          </button>
+        {%- endif -%}
+        <span class="collection-toolbar__count" data-collection-count>{{ 'collections.products_count' | t: count: collection.products_count }}</span>
+      </div>
+      <div class="collection-toolbar__right">
+        {%- if section.settings.enable_sorting -%}
+          <label for="SortBy" class="visually-hidden">{{ 'collections.sort_by' | t }}</label>
+          <select id="SortBy" class="select" data-sort-select>
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value | escape }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>
+            {%- endfor -%}
+          </select>
+        {%- endif -%}
+        {%- if section.settings.enable_grid_toggle -%}
+          <div class="grid-toggle" data-default-cols="{{ section.settings.columns }}">
+            <button type="button" data-grid-cols="2" aria-label="2">{% render 'icon', name: 'grid-2' %}</button>
+            <button type="button" data-grid-cols="{{ section.settings.columns }}" aria-label="{{ section.settings.columns }}">{% render 'icon', name: 'grid-3' %}</button>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="collection-layout{% unless show_filters %} collection-layout--no-sidebar{% endunless %}">
+      {%- if show_filters -%}
+        <aside id="FilterDrawer" class="collection-sidebar drawer drawer--left" aria-hidden="true" aria-label="{{ 'collections.filter' | t }}">
+          <div class="drawer__header">
+            <span class="drawer__title h3">{{ 'collections.filter' | t }}</span>
+            <button type="button" class="drawer__close" data-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+          </div>
+          <div class="drawer__body">
+            {% render 'facets', results: collection %}
+          </div>
+          <div class="drawer__footer">
+            <button type="button" class="btn btn--full" data-close>{{ 'collections.apply' | t }}</button>
+          </div>
+        </aside>
+      {%- endif -%}
+
+      <div>
+        <div data-active-facets>{% render 'active-facets', results: collection, clear_url: clear_url %}</div>
+        <div class="collection-grid" data-collection-results>
+          {%- if collection.products.size > 0 -%}
+            <div class="grid" style="--cols: {{ section.settings.columns }}; --cols-tablet: 3; --cols-mobile: {{ section.settings.columns_mobile }};">
+              {%- for product in collection.products -%}
+                {%- liquid
+                  assign lazy = true
+                  if forloop.index <= 4
+                    assign lazy = false
+                  endif
+                -%}
+                {% render 'product-card', product: product, lazy: lazy %}
+              {%- endfor -%}
+            </div>
+            {% render 'pagination', paginate: paginate %}
+          {%- else -%}
+            <div class="collection-empty">
+              <p>{{ 'collections.empty' | t }}</p>
+              <a href="{{ clear_url }}" class="btn btn--secondary" data-facet-remove>{{ 'collections.clear_all' | t }}</a>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "Collection page",
+  "class": "section-main-collection",
+  "settings": [
+    { "type": "header", "content": "Header" },
+    { "type": "checkbox", "id": "show_header", "label": "Show collection title", "default": true },
+    { "type": "checkbox", "id": "show_image", "label": "Show collection image as banner", "default": true },
+    { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
+    { "type": "header", "content": "Products" },
+    { "type": "range", "id": "per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "range", "id": "columns", "label": "Products per row (desktop)", "min": 2, "max": 5, "step": 1, "default": 3 },
+    { "type": "select", "id": "columns_mobile", "label": "Products per row (mobile)", "default": "2", "options": [ { "value": "1", "label": "1" }, { "value": "2", "label": "2" } ] },
+    { "type": "header", "content": "Filtering and sorting" },
+    { "type": "checkbox", "id": "enable_filtering", "label": "Enable filtering", "default": true, "info": "Customize filters with the Search & Discovery app" },
+    { "type": "checkbox", "id": "enable_sorting", "label": "Enable sorting", "default": true },
+    { "type": "checkbox", "id": "enable_grid_toggle", "label": "Show grid size toggle", "default": true }
+  ]
+}
+{% endschema %}

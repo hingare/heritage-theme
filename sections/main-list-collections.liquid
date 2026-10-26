@@ -1,0 +1,30 @@
+<div class="page-width" style="padding-bottom: 4rem;">
+  <div class="page-header"><h1>{{ section.settings.title }}</h1></div>
+  <div class="grid" style="--cols: 4;">
+    {%- for collection in collections -%}
+      {%- if collection.products_count > 0 or section.settings.show_empty -%}
+        <a href="{{ collection.url }}" class="collection-card" data-reveal>
+          <div class="media media--portrait">
+            {%- assign card_image = collection.featured_image | default: collection.products.first.featured_media -%}
+            {%- if card_image -%}
+              {{ card_image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, 50vw', widths: '300, 600, 900', alt: collection.title | escape }}
+            {%- else -%}
+              {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </div>
+          <h2 class="collection-card__title">{{ collection.title }}</h2>
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collections list page",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Collections" },
+    { "type": "checkbox", "id": "show_empty", "label": "Show empty collections", "default": false }
+  ]
+}
+{% endschema %}

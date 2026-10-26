@@ -1,0 +1,18 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "text": { "type": "text", "settings": { "title": "About us", "text": "<p>Share a short story about your brand here.</p>", "show_social": true, "wide": false, "image_width": 140 } },
+        "menu-shop": { "type": "menu", "settings": { "title": "Shop", "menu": "main-menu" } },
+        "menu-help": { "type": "menu", "settings": { "title": "Help", "menu": "footer" } },
+        "newsletter": { "type": "newsletter", "settings": { "title": "Join our newsletter", "text": "<p>New arrivals, exclusive offers and stories, straight to your inbox.</p>", "wide": true } }
+      },
+      "block_order": ["text", "menu-shop", "menu-help", "newsletter"],
+      "settings": { "copyright_text": "", "show_policies": true, "show_payment_icons": true }
+    }
+  },
+  "order": ["footer"]
+}

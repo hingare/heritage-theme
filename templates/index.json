@@ -1,0 +1,263 @@
+{
+  "sections": {
+    "slideshow": {
+      "type": "slideshow",
+      "blocks": {
+        "s1": {
+          "type": "slide",
+          "settings": {
+            "subheading": "New collection",
+            "heading": "Crafted to last",
+            "text": "<p>Timeless pieces made with care.</p>",
+            "button_label": "Shop now",
+            "link": "shopify://collections/all",
+            "text_position": "center",
+            "text_align": "left",
+            "text_color": "#ffffff",
+            "overlay": 25
+          }
+        },
+        "s2": {
+          "type": "slide",
+          "settings": {
+            "subheading": "Best sellers",
+            "heading": "Everyday essentials",
+            "text": "<p>Discover the pieces our customers love most.</p>",
+            "button_label": "Shop best sellers",
+            "link": "shopify://collections/all",
+            "text_position": "center",
+            "text_align": "center",
+            "text_color": "#ffffff",
+            "overlay": 25
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2"
+      ],
+      "settings": {
+        "height": "large",
+        "autoplay": true,
+        "speed": 6,
+        "accessibility_label": "Featured collections"
+      }
+    },
+    "text-columns": {
+      "type": "text-columns",
+      "blocks": {
+        "c1": {
+          "type": "column",
+          "settings": {
+            "icon": "truck",
+            "title": "Free shipping",
+            "text": "<p>On all orders over $150.</p>"
+          }
+        },
+        "c2": {
+          "type": "column",
+          "settings": {
+            "icon": "return",
+            "title": "Easy returns",
+            "text": "<p>30 days to change your mind.</p>"
+          }
+        },
+        "c3": {
+          "type": "column",
+          "settings": {
+            "icon": "lock",
+            "title": "Secure checkout",
+            "text": "<p>All major cards accepted.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "settings": {
+        "heading": "",
+        "align": "center",
+        "image_ratio": "landscape",
+        "alt_bg": false
+      }
+    },
+    "collection-list": {
+      "type": "collection-list",
+      "blocks": {
+        "k1": {
+          "type": "collection",
+          "settings": {}
+        },
+        "k2": {
+          "type": "collection",
+          "settings": {}
+        },
+        "k3": {
+          "type": "collection",
+          "settings": {}
+        },
+        "k4": {
+          "type": "collection",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "k1",
+        "k2",
+        "k3",
+        "k4"
+      ],
+      "settings": {
+        "heading": "Shop by category",
+        "style": "overlay",
+        "image_ratio": "portrait",
+        "columns": 4,
+        "alt_bg": false
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "New arrivals",
+        "subheading": "Just in",
+        "limit": 8,
+        "columns": 4,
+        "mobile_scroll": true,
+        "view_all": true,
+        "alt_bg": false,
+        "center_heading": false
+      }
+    },
+    "promo-grid": {
+      "type": "promo-grid",
+      "blocks": {
+        "p1": {
+          "type": "advanced",
+          "settings": {
+            "width": "8",
+            "height": 460,
+            "heading": "The signature collection",
+            "button_label": "Shop now",
+            "text_position": "bottom",
+            "text_color": "#ffffff",
+            "overlay": 20
+          }
+        },
+        "p2": {
+          "type": "advanced",
+          "settings": {
+            "width": "4",
+            "height": 460,
+            "heading": "Gifts",
+            "button_label": "Explore",
+            "text_position": "bottom",
+            "text_color": "#ffffff",
+            "overlay": 20
+          }
+        },
+        "p3": {
+          "type": "banner",
+          "settings": {
+            "heading": "Join our newsletter for 10% off your first order",
+            "button_label": "Sign up",
+            "text_color": "#ffffff",
+            "bg_color": "#9a5b2e"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3"
+      ],
+      "settings": {
+        "full_width": false,
+        "gap": 12,
+        "padding_top": 24,
+        "padding_bottom": 48
+      }
+    },
+    "image-with-text": {
+      "type": "image-with-text",
+      "settings": {
+        "subheading": "Our story",
+        "heading": "Made with care",
+        "text": "<p>Use this section to tell customers who you are and what makes your products different.</p>",
+        "button_label": "Read our story",
+        "layout": "left",
+        "image_ratio": "portrait",
+        "button_secondary": true,
+        "alt_bg": true
+      }
+    },
+    "scrolling-text": {
+      "type": "scrolling-text",
+      "settings": {
+        "text": "Free shipping on orders over $150",
+        "speed": 35,
+        "size": 1.6,
+        "bg_color": "#faf7f2",
+        "text_color": "#1c1a17"
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "<p>Beautiful quality, and it arrived quickly. I get compliments every time I use it.</p>",
+            "author": "Happy customer"
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "<p>Exactly as pictured. You can feel the craftsmanship.</p>",
+            "author": "Happy customer"
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "<p>My second order already. Great service from start to finish.</p>",
+            "author": "Happy customer"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "settings": {
+        "heading": "What our customers say",
+        "alt_bg": true
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Subscribe to our emails",
+        "text": "<p>Be the first to know about new collections and exclusive offers.</p>",
+        "alt_bg": false
+      }
+    }
+  },
+  "order": [
+    "slideshow",
+    "text-columns",
+    "collection-list",
+    "featured-collection",
+    "promo-grid",
+    "image-with-text",
+    "scrolling-text",
+    "testimonials",
+    "newsletter"
+  ]
+}

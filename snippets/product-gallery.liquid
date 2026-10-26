@@ -1,0 +1,71 @@
+{%- comment -%}
+  Product media gallery.
+  - product (required), section (required)
+  - layout: 'thumbnails' | 'stacked'
+  - zoom: boolean
+{%- endcomment -%}
+{%- liquid
+  assign layout = layout | default: 'thumbnails'
+  assign featured = product.selected_or_first_available_variant.featured_media | default: product.featured_media
+  assign ratio_class = 'media--product'
+  if section.settings.image_ratio == 'natural'
+    assign ratio_class = 'media--natural'
+  elsif section.settings.image_ratio == 'square'
+    assign ratio_class = 'media--square'
+  endif
+-%}
+<div class="product-gallery product-gallery--{{ layout }}" data-gallery data-zoom="{{ zoom }}">
+  <div class="product-gallery__main">
+    <div class="product-gallery__slides" data-gallery-track>
+      {%- if product.media.size == 0 -%}
+        <div class="product-gallery__slide" data-media-id="0">
+          <div class="media media--product">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+        </div>
+      {%- endif -%}
+      {%- for media in product.media -%}
+        <div class="product-gallery__slide" data-media-id="{{ media.id }}">
+          {%- case media.media_type -%}
+            {%- when 'image' -%}
+              <div class="media {{ ratio_class }}">
+                {%- liquid
+                  assign loading = 'lazy'
+                  if forloop.first
+                    assign loading = 'eager'
+                  endif
+                  assign zoom_src = media | image_url: width: 2400
+                  assign media_alt = media.alt | default: product.title | escape
+                -%}
+                {{ media | image_url: width: 1500 | image_tag: loading: loading, sizes: '(min-width: 990px) 55vw, 100vw', widths: '450, 650, 900, 1200, 1500', alt: media_alt, data-zoom-src: zoom_src }}
+              </div>
+              {%- if zoom -%}<span class="product-gallery__zoom-icon">{% render 'icon', name: 'zoom' %}</span>{%- endif -%}
+            {%- when 'video' -%}
+              <div class="media {{ ratio_class }}">{{ media | video_tag: controls: true, muted: true, playsinline: true, image_size: '1200x' }}</div>
+            {%- when 'external_video' -%}
+              <div class="media media--square">{{ media | external_video_tag }}</div>
+            {%- when 'model' -%}
+              <div class="media media--square">{{ media | model_viewer_tag }}</div>
+          {%- endcase -%}
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if product.media.size > 1 -%}
+      <button type="button" class="product-gallery__nav product-gallery__nav--prev" data-gallery-prev aria-label="{{ 'general.previous' | t }}">{% render 'icon', name: 'chevron-left' %}</button>
+      <button type="button" class="product-gallery__nav product-gallery__nav--next" data-gallery-next aria-label="{{ 'general.next' | t }}">{% render 'icon', name: 'chevron-right' %}</button>
+    {%- endif -%}
+  </div>
+
+  {%- if product.media.size > 1 -%}
+    <div class="product-gallery__thumbs">
+      {%- for media in product.media -%}
+        <button type="button" class="product-gallery__thumb{% if forloop.first %} is-active{% endif %}" data-thumb aria-label="{{ 'accessibility.slide' | t: number: forloop.index }}">
+          <div class="media media--square">
+            {{ media.preview_image | image_url: width: 200 | image_tag: loading: 'lazy', sizes: '80px', alt: '' }}
+          </div>
+        </button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+{%- if featured and featured.id != product.media.first.id -%}
+  <script>document.addEventListener('DOMContentLoaded', function () { var g = document.querySelector('#Product-{{ section.id }} [data-gallery]'); if (g && g._goTo) g._goTo({{ featured.id }}); });</script>
+{%- endif -%}

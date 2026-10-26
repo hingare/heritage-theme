@@ -1,0 +1,286 @@
+{
+  "sections": {
+    "hero": {
+      "type": "promo-grid",
+      "blocks": {
+        "h1": {
+          "type": "advanced",
+          "settings": {
+            "image": "shopify://shop_images/Crocodile_Pattern_Genuine_Leather_Women_Handbag_Large_Capacity_Tote_Bag_Crocodile_Tote_Bag_With_Fashion_Model.webp",
+            "width": "4",
+            "height": 620,
+            "subheading": "Women",
+            "heading": "Leather tote bags",
+            "button_label": "Shop totes",
+            "link": "shopify://collections/womens-tote-bags",
+            "text_position": "bottom",
+            "text_color": "#ffffff",
+            "overlay": 25
+          }
+        },
+        "h2": {
+          "type": "advanced",
+          "settings": {
+            "image": "shopify://shop_images/B7765663-119F-4DD6-A080-FA7A02E7E64C.jpg",
+            "width": "4",
+            "height": 620,
+            "subheading": "Handmade in Bangladesh",
+            "heading": "Heritage meets rare",
+            "button_label": "Shop new arrivals",
+            "link": "shopify://collections/new-arrivals",
+            "text_position": "bottom",
+            "text_color": "#ffffff",
+            "overlay": 30
+          }
+        },
+        "h3": {
+          "type": "advanced",
+          "settings": {
+            "image": "shopify://shop_images/Anti_Red_Brown_Genuine_Leather_Shoulder_Bag_for_Women_Original_Cow_Leather_Tote_Bag_fashion_model_with_leather_tote_bag_9bfea9d2-3809-4bc1-8356-a00846f8aa8c.webp",
+            "width": "4",
+            "height": 620,
+            "subheading": "Everyday",
+            "heading": "Bags for every day",
+            "button_label": "Shop bags",
+            "link": "shopify://collections/bags",
+            "text_position": "bottom",
+            "text_color": "#ffffff",
+            "overlay": 25
+          }
+        },
+        "h4": {
+          "type": "banner",
+          "settings": {
+            "heading": "Free US shipping on orders over $150",
+            "text": "Genuine cowhide leather, finished by hand",
+            "button_label": "Shop all",
+            "link": "shopify://collections/all",
+            "text_color": "#ffffff",
+            "bg_color": "#9a5b2e"
+          }
+        }
+      },
+      "block_order": [
+        "h1",
+        "h2",
+        "h3",
+        "h4"
+      ],
+      "settings": {
+        "full_width": true,
+        "gap": 6,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "values": {
+      "type": "text-columns",
+      "blocks": {
+        "v1": {
+          "type": "column",
+          "settings": {
+            "icon": "leather",
+            "title": "Genuine cowhide",
+            "text": "<p>Full-grain and top-grain leather that ages beautifully.</p>"
+          }
+        },
+        "v2": {
+          "type": "column",
+          "settings": {
+            "icon": "hand",
+            "title": "Handmade",
+            "text": "<p>Cut and stitched by our artisans in Bangladesh.</p>",
+            "link_label": "Our handmade promise",
+            "link": "/pages/handmade-promise"
+          }
+        },
+        "v3": {
+          "type": "column",
+          "settings": {
+            "icon": "truck",
+            "title": "Free US shipping",
+            "text": "<p>On every order over $150.</p>"
+          }
+        },
+        "v4": {
+          "type": "column",
+          "settings": {
+            "icon": "return",
+            "title": "30-day returns",
+            "text": "<p>Not right? Send it back, easily.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "v1",
+        "v2",
+        "v3",
+        "v4"
+      ],
+      "settings": {
+        "heading": "",
+        "align": "center",
+        "image_ratio": "landscape",
+        "alt_bg": false
+      }
+    },
+    "new": {
+      "type": "featured-collection",
+      "settings": {
+        "subheading": "Just in",
+        "heading": "New arrivals",
+        "center_heading": false,
+        "collection": "new-arrivals",
+        "limit": 8,
+        "columns": 4,
+        "mobile_scroll": true,
+        "view_all": true,
+        "alt_bg": false
+      }
+    },
+    "categories": {
+      "type": "collection-list",
+      "blocks": {
+        "c1": {
+          "type": "collection",
+          "settings": {
+            "collection": "womens-bags",
+            "title": "Women's bags",
+            "image": "shopify://shop_images/Original_Cow_Leather_Women_Tote_Bag_Genuine_Leather_Bag_With_Fashion_Model.webp"
+          }
+        },
+        "c2": {
+          "type": "collection",
+          "settings": {
+            "collection": "men",
+            "title": "Men",
+            "image": "shopify://shop_images/hingare-leather-wallet-and-belt-combo.webp"
+          }
+        },
+        "c3": {
+          "type": "collection",
+          "settings": {
+            "collection": "small-leather-goods",
+            "title": "Small leather goods",
+            "image": "shopify://shop_images/hingare-black-leather-card-holder-wallet.webp"
+          }
+        },
+        "c4": {
+          "type": "collection",
+          "settings": {
+            "collection": "accessories",
+            "title": "Accessories",
+            "image": "shopify://shop_images/BC7A7A4D-90F6-47AE-A4B9-BDA04B846CD4.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4"
+      ],
+      "settings": {
+        "heading": "Shop by category",
+        "style": "overlay",
+        "image_ratio": "portrait",
+        "columns": 4,
+        "alt_bg": false
+      }
+    },
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "image": "shopify://shop_images/hingare-heritage-meets-rare-timeline.png",
+        "image_ratio": "natural",
+        "layout": "left",
+        "subheading": "Our story",
+        "heading": "Born in Bangladesh, made for you",
+        "text": "<p>HINGARE started in 2021 with a simple idea: honest leather goods, made by hand. In 2022 we opened our own factory, and today HINGARE USA brings that craft straight to your door.</p>",
+        "button_label": "Read our story",
+        "link": "/pages/our-story-craftsmanship",
+        "button_secondary": true,
+        "alt_bg": true
+      }
+    },
+    "spotlight": {
+      "type": "featured-product",
+      "settings": {
+        "product": "womens-crocodile-pattern-leather-top-handle-handbag-brown",
+        "subheading": "Statement piece",
+        "show_description": true,
+        "show_dynamic": false,
+        "alt_bg": false
+      }
+    },
+    "marquee": {
+      "type": "scrolling-text",
+      "settings": {
+        "text": "Genuine leather \u00b7 Handmade in Bangladesh \u00b7 Built to last",
+        "speed": 40,
+        "size": 1.6,
+        "bg_color": "#1c1a17",
+        "text_color": "#f1ebe1"
+      }
+    },
+    "gifts": {
+      "type": "promo-grid",
+      "blocks": {
+        "g1": {
+          "type": "advanced",
+          "settings": {
+            "image": "shopify://shop_images/leather-gift-guide-him-and-her.png",
+            "width": "12",
+            "height": 640,
+            "subheading": "",
+            "heading": "",
+            "button_label": "",
+            "link": "shopify://collections/all",
+            "text_position": "center",
+            "text_color": "#ffffff",
+            "overlay": 0
+          }
+        }
+      },
+      "block_order": [
+        "g1"
+      ],
+      "settings": {
+        "full_width": false,
+        "gap": 12,
+        "padding_top": 56,
+        "padding_bottom": 24
+      }
+    },
+    "journal": {
+      "type": "blog-posts",
+      "settings": {
+        "heading": "From the journal",
+        "blog": "journal",
+        "limit": 3,
+        "alt_bg": false
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "subheading": "Stay in touch",
+        "heading": "Join the HINGARE list",
+        "text": "<p>New arrivals, leather care tips and early access to offers.</p>",
+        "alt_bg": true
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "values",
+    "new",
+    "categories",
+    "story",
+    "spotlight",
+    "marquee",
+    "gifts",
+    "journal",
+    "newsletter"
+  ]
+}

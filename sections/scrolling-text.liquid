@@ -1,0 +1,30 @@
+<div class="marquee" style="position: relative; --marquee-speed: {{ section.settings.speed }}s; --marquee-size: {{ section.settings.size }}rem; background: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};">
+  <div class="marquee__track" aria-hidden="true">
+    {%- for i in (1..2) -%}
+      {%- for n in (1..4) -%}
+        <span class="marquee__item">{{ section.settings.text }}</span>
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+  {%- if section.settings.link != blank -%}
+    <a href="{{ section.settings.link }}" class="promo-grid__link-cover"><span class="visually-hidden">{{ section.settings.text }}</span></a>
+  {%- else -%}
+    <span class="visually-hidden">{{ section.settings.text }}</span>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Scrolling text",
+  "class": "section-scrolling-text",
+  "settings": [
+    { "type": "text", "id": "text", "label": "Text", "default": "Free shipping on orders over $150" },
+    { "type": "url", "id": "link", "label": "Link" },
+    { "type": "range", "id": "speed", "label": "Speed (lower is faster)", "min": 10, "max": 80, "step": 5, "unit": "s", "default": 35 },
+    { "type": "range", "id": "size", "label": "Text size", "min": 1, "max": 4, "step": 0.2, "unit": "rem", "default": 1.6 },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#faf7f2" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1c1a17" }
+  ],
+  "presets": [ { "name": "Scrolling text" } ]
+}
+{% endschema %}
