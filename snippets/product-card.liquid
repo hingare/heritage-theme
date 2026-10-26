@@ -30,7 +30,7 @@
     endfor
   endif
 -%}
-<div class="product-card" data-reveal>
+<div class="product-card{% if settings.image_hover_zoom %} product-card--zoom{% endif %}{% if settings.product_card_align == 'center' %} product-card--center{% endif %}" data-reveal>
   <a href="{{ product.url }}" class="product-card__media" tabindex="-1" aria-hidden="true">
     <div class="media media--product{% if secondary %} media--has-secondary{% endif %}">
       {%- if product.featured_media -%}
@@ -45,7 +45,7 @@
   </a>
 
   <div class="product-card__badges">
-    {%- if product.available == false -%}
+    {%- if product.available == false and settings.badge_show_sold_out -%}
       <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
     {%- elsif on_sale -%}
       <span class="badge badge--sale">
@@ -57,15 +57,26 @@
         {%- endif -%}
       </span>
     {%- endif -%}
-    {%- for tag in product.tags -%}
-      {%- assign tag_lower = tag | downcase -%}
-      {%- if tag_lower == 'new' or tag_lower == 'badge:new' -%}
-        <span class="badge">{{ 'products.product.new' | t }}</span>
-      {%- endif -%}
-    {%- endfor -%}
+    {%- if settings.badge_show_new -%}
+      {%- for tag in product.tags -%}
+        {%- assign tag_lower = tag | downcase -%}
+        {%- if tag_lower == 'new' or tag_lower == 'badge:new' -%}
+          <span class="badge badge--new">{{ 'products.product.new' | t }}</span>
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
   </div>
 
   {% render 'wishlist-button', product: product, class: 'product-card__wishlist' %}
+
+  {%- if settings.quick_add_enabled and settings.product_card_mobile_add and product.available -%}
+    {%- if product.has_only_default_variant -%}
+      <button type="button" class="product-card__mobile-add" data-quick-add="{{ product.selected_or_first_available_variant.id }}" aria-label="{{ 'products.product.quick_add' | t }}: {{ product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+    {%- else -%}
+      <button type="button" class="product-card__mobile-add" data-quick-view="{{ product.url }}" aria-label="{{ 'products.product.quick_add' | t }}: {{ product.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+    {%- endif -%}
+  {%- endif -%}
 
   {%- if settings.quick_view_enabled or settings.quick_add_enabled -%}
     <div class="product-card__actions">
@@ -87,6 +98,16 @@
       <span class="product-card__vendor">{{ product.vendor }}</span>
     {%- endif -%}
     <a href="{{ product.url }}" class="product-card__title">{{ product.title }}</a>
+    {%- if settings.product_card_rating and product.metafields.reviews.rating.value != blank -%}
+      {%- liquid
+        assign rating = product.metafields.reviews.rating.value
+        assign rating_count = product.metafields.reviews.rating_count.value | default: 0
+      -%}
+      <div class="rating" role="img" aria-label="{{ 'products.product.rating' | t: rating: rating.rating, max: rating.scale_max }}">
+        <span class="rating__stars" style="--rating: {{ rating.rating }}; --rating-max: {{ rating.scale_max }};" aria-hidden="true"></span>
+        {%- if rating_count > 0 -%}<span class="rating__count" aria-hidden="true">({{ rating_count }})</span>{%- endif -%}
+      </div>
+    {%- endif -%}
     {% render 'price', product: product %}
     {%- if swatch_option and swatch_option.values.size > 1 -%}
       <div class="product-card__swatches">

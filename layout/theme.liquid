@@ -77,7 +77,7 @@
     {{ content_for_header }}
   </head>
 
-  <body class="template-{{ template.name | handle }}{% if settings.animations_enabled %} animations-enabled{% endif %}">
+  <body class="template-{{ template.name | handle }}{% if settings.animations_enabled %} animations-enabled{% endif %}{% if settings.page_transition %} page-transition{% endif %}">
     <a class="skip-link visually-hidden" href="#MainContent">{{ 'accessibility.skip_to_content' | t }}</a>
 
     {% sections 'header-group' %}

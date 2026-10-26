@@ -17,19 +17,26 @@
   if compare > price
     assign on_sale = true
   endif
+  if settings.show_currency_code
+    assign price_money = price | money_with_currency
+    assign compare_money = compare | money_with_currency
+  else
+    assign price_money = price | money
+    assign compare_money = compare | money
+  endif
 -%}
 <div class="price{% if large %} price--large{% endif %}">
   {%- if on_sale -%}
     <span class="visually-hidden">{{ 'products.product.sale_price' | t }}</span>
     <span class="price__sale">
       {%- if variant == blank and product.price_varies and large != true -%}
-        {{ 'products.product.from_price' | t: price: price | money }}
+        {{ 'products.product.from_price' | t: price: price_money }}
       {%- else -%}
-        {{ price | money }}
+        {{ price_money }}
       {%- endif -%}
     </span>
     <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
-    <s class="price__compare">{{ compare | money }}</s>
+    <s class="price__compare">{{ compare_money }}</s>
     {%- if show_save -%}
       {%- liquid
         assign savings = compare | minus: price
@@ -37,7 +44,8 @@
           assign percent = savings | times: 100.0 | divided_by: compare | round
           assign save_label = 'products.product.save_percent' | t: percent: percent
         else
-          assign save_label = 'products.product.save' | t: amount: savings | money
+          assign savings_money = savings | money
+          assign save_label = 'products.product.save' | t: amount: savings_money
         endif
       -%}
       <span class="price__save">{{ save_label }}</span>
@@ -45,9 +53,9 @@
   {%- else -%}
     <span class="price__regular">
       {%- if variant == blank and product.price_varies and large != true -%}
-        {{ 'products.product.from_price' | t: price: price | money }}
+        {{ 'products.product.from_price' | t: price: price_money }}
       {%- else -%}
-        {{ price | money }}
+        {{ price_money }}
       {%- endif -%}
     </span>
   {%- endif -%}

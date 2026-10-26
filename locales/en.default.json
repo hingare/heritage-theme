@@ -53,7 +53,8 @@
       "shipping_calculated": "Shipping calculated at checkout.",
       "you_may_also_like": "You may also like",
       "recently_viewed": "Recently viewed",
-      "zoom": "Zoom image"
+      "zoom": "Zoom image",
+      "rating": "{{ rating }} out of {{ max }} stars"
     },
     "pickup": {
       "available_at": "Pickup available at {{ location }}",

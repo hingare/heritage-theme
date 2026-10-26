@@ -109,6 +109,22 @@
         "id": "color_footer_text",
         "label": "Footer text",
         "default": "#e9e1d4"
+      },
+      {
+        "type": "header",
+        "content": "Product tiles"
+      },
+      {
+        "type": "color",
+        "id": "color_tile_bg",
+        "label": "Image background",
+        "info": "Shows behind product photos, useful for cut-out images. Leave empty for none."
+      },
+      {
+        "type": "color",
+        "id": "color_rating_star",
+        "label": "Rating stars",
+        "default": "#c9a24a"
       }
     ]
   },
@@ -238,6 +254,55 @@
         "step": 1,
         "unit": "px",
         "default": 16
+      },
+      {
+        "type": "range",
+        "id": "type_body_line_height",
+        "label": "Body line height",
+        "min": 120,
+        "max": 200,
+        "step": 5,
+        "default": 160,
+        "unit": "%"
+      },
+      {
+        "type": "header",
+        "content": "Navigation"
+      },
+      {
+        "type": "range",
+        "id": "type_nav_size",
+        "label": "Menu text size",
+        "min": 12,
+        "max": 18,
+        "step": 1,
+        "default": 13,
+        "unit": "px"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_nav_uppercase",
+        "label": "Uppercase menu links",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Buttons"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_button_uppercase",
+        "label": "Uppercase button text",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "type_button_spacing",
+        "label": "Button letter spacing",
+        "min": 0,
+        "max": 300,
+        "step": 10,
+        "default": 140
       }
     ]
   },
@@ -275,10 +340,79 @@
         "default": 0
       },
       {
+        "type": "range",
+        "id": "section_spacing",
+        "label": "Space between sections",
+        "min": 24,
+        "max": 120,
+        "step": 4,
+        "default": 72,
+        "unit": "px",
+        "info": "Mobile uses two thirds of this."
+      },
+      {
+        "type": "range",
+        "id": "grid_spacing",
+        "label": "Product grid spacing",
+        "min": 8,
+        "max": 40,
+        "step": 2,
+        "default": 20,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "input_radius",
+        "label": "Input corner radius",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "default": 0,
+        "unit": "px"
+      },
+      {
+        "type": "select",
+        "id": "icon_stroke",
+        "label": "Icon line weight",
+        "default": "16",
+        "options": [
+          {
+            "value": "12",
+            "label": "Thin"
+          },
+          {
+            "value": "16",
+            "label": "Regular"
+          },
+          {
+            "value": "20",
+            "label": "Bold"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Animations",
+    "settings": [
+      {
         "type": "checkbox",
         "id": "animations_enabled",
         "label": "Reveal sections on scroll",
         "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "image_hover_zoom",
+        "label": "Zoom product images on hover",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "page_transition",
+        "label": "Fade pages in",
+        "default": false,
+        "info": "A short fade when each page opens."
       },
       {
         "type": "checkbox",
@@ -353,6 +487,141 @@
         "label": "Swatch option name",
         "default": "Color",
         "info": "Option name used for color swatches"
+      },
+      {
+        "type": "select",
+        "id": "product_card_image_fit",
+        "label": "Image fit",
+        "default": "cover",
+        "options": [
+          {
+            "value": "cover",
+            "label": "Fill the frame"
+          },
+          {
+            "value": "contain",
+            "label": "Show the whole image"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "product_card_align",
+        "label": "Text alignment",
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "product_card_rating",
+        "label": "Show star rating",
+        "default": false,
+        "info": "Reads the standard reviews metafields that review apps like Judge.me and Shopify Product Reviews fill in."
+      },
+      {
+        "type": "checkbox",
+        "id": "product_card_mobile_add",
+        "label": "Show quick add button on mobile",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "swatch_style",
+        "label": "Swatch shape",
+        "default": "circle",
+        "options": [
+          {
+            "value": "circle",
+            "label": "Circle"
+          },
+          {
+            "value": "square",
+            "label": "Square"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Badges",
+    "settings": [
+      {
+        "type": "select",
+        "id": "badge_style",
+        "label": "Badge shape",
+        "default": "square",
+        "options": [
+          {
+            "value": "square",
+            "label": "Square"
+          },
+          {
+            "value": "rounded",
+            "label": "Rounded"
+          },
+          {
+            "value": "pill",
+            "label": "Pill"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "badge_show_sold_out",
+        "label": "Show sold out badge",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "badge_show_new",
+        "label": "Show new badge",
+        "default": true,
+        "info": "Add the tag \"new\" to a product to show it."
+      },
+      {
+        "type": "color",
+        "id": "color_badge_sale_bg",
+        "label": "Sale badge",
+        "default": "#b23a2b"
+      },
+      {
+        "type": "color",
+        "id": "color_badge_sale_text",
+        "label": "Sale badge text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_badge_sold_out_bg",
+        "label": "Sold out badge",
+        "default": "#1c1a17"
+      },
+      {
+        "type": "color",
+        "id": "color_badge_sold_out_text",
+        "label": "Sold out badge text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_badge_new_bg",
+        "label": "New badge",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_badge_new_text",
+        "label": "New badge text",
+        "default": "#1c1a17"
       }
     ]
   },
@@ -399,6 +668,12 @@
             "label": "Page"
           }
         ]
+      },
+      {
+        "type": "url",
+        "id": "cart_empty_link",
+        "label": "Empty cart button link",
+        "info": "Defaults to all products."
       },
       {
         "type": "checkbox",
@@ -451,6 +726,49 @@
     ]
   },
   {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "predictive_search_enabled",
+        "label": "Show results as you type",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "search_unavailable",
+        "label": "Sold out products in results",
+        "default": "last",
+        "options": [
+          {
+            "value": "show",
+            "label": "Show"
+          },
+          {
+            "value": "last",
+            "label": "Show last"
+          },
+          {
+            "value": "hide",
+            "label": "Hide"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Currency",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_currency_code",
+        "label": "Show currency codes",
+        "default": false,
+        "info": "For example $120.00 USD. Helpful when you sell in more than one currency."
+      }
+    ]
+  },
+  {
     "name": "Social media",
     "settings": [
       {
@@ -482,6 +800,31 @@
         "type": "text",
         "id": "social_twitter_link",
         "label": "X (Twitter)"
+      },
+      {
+        "type": "text",
+        "id": "social_snapchat_link",
+        "label": "Snapchat",
+        "placeholder": "https://snapchat.com/add/"
+      },
+      {
+        "type": "text",
+        "id": "social_threads_link",
+        "label": "Threads",
+        "placeholder": "https://threads.net/@"
+      },
+      {
+        "type": "text",
+        "id": "social_linkedin_link",
+        "label": "LinkedIn",
+        "placeholder": "https://linkedin.com/company/"
+      },
+      {
+        "type": "text",
+        "id": "social_whatsapp_link",
+        "label": "WhatsApp",
+        "placeholder": "https://wa.me/",
+        "info": "Your number with country code, for example https://wa.me/8801XXXXXXXXX"
       }
     ]
   },

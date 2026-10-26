@@ -5,7 +5,7 @@ const RECENT_KEY = 'heritage-recent-searches';
 
 // Live search for the header overlay: suggestions, products and collections as you type,
 // recent and popular searches when the box is empty, and full keyboard control.
-export default function SearchPanel({ popular, strings }) {
+export default function SearchPanel({ popular, strings, unavailable = 'last' }) {
   const [q, setQ] = useState('');
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ export default function SearchPanel({ popular, strings }) {
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const data = await getJSON(`/search/suggest.json?q=${encodeURIComponent(term)}&resources[type]=product,collection,query,page&resources[limit]=6&resources[options][unavailable_products]=last`, controller.signal);
+        const data = await getJSON(url(`/search/suggest.json?q=${encodeURIComponent(term)}&resources[type]=product,collection,query,page&resources[limit]=6&resources[options][unavailable_products]=${unavailable}`), controller.signal);
         const r = data.resources.results;
         setResults({
           queries: (r.queries || []).slice(0, 5),

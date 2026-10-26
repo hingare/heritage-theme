@@ -31,6 +31,28 @@
     --button-radius: {{ settings.button_radius }}px;
     --card-radius: {{ settings.card_radius }}px;
     --page-width: {{ settings.page_width }}px;
+    --body-line-height: {{ settings.type_body_line_height | default: 160 | divided_by: 100.0 }};
+    --nav-size: {{ settings.type_nav_size | default: 13 }}px;
+    --nav-transform: {% if settings.type_nav_uppercase %}uppercase{% else %}none{% endif %};
+    --nav-spacing: {% if settings.type_nav_uppercase %}0.12em{% else %}0.02em{% endif %};
+    --button-transform: {% if settings.type_button_uppercase %}uppercase{% else %}none{% endif %};
+    --button-spacing: {{ settings.type_button_spacing | default: 140 | divided_by: 1000.0 }}em;
+    --section-spacing: {{ settings.section_spacing | default: 72 }}px;
+    --section-spacing-mobile: {{ settings.section_spacing | default: 72 | times: 2 | divided_by: 3 }}px;
+    --grid-gap: {{ settings.grid_spacing | default: 20 }}px;
+    --input-radius: {{ settings.input_radius }}px;
+    --icon-stroke: {{ settings.icon_stroke | default: '16' | divided_by: 10.0 }};
+    --badge-radius: {% case settings.badge_style %}{% when 'rounded' %}4px{% when 'pill' %}999px{% else %}0{% endcase %};
+    --badge-sale-bg: {{ settings.color_badge_sale_bg | default: settings.color_sale }};
+    --badge-sale-text: {{ settings.color_badge_sale_text | default: '#ffffff' }};
+    --badge-sold-out-bg: {{ settings.color_badge_sold_out_bg | default: settings.color_body_text }};
+    --badge-sold-out-text: {{ settings.color_badge_sold_out_text | default: settings.color_body_bg }};
+    --badge-new-bg: {{ settings.color_badge_new_bg | default: settings.color_body_bg }};
+    --badge-new-text: {{ settings.color_badge_new_text | default: settings.color_body_text }};
+    --tile-bg: {% if settings.color_tile_bg != blank %}{{ settings.color_tile_bg }}{% else %}transparent{% endif %};
+    --star-color: {{ settings.color_rating_star | default: '#c9a24a' }};
+    --card-image-fit: {{ settings.product_card_image_fit | default: 'cover' }};
+    --swatch-radius: {% if settings.swatch_style == 'square' %}3px{% else %}50%{% endif %};
     --product-image-ratio: {% case settings.product_card_ratio %}{% when 'square' %}1{% when 'portrait' %}0.8{% when 'tall' %}0.6667{% else %}1{% endcase %};
   }
   {%- for scheme in settings.color_schemes %}
