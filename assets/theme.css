@@ -885,3 +885,9 @@ svg[viewBox="0 0 24 24"][stroke="currentColor"] { stroke-width: var(--icon-strok
 @media (max-width: 749px) { .collection-promo { grid-column: span min(var(--promo-span, 1), var(--cols-mobile, 2)); min-height: 240px; } .collection-promo__content { padding: 1rem; } }
 .subcollections__row > a { margin: 0; }
 @media (min-width: 750px) { .subcollections__row > a:first-child { margin-left: auto; } .subcollections__row > a:last-child { margin-right: auto; } }
+@media (max-width: 749px) {
+  .site-footer__grid { row-gap: 0; }
+  .site-footer__grid > * { padding: 1.25rem 0; }
+  .site-footer__grid > :has(> .site-footer__block--collapsible) { padding: 0; }
+  .site-footer__grid > :first-child { padding-top: 0; }
+}
