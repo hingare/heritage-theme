@@ -3,6 +3,8 @@
   - product (required), section (required)
   - show_quantity: boolean
   - show_dynamic: boolean (dynamic checkout buttons)
+  - show_installments: boolean (Shop Pay installments message, follows the selected variant)
+  - show_recipient: boolean (gift card recipient form, gift cards only)
 {%- endcomment -%}
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
@@ -10,12 +12,41 @@
 -%}
 {%- form 'product', product, id: form_id, data-product-form: 'true', novalidate: 'novalidate' -%}
   <input type="hidden" name="id" value="{{ current_variant.id }}">
+  {%- if show_installments -%}
+    <div class="product-form__installments">{{ form | payment_terms }}</div>
+  {%- endif -%}
+  {%- if product.gift_card? and show_recipient -%}
+    <details class="gift-recipient" data-gift-recipient>
+      <summary class="gift-recipient__toggle">
+        <input type="checkbox" name="properties[__shopify_send_gift_card_to_recipient]" value="on" tabindex="-1" aria-hidden="true">
+        {{ 'products.gift_card.send_to_recipient' | t }}
+      </summary>
+      <div class="gift-recipient__fields">
+        <div class="field">
+          <label for="Recipient-email-{{ section.id }}">{{ 'products.gift_card.email' | t }}</label>
+          <input class="input" id="Recipient-email-{{ section.id }}" type="email" name="properties[Recipient email]" autocomplete="email" disabled>
+        </div>
+        <div class="field">
+          <label for="Recipient-name-{{ section.id }}">{{ 'products.gift_card.name' | t }}</label>
+          <input class="input" id="Recipient-name-{{ section.id }}" type="text" name="properties[Recipient name]" disabled>
+        </div>
+        <div class="field">
+          <label for="Recipient-message-{{ section.id }}">{{ 'products.gift_card.message' | t }}</label>
+          <textarea class="input" id="Recipient-message-{{ section.id }}" name="properties[Message]" rows="3" maxlength="200" disabled></textarea>
+        </div>
+        <div class="field">
+          <label for="Recipient-date-{{ section.id }}">{{ 'products.gift_card.send_on' | t }}</label>
+          <input class="input" id="Recipient-date-{{ section.id }}" type="date" name="properties[Send on]" pattern="\d{4}-\d{2}-\d{2}" disabled>
+        </div>
+      </div>
+    </details>
+  {%- endif -%}
   <div class="product-form__buttons">
     <div class="product-form__row">
       {%- if show_quantity -%}
         <div class="quantity">
           <button type="button" data-qty-btn="minus" aria-label="-">{% render 'icon', name: 'minus' %}</button>
-          <input type="number" name="quantity" min="1" value="1" aria-label="{{ 'products.product.quantity' | t }}">
+          <input type="number" name="quantity" min="{{ current_variant.quantity_rule.min | default: 1 }}"{% if current_variant.quantity_rule.max %} max="{{ current_variant.quantity_rule.max }}"{% endif %} step="{{ current_variant.quantity_rule.increment | default: 1 }}" value="{{ current_variant.quantity_rule.min | default: 1 }}" aria-label="{{ 'products.product.quantity' | t }}">
           <button type="button" data-qty-btn="plus" aria-label="+">{% render 'icon', name: 'plus' %}</button>
         </div>
       {%- endif -%}

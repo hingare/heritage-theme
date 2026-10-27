@@ -54,13 +54,26 @@
       "you_may_also_like": "You may also like",
       "recently_viewed": "Recently viewed",
       "zoom": "Zoom image",
-      "rating": "{{ rating }} out of {{ max }} stars"
+      "rating": "{{ rating }} out of {{ max }} stars",
+      "rating_count": {
+        "one": "{{ count }} review",
+        "other": "{{ count }} reviews"
+      },
+      "rating_none": "No reviews yet",
+      "on_sale": "Sale"
     },
     "pickup": {
       "available_at": "Pickup available at {{ location }}",
       "unavailable_at": "Pickup currently unavailable at {{ location }}",
       "view_stores": "Check other stores",
       "unavailable": "Unavailable"
+    },
+    "gift_card": {
+      "send_to_recipient": "I want to send this as a gift",
+      "email": "Recipient email",
+      "name": "Recipient name (optional)",
+      "message": "Message (optional)",
+      "send_on": "Send on (optional)"
     }
   },
   "collections": {
@@ -76,7 +89,8 @@
     "from": "From",
     "to": "To",
     "load_more": "Load more",
-    "showing": "Showing {{ shown }} of {{ total }}"
+    "showing": "Showing {{ shown }} of {{ total }}",
+    "subcollections": "Subcollections"
   },
   "cart": {
     "title": "Your cart",
@@ -175,5 +189,12 @@
     "result_subheading": "Our picks for you",
     "result_heading": "We think you'll love these",
     "no_match": "No products to show yet. Try different answers."
+  },
+  "contact": {
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send",
+    "success": "Thanks for your message. We'll get back to you soon."
   }
 }

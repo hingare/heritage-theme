@@ -1,0 +1,17 @@
+{%- comment -%}
+  Promotion tile shown inside the collection grid.
+  - block: the main-collection promo block
+{%- endcomment -%}
+<div class="collection-promo" style="--promo-span: {{ block.settings.span }}; --promo-bg: {{ block.settings.bg_color }}; --promo-text: {{ block.settings.text_color }}; --overlay-opacity: {{ block.settings.overlay | divided_by: 100.0 }};" {{ block.shopify_attributes }}>
+  {%- if block.settings.image != blank -%}
+    <div class="collection-promo__media">
+      {{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '400, 600, 900, 1200', sizes: '(min-width: 990px) 33vw, 50vw', alt: block.settings.image.alt }}
+    </div>
+  {%- endif -%}
+  {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="promo-grid__link-cover" aria-label="{{ block.settings.heading | escape }}"></a>{%- endif -%}
+  <div class="collection-promo__content">
+    {%- if block.settings.subheading != blank -%}<span class="subheading">{{ block.settings.subheading }}</span>{%- endif -%}
+    {%- if block.settings.heading != blank -%}<p class="collection-promo__heading h3">{{ block.settings.heading }}</p>{%- endif -%}
+    {%- if block.settings.button_label != blank -%}<span class="btn btn--small btn--light">{{ block.settings.button_label }}</span>{%- endif -%}
+  </div>
+</div>

@@ -59,4 +59,13 @@
       {%- endif -%}
     </span>
   {%- endif -%}
+  {%- if target.unit_price_measurement and large -%}
+    <span class="price__unit">
+      {%- liquid
+        assign unit_money = target.unit_price | money
+        assign ref = target.unit_price_measurement.reference_value
+      -%}
+      {{ unit_money }}/{% if ref != 1 %}{{ ref }}{% endif %}{{ target.unit_price_measurement.reference_unit }}
+    </span>
+  {%- endif -%}
 </div>

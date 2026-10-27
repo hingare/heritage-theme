@@ -244,9 +244,11 @@
       const btn = e.target.closest('[data-qty-btn]');
       if (btn) {
         const input = btn.parentElement.querySelector('input');
-        const step = btn.dataset.qtyBtn === 'plus' ? 1 : -1;
+        const inc = parseInt(input.step, 10) || 1;
+        const step = btn.dataset.qtyBtn === 'plus' ? inc : -inc;
         const min = parseInt(input.min || '0', 10);
-        input.value = Math.max(min, (parseInt(input.value, 10) || 0) + step);
+        const max = input.max ? parseInt(input.max, 10) : Infinity;
+        input.value = Math.min(max, Math.max(min, (parseInt(input.value, 10) || 0) + step));
         input.dispatchEvent(new Event('change', { bubbles: true }));
         return;
       }
@@ -298,6 +300,19 @@
     const picker = root.querySelector('[data-variant-picker]');
 
     initGallery(root);
+
+    // Reopen the "Ask a question" popup after its form posts, so the success or error message is seen.
+    const posted = root.querySelector('.product-question .form-success, .product-question .form-error');
+    const postedPanel = posted?.closest('.drawer');
+    if (postedPanel) openPanel(postedPanel);
+
+    // Gift card recipient: the hidden checkbox and fields follow the open state so Shopify only gets them when used.
+    const recipient = root.querySelector('[data-gift-recipient]');
+    recipient?.addEventListener('toggle', () => {
+      const on = recipient.open;
+      recipient.querySelector('input[type=checkbox]').checked = on;
+      $$('.gift-recipient__fields [name]', recipient).forEach((f) => { f.disabled = !on; });
+    });
 
     const selectedOptions = () => {
       if (!picker) return null;
@@ -393,12 +408,18 @@
 
     const setActive = (index) => {
       thumbs.forEach((t, i) => t.classList.toggle('is-active', i === index));
-      thumbs[index]?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      // Scroll only the thumbnail strip; scrollIntoView would also move the page while swiping.
+      const thumb = thumbs[index];
+      const strip = thumb?.parentElement;
+      if (thumb && strip) {
+        if (strip.scrollHeight > strip.clientHeight + 1) strip.scrollTo({ top: thumb.offsetTop - strip.offsetTop - strip.clientHeight / 2 + thumb.offsetHeight / 2, behavior: 'smooth' });
+        else strip.scrollTo({ left: thumb.offsetLeft - strip.offsetLeft - strip.clientWidth / 2 + thumb.offsetWidth / 2, behavior: 'smooth' });
+      }
     };
     const goTo = (index) => {
       const slide = slides[index];
       if (!slide) return;
-      if (gallery.classList.contains('product-gallery--stacked') && window.innerWidth >= 990) {
+      if ((gallery.classList.contains('product-gallery--stacked') || gallery.classList.contains('product-gallery--column')) && window.innerWidth >= 990) {
         slide.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
         track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior: 'smooth' });
@@ -513,6 +534,9 @@
           const fresh = doc.querySelector(sel);
           $$(sel).forEach((el) => { if (fresh) el.innerHTML = fresh.innerHTML; });
         });
+        const freshCount = doc.querySelector('[data-filter-count]');
+        $$('[data-filter-count]').forEach((el) => { if (freshCount) { el.textContent = freshCount.textContent; el.hidden = freshCount.hidden; } });
+        initPriceRanges();
         window.history.replaceState({}, '', url);
         applyGridCols();
         initReveal(container);
@@ -534,6 +558,20 @@
     };
 
     const onFilterChange = debounce(() => render(collectParams()), 400);
+
+    // Price slider: two range inputs drive the From/To number fields, which carry the filter values.
+    container.addEventListener('input', (e) => {
+      const range = e.target.closest('[data-price-range]');
+      if (!range) return;
+      const lo = $('[data-range-min]', range);
+      const hi = $('[data-range-max]', range);
+      if (Number(lo.value) > Number(hi.value)) (e.target === lo ? lo : hi).value = e.target === lo ? hi.value : lo.value;
+      const fields = $$('input[type=number]', range.nextElementSibling);
+      if (fields[0]) fields[0].value = Number(lo.value) > 0 ? lo.value : '';
+      if (fields[1]) fields[1].value = Number(hi.value) < Number(hi.max) ? hi.value : '';
+      range.style.setProperty('--lo', `${(lo.value / lo.max) * 100}%`);
+      range.style.setProperty('--hi', `${(hi.value / hi.max) * 100}%`);
+    });
     container.addEventListener('change', (e) => {
       if (e.target.closest('[data-facets-form]') || e.target.matches('[data-sort-select]')) onFilterChange();
     });
@@ -548,6 +586,16 @@
         render(url.searchParams.toString());
       }
     });
+
+    function initPriceRanges() {
+      $$('[data-price-range]', container).forEach((range) => {
+        const lo = $('[data-range-min]', range);
+        const hi = $('[data-range-max]', range);
+        range.style.setProperty('--lo', `${(lo.value / lo.max) * 100}%`);
+        range.style.setProperty('--hi', `${(hi.value / hi.max) * 100}%`);
+      });
+    }
+    initPriceRanges();
 
     // Grid density toggle
     const key = 'heritage-grid-cols';

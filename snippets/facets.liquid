@@ -7,7 +7,16 @@
   {%- if results.terms -%}<input type="hidden" name="q" value="{{ results.terms | escape }}">{%- endif -%}
   <div data-facets-body>
     {%- for filter in results.filters -%}
-      <details class="facets__group" {% if forloop.index <= 3 or filter.active_values.size > 0 %}open{% endif %}>
+      {%- liquid
+        assign group_open = false
+        if collapsed != true and forloop.index <= 3
+          assign group_open = true
+        endif
+        if filter.active_values.size > 0 or filter.min_value.value or filter.max_value.value
+          assign group_open = true
+        endif
+      -%}
+      <details class="facets__group"{% if group_open %} open{% endif %}>
         <summary class="facets__summary">
           <span>{{ filter.label }}{% if filter.active_values.size > 0 %} ({{ filter.active_values.size }}){% endif %}</span>
           {% render 'icon', name: 'chevron-down' %}
@@ -19,6 +28,10 @@
               assign max_value = filter.max_value.value | divided_by: 100.0 | round
               assign range_max = filter.range_max | divided_by: 100.0 | ceil
             -%}
+            <div class="facets__range" data-price-range>
+              <input type="range" min="0" max="{{ range_max }}" step="1" value="{{ min_value | default: 0 }}" aria-label="{{ 'collections.from' | t }}" data-range-min tabindex="-1">
+              <input type="range" min="0" max="{{ range_max }}" step="1" value="{% if filter.max_value.value %}{{ max_value }}{% else %}{{ range_max }}{% endif %}" aria-label="{{ 'collections.to' | t }}" data-range-max tabindex="-1">
+            </div>
             <div class="facets__price">
               <div class="field">
                 <label for="Filter-{{ filter.param_name }}-gte">{{ 'collections.from' | t }} {{ cart.currency.symbol }}</label>

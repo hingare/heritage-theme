@@ -5,11 +5,27 @@
   endif
   assign sort_by = collection.sort_by | default: collection.default_sort_by
   assign clear_url = collection.url | append: '?sort_by=' | append: sort_by
+  assign active_count = 0
+  for filter in collection.filters
+    assign active_count = active_count | plus: filter.active_values.size
+    if filter.type == 'price_range' and filter.min_value.value or filter.max_value.value
+      assign active_count = active_count | plus: 1
+    endif
+  endfor
+  assign filter_drawer = false
+  if section.settings.filter_layout == 'drawer'
+    assign filter_drawer = true
+  endif
+  assign hero_class = 'collection-hero--' | append: section.settings.hero_height | append: ' collection-hero--' | append: section.settings.hero_align
+  assign sub_menu = section.settings.subcollections_menu
+  if sub_menu == blank and section.settings.show_subcollections
+    assign sub_menu = linklists[collection.handle]
+  endif
 -%}
 
 {%- if section.settings.show_header -%}
   {%- if section.settings.show_image and collection.image -%}
-    <div class="collection-hero">
+    <div class="collection-hero {{ hero_class }}" style="--hero-overlay: {{ section.settings.hero_overlay | divided_by: 100.0 }};">
       <div class="collection-hero__media">
         {{ collection.image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '100vw', widths: '750, 1100, 1500, 2000, 2400', alt: collection.title }}
       </div>
@@ -28,13 +44,24 @@
   {%- endif -%}
 {%- endif -%}
 
-<div class="page-width" data-collection-container data-section-id="{{ section.id }}" style="padding-bottom: 4rem;">
+{%- if section.settings.show_subcollections and sub_menu.links.size > 0 -%}
+  <nav class="page-width subcollections" aria-label="{{ 'collections.subcollections' | t }}">
+    <div class="tab-row subcollections__row">
+      {%- for link in sub_menu.links -%}
+        <a href="{{ link.url }}" class="subcollections__pill{% if link.active %} is-active{% endif %}">{{ link.title }}</a>
+      {%- endfor -%}
+    </div>
+  </nav>
+{%- endif -%}
+
+<div class="page-width{% if filter_drawer %} collection--filter-drawer{% endif %}" data-collection-container data-section-id="{{ section.id }}" style="padding-bottom: 4rem;">
   {%- paginate collection.products by section.settings.per_page -%}
     <div class="collection-toolbar">
       <div class="collection-toolbar__left" style="display:flex;align-items:center;gap:1.25rem;">
         {%- if show_filters -%}
           <button type="button" class="collection-toolbar__filter-btn collection-toolbar__filter-btn--mobile" data-open="FilterDrawer">
-            {% render 'icon', name: 'filter' %} {{ 'collections.filter' | t }}
+            {% render 'icon', name: 'filter' %}<span>{{ 'collections.filter' | t }}</span>
+            <span class="collection-toolbar__filter-count" data-filter-count{% if active_count == 0 %} hidden{% endif %}>{{ active_count }}</span>
           </button>
         {%- endif -%}
         <span class="collection-toolbar__count" data-collection-count>{{ 'collections.products_count' | t: count: collection.products_count }}</span>
@@ -65,7 +92,7 @@
             <button type="button" class="drawer__close" data-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
           </div>
           <div class="drawer__body">
-            {% render 'facets', results: collection %}
+            {% render 'facets', results: collection, collapsed: section.settings.filters_collapsed %}
           </div>
           <div class="drawer__footer">
             <button type="button" class="btn btn--full" data-close>{{ 'collections.apply' | t }}</button>
@@ -85,6 +112,14 @@
                     assign lazy = false
                   endif
                 -%}
+                {%- if paginate.current_page == 1 and active_count == 0 -%}
+                  {%- assign card_index = forloop.index -%}
+                  {%- for block in section.blocks -%}
+                    {%- if block.settings.position == card_index -%}
+                      {%- render 'collection-promo', block: block -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
                 {% render 'product-card', product: product, lazy: lazy %}
               {%- endfor -%}
             </div>
@@ -123,6 +158,12 @@
     { "type": "checkbox", "id": "show_header", "label": "Show collection title", "default": true },
     { "type": "checkbox", "id": "show_image", "label": "Show collection image as banner", "default": true },
     { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
+    { "type": "select", "id": "hero_height", "label": "Banner height", "default": "medium", "options": [ { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "hero_align", "label": "Banner text position", "default": "left", "options": [ { "value": "left", "label": "Bottom left" }, { "value": "center", "label": "Center" } ] },
+    { "type": "range", "id": "hero_overlay", "label": "Banner overlay opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 35 },
+    { "type": "header", "content": "Subcollections" },
+    { "type": "checkbox", "id": "show_subcollections", "label": "Show subcollection links", "default": true, "info": "Uses a menu with the same handle as the collection (e.g. a menu called \"womens-bags\"), or the menu picked below." },
+    { "type": "link_list", "id": "subcollections_menu", "label": "Menu" },
     { "type": "header", "content": "Products" },
     { "type": "range", "id": "per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
     { "type": "select", "id": "pagination_type", "label": "Pagination", "default": "load_more", "options": [ { "value": "numbers", "label": "Page numbers" }, { "value": "load_more", "label": "Load more button" }, { "value": "infinite", "label": "Infinite scroll" } ] },
@@ -130,8 +171,25 @@
     { "type": "select", "id": "columns_mobile", "label": "Products per row (mobile)", "default": "2", "options": [ { "value": "1", "label": "1" }, { "value": "2", "label": "2" } ] },
     { "type": "header", "content": "Filtering and sorting" },
     { "type": "checkbox", "id": "enable_filtering", "label": "Enable filtering", "default": true, "info": "Customize filters with the Search & Discovery app" },
+    { "type": "select", "id": "filter_layout", "label": "Filter layout (desktop)", "default": "sidebar", "options": [ { "value": "sidebar", "label": "Sidebar" }, { "value": "drawer", "label": "Drawer" } ], "info": "Filters always open in a drawer on mobile." },
+    { "type": "checkbox", "id": "filters_collapsed", "label": "Collapse filter groups", "default": false },
     { "type": "checkbox", "id": "enable_sorting", "label": "Enable sorting", "default": true },
     { "type": "checkbox", "id": "enable_grid_toggle", "label": "Show grid size toggle", "default": true }
+  ],
+  "blocks": [
+    { "type": "promo", "name": "Promotion tile", "settings": [
+      { "type": "paragraph", "content": "Shows inside the product grid on the first page, when no filters are used." },
+      { "type": "range", "id": "position", "label": "Position in grid", "min": 1, "max": 24, "step": 1, "default": 3 },
+      { "type": "select", "id": "span", "label": "Width", "default": "1", "options": [ { "value": "1", "label": "1 product" }, { "value": "2", "label": "2 products" } ] },
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "text", "id": "subheading", "label": "Subheading" },
+      { "type": "text", "id": "heading", "label": "Heading", "default": "Made by hand" },
+      { "type": "text", "id": "button_label", "label": "Button label", "default": "Learn more" },
+      { "type": "url", "id": "link", "label": "Link" },
+      { "type": "color", "id": "bg_color", "label": "Background color", "default": "#1c1a17" },
+      { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+      { "type": "range", "id": "overlay", "label": "Image overlay opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 30 }
+    ] }
   ]
 }
 {% endschema %}
