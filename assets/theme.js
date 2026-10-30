@@ -48,6 +48,27 @@
     if (restoreFocus && lastFocus) lastFocus.focus();
   }
 
+  // Keep the desktop menu on one line: tighten spacing step by step, then shrink the search box.
+  function fitNav() {
+    $$('.site-nav').forEach((nav) => {
+      const header = nav.closest('.site-header');
+      const levels = ['fit-1', 'fit-2', 'fit-3', 'fit-4', 'fit-5'];
+      const set = (n) => levels.forEach((c, i) => {
+        nav.classList.toggle(c, i < n && c !== 'fit-4');
+        if (c === 'fit-4') header?.classList.toggle('nav-fit-4', i < n);
+      });
+      set(0);
+      if (window.innerWidth < 990 || !nav.offsetParent) return;
+      const fits = () => $$(':scope > .site-nav__item', nav).reduce((w, li) => w + li.offsetWidth, 0) <= nav.clientWidth + 1;
+      for (let n = 1; n <= levels.length && !fits(); n += 1) set(n);
+    });
+  }
+  let fitTimer;
+  window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitNav, 120); });
+  document.fonts?.ready.then(fitNav);
+  fitNav();
+  document.addEventListener('shopify:section:load', fitNav);
+
   document.addEventListener('click', (e) => {
     const opener = e.target.closest('[data-open]');
     if (opener) {
