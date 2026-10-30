@@ -196,5 +196,16 @@
     "message": "Message",
     "send": "Send",
     "success": "Thanks for your message. We'll get back to you soon."
+  },
+  "video": {
+    "play": "Play video",
+    "pause": "Pause video",
+    "sound_on": "Turn sound on",
+    "sound_off": "Turn sound off",
+    "music_on": "Play background music",
+    "music_off": "Stop background music",
+    "watch": "Watch video",
+    "close": "Close video",
+    "shop": "Shop now"
   }
 }

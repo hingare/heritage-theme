@@ -1,0 +1,310 @@
+{{ 'video-sections.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'video-sections.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign s = section.settings
+  assign first_loading = 'lazy'
+  if section.index <= 2
+    assign first_loading = 'eager'
+  endif
+-%}
+<video-slideshow
+  class="vslideshow vslideshow--{{ s.height }} vslideshow--mobile-{{ s.mobile_height }} vslideshow--{{ s.transition }}{% if s.show_controls_hover %} vslideshow--controls-hover{% endif %}"
+  data-video-end="{{ s.video_end }}"
+  data-autoplay="{{ s.autoplay_images }}"
+  data-speed="{{ s.speed }}"
+  data-music-first-click="{{ s.music_first_click }}"
+  data-music-volume="{{ s.music_volume | divided_by: 100.0 }}"
+  role="region"
+  aria-roledescription="carousel"
+  aria-label="{{ s.accessibility_label | escape }}"
+  style="--vs-overlay-color: {{ s.overlay_color }}; --vs-ui-color: {{ s.ui_color }};"
+>
+  <div class="vslideshow__track">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign b = block.settings
+        assign kind = 'image'
+        if b.video != blank
+          assign kind = 'shopify'
+        elsif b.video_url != blank
+          assign kind = b.video_url.type
+        elsif b.video_mp4_url != blank
+          assign kind = 'mp4'
+        endif
+        assign h_class = ''
+        if b.text_align == 'center'
+          assign h_class = 'vslide__content--h-center'
+        elsif b.text_align == 'right'
+          assign h_class = 'vslide__content--h-right'
+        endif
+        assign loop_attr = false
+        if s.video_end == 'loop' or section.blocks.size == 1
+          assign loop_attr = true
+        endif
+        assign media_loading = 'lazy'
+        if forloop.first
+          assign media_loading = first_loading
+        endif
+      -%}
+      <div
+        class="vslide{% if forloop.first %} is-active{% endif %}"
+        data-kind="{{ kind }}"
+        data-index="{{ forloop.index0 }}"
+        style="--overlay-opacity: {{ b.overlay | divided_by: 100.0 }}; color: {{ b.text_color }};"
+        role="group"
+        aria-roledescription="slide"
+        aria-label="{{ forloop.index }} / {{ section.blocks.size }}"
+        {{ block.shopify_attributes }}
+      >
+        <div class="vslide__media">
+          {%- comment -%} Poster / image slide {%- endcomment -%}
+          <div class="vslide__poster{% if b.image_mobile != blank %} vslide__poster--has-mobile{% endif %}">
+            {%- if b.image != blank -%}
+              {{ b.image | image_url: width: 2400 | image_tag: loading: media_loading, sizes: '100vw', widths: '750, 1100, 1500, 1900, 2400', alt: b.image.alt, class: 'vslide__img vslide__img--desktop' }}
+            {%- elsif kind == 'shopify' and b.video.preview_image -%}
+              {{ b.video.preview_image | image_url: width: 1920 | image_tag: loading: media_loading, sizes: '100vw', alt: '', class: 'vslide__img vslide__img--desktop' }}
+            {%- elsif kind == 'youtube' -%}
+              {%- # theme-check-disable RemoteAsset -%}
+              <img class="vslide__img vslide__img--desktop" src="https://i.ytimg.com/vi/{{ b.video_url.id }}/maxresdefault.jpg" alt="" loading="{{ media_loading }}" width="1280" height="720">
+              {%- # theme-check-enable RemoteAsset -%}
+            {%- elsif kind == 'image' -%}
+              {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg vslide__img' }}
+            {%- endif -%}
+            {%- if b.image_mobile != blank -%}
+              {{ b.image_mobile | image_url: width: 1100 | image_tag: loading: 'lazy', sizes: '100vw', widths: '550, 750, 1100', alt: b.image_mobile.alt, class: 'vslide__img vslide__img--mobile' }}
+            {%- endif -%}
+          </div>
+
+          {%- case kind -%}
+            {%- when 'shopify' -%}
+              <div class="vslide__video{% if b.video_mobile != blank %} vslide__video--desktop{% endif %}">
+                {{ b.video | video_tag: muted: true, playsinline: true, loop: loop_attr, preload: 'none', controls: false, image_size: '1920x', class: 'vslide__el' }}
+              </div>
+              {%- if b.video_mobile != blank -%}
+                <div class="vslide__video vslide__video--mobile">
+                  {{ b.video_mobile | video_tag: muted: true, playsinline: true, loop: loop_attr, preload: 'none', controls: false, image_size: '1100x', class: 'vslide__el' }}
+                </div>
+              {%- endif -%}
+            {%- when 'mp4' -%}
+              <div class="vslide__video">
+                <video class="vslide__el" src="{{ b.video_mp4_url }}" muted playsinline preload="none"{% if loop_attr %} loop{% endif %}></video>
+              </div>
+            {%- when 'youtube' -%}
+              {%- capture yt_src -%}https://www.youtube-nocookie.com/embed/{{ b.video_url.id }}?enablejsapi=1&autoplay=0&mute=1&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&origin={{ request.origin | url_encode }}{% if loop_attr %}&loop=1&playlist={{ b.video_url.id }}{% endif %}{%- endcapture -%}
+              <div class="vslide__video vslide__video--embed">
+                <iframe class="vslide__el" data-src="{{ yt_src }}" title="{{ b.heading | default: 'Video' | escape }}" allow="autoplay; encrypted-media; picture-in-picture" tabindex="-1"></iframe>
+              </div>
+            {%- when 'vimeo' -%}
+              {%- capture vm_src -%}https://player.vimeo.com/video/{{ b.video_url.id }}?autoplay=0&muted=1&controls=0&title=0&byline=0&portrait=0&dnt=1&autopause=0&playsinline=1{% if loop_attr %}&loop=1{% endif %}{%- endcapture -%}
+              <div class="vslide__video vslide__video--embed">
+                <iframe class="vslide__el" data-src="{{ vm_src }}" title="{{ b.heading | default: 'Video' | escape }}" allow="autoplay; fullscreen; picture-in-picture" tabindex="-1"></iframe>
+              </div>
+          {%- endcase -%}
+        </div>
+        <div class="vslide__overlay"></div>
+
+        {%- if b.link != blank and b.button_label == blank -%}
+          <a href="{{ b.link }}" class="vslide__cover-link" aria-label="{{ b.heading | default: b.subheading | escape }}"></a>
+        {%- endif -%}
+
+        <div class="page-width vslide__content vslide__content--{{ b.text_position }} {{ h_class }}">
+          <div class="vslide__text" style="--text-width: {{ b.text_width }}px;">
+            {%- if b.subheading != blank -%}<span class="subheading">{{ b.subheading }}</span>{%- endif -%}
+            {%- if b.heading != blank -%}<h2 class="vslide__heading vslide__heading--{{ b.heading_size }}">{{ b.heading }}</h2>{%- endif -%}
+            {%- if b.text != blank -%}<div class="vslide__subtext">{{ b.text }}</div>{%- endif -%}
+            {%- liquid
+              assign popup_source = false
+              if b.show_watch_button
+                if b.popup_video_url != blank or kind != 'image'
+                  assign popup_source = true
+                endif
+              endif
+            -%}
+            {%- if b.button_label != blank or b.button_label_2 != blank or popup_source -%}
+              <div class="vslide__buttons">
+                {%- if b.button_label != blank -%}
+                  <a href="{{ b.link | default: '#' }}" class="btn btn--light">{{ b.button_label }}</a>
+                {%- endif -%}
+                {%- if b.button_label_2 != blank -%}
+                  <a href="{{ b.link_2 | default: '#' }}" class="btn btn--secondary" style="color: inherit;">{{ b.button_label_2 }}</a>
+                {%- endif -%}
+                {%- if popup_source -%}
+                  {%- liquid
+                    assign p_kind = kind
+                    assign p_id = ''
+                    assign p_src = ''
+                    if b.popup_video_url != blank
+                      assign p_kind = b.popup_video_url.type
+                      assign p_id = b.popup_video_url.id
+                    elsif kind == 'youtube' or kind == 'vimeo'
+                      assign p_id = b.video_url.id
+                    elsif kind == 'shopify'
+                      assign p_src = b.video.sources | where: 'mime_type', 'video/mp4' | map: 'url' | first
+                      if p_src == blank
+                        assign p_src = b.video.sources.first.url
+                      endif
+                    elsif kind == 'mp4'
+                      assign p_src = b.video_mp4_url
+                    endif
+                  -%}
+                  <button type="button" class="vslide__watch" data-vs-watch data-kind="{{ p_kind }}" data-id="{{ p_id }}" data-src="{{ p_src }}">
+                    <span class="vslide__watch-icon">{% render 'icon', name: 'play' %}</span>
+                    <span>{% if b.watch_label != blank %}{{ b.watch_label }}{% else %}{{ 'video.watch' | t }}{% endif %}</span>
+                  </button>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+
+  {%- if section.blocks.size > 1 and s.show_arrows -%}
+    <button type="button" class="vslideshow__arrow vslideshow__arrow--prev" data-vs-prev aria-label="{{ 'general.previous' | t }}">{% render 'icon', name: 'chevron-left' %}</button>
+    <button type="button" class="vslideshow__arrow vslideshow__arrow--next" data-vs-next aria-label="{{ 'general.next' | t }}">{% render 'icon', name: 'chevron-right' %}</button>
+  {%- endif -%}
+
+  <div class="vslideshow__bar page-width">
+    {%- if section.blocks.size > 1 and s.dots_style != 'none' -%}
+      <div class="vslideshow__dots vslideshow__dots--{{ s.dots_style }}">
+        {%- for block in section.blocks -%}
+          <button type="button" class="vslideshow__dot{% if forloop.first %} is-active{% endif %}" data-vs-dot="{{ forloop.index0 }}" aria-label="{{ 'accessibility.slide' | t: number: forloop.index }}">
+            {%- if s.dots_style == 'numbers' -%}<span>{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>{%- endif -%}
+            <i class="vslideshow__dot-fill"></i>
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+    <div class="vslideshow__buttons">
+      {%- if s.show_play_pause -%}
+        <button type="button" class="vslideshow__btn" data-vs-play aria-label="{{ 'video.pause' | t }}" data-label-play="{{ 'video.play' | t }}" data-label-pause="{{ 'video.pause' | t }}">
+          <span class="vs-ico vs-ico--pause">{% render 'icon', name: 'pause' %}</span><span class="vs-ico vs-ico--play">{% render 'icon', name: 'play' %}</span>
+        </button>
+      {%- endif -%}
+      {%- if s.show_sound -%}
+        <button type="button" class="vslideshow__btn" data-vs-sound aria-pressed="false" aria-label="{{ 'video.sound_on' | t }}" data-label-on="{{ 'video.sound_on' | t }}" data-label-off="{{ 'video.sound_off' | t }}">
+          <span class="vs-ico vs-ico--muted">{% render 'icon', name: 'volume-off' %}</span><span class="vs-ico vs-ico--unmuted">{% render 'icon', name: 'volume' %}</span>
+        </button>
+      {%- endif -%}
+      {%- if s.music_url != blank -%}
+        <button type="button" class="vslideshow__btn vslideshow__btn--music" data-vs-music aria-pressed="false" aria-label="{{ 'video.music_on' | t }}" data-label-on="{{ 'video.music_on' | t }}" data-label-off="{{ 'video.music_off' | t }}">
+          <span class="vs-ico vs-ico--music-off">{% render 'icon', name: 'music-off' %}</span><span class="vs-ico vs-ico--music-on">{% render 'icon', name: 'music' %}</span>
+          {%- if s.music_label != blank -%}<span class="vslideshow__btn-label">{{ s.music_label }}</span>{%- endif -%}
+        </button>
+        <audio data-vs-audio src="{{ s.music_url }}" preload="none" loop></audio>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if s.show_progress -%}
+    <div class="vslideshow__progress" aria-hidden="true"><i data-vs-progress></i></div>
+  {%- endif -%}
+
+  <div class="vslideshow__modal" data-vs-modal hidden>
+    <div class="vslideshow__modal-backdrop" data-vs-close></div>
+    <div class="vslideshow__modal-box" role="dialog" aria-modal="true" aria-label="{{ 'video.watch' | t }}">
+      <button type="button" class="vslideshow__modal-close" data-vs-close aria-label="{{ 'video.close' | t }}">{% render 'icon', name: 'close' %}</button>
+      <div class="vslideshow__modal-body" data-vs-modal-body></div>
+    </div>
+  </div>
+</video-slideshow>
+
+{% schema %}
+{
+  "name": "Video slideshow",
+  "tag": "section",
+  "class": "section-video-slideshow",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "accessibility_label", "label": "Slideshow description", "default": "Featured videos" },
+    { "type": "header", "content": "Layout" },
+    { "type": "select", "id": "height", "label": "Height", "default": "large", "options": [
+      { "value": "small", "label": "Small" },
+      { "value": "medium", "label": "Medium" },
+      { "value": "large", "label": "Large" },
+      { "value": "full", "label": "Full screen" },
+      { "value": "ratio", "label": "Video ratio (16:9)" }
+    ] },
+    { "type": "select", "id": "mobile_height", "label": "Mobile height", "default": "tall", "options": [
+      { "value": "short", "label": "Short (16:9)" },
+      { "value": "tall", "label": "Tall (4:5)" },
+      { "value": "full", "label": "Full screen" }
+    ] },
+    { "type": "select", "id": "transition", "label": "Slide transition", "default": "fade", "options": [
+      { "value": "fade", "label": "Fade" },
+      { "value": "slide", "label": "Slide" }
+    ] },
+    { "type": "color", "id": "overlay_color", "label": "Overlay color", "default": "#000000" },
+    { "type": "header", "content": "Video playback" },
+    { "type": "select", "id": "video_end", "label": "When a video ends", "default": "loop", "options": [
+      { "value": "loop", "label": "Repeat the same video" },
+      { "value": "next", "label": "Play the next slide" }
+    ], "info": "With 'Repeat', the slideshow never moves on by itself while a video plays. Shoppers use the arrows or dots to see the next video." },
+    { "type": "checkbox", "id": "autoplay_images", "label": "Auto-rotate image-only slides", "default": false, "info": "Slides with a video never rotate on a timer." },
+    { "type": "range", "id": "speed", "label": "Image slide duration", "min": 3, "max": 15, "step": 1, "unit": "s", "default": 7 },
+    { "type": "header", "content": "Controls" },
+    { "type": "checkbox", "id": "show_sound", "label": "Show sound on/off button", "default": true, "info": "Browsers always start videos muted. Shoppers turn sound on with this button." },
+    { "type": "checkbox", "id": "show_play_pause", "label": "Show play/pause button", "default": true },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": true },
+    { "type": "select", "id": "dots_style", "label": "Slide navigation", "default": "lines", "options": [
+      { "value": "lines", "label": "Lines with progress" },
+      { "value": "numbers", "label": "Numbers" },
+      { "value": "dots", "label": "Dots" },
+      { "value": "none", "label": "None" }
+    ] },
+    { "type": "checkbox", "id": "show_progress", "label": "Show video progress bar", "default": true },
+    { "type": "checkbox", "id": "show_controls_hover", "label": "Show arrows only on hover (desktop)", "default": true },
+    { "type": "color", "id": "ui_color", "label": "Controls color", "default": "#ffffff" },
+    { "type": "header", "content": "Background music" },
+    { "type": "url", "id": "music_url", "label": "Music file link (MP3)", "info": "Upload an MP3 in Content > Files, copy its link and paste it here. Leave empty for no music." },
+    { "type": "text", "id": "music_label", "label": "Music button label", "info": "Optional, for example: Music" },
+    { "type": "range", "id": "music_volume", "label": "Music volume", "min": 5, "max": 100, "step": 5, "unit": "%", "default": 50 },
+    { "type": "checkbox", "id": "music_first_click", "label": "Start music on the shopper's first click", "default": false, "info": "Browsers block music until the shopper interacts with the page. Shoppers can always stop it with the music button." }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "header", "content": "Video" },
+        { "type": "video", "id": "video", "label": "Shopify video", "info": "Upload a video file to Shopify. Best quality and speed." },
+        { "type": "video", "id": "video_mobile", "label": "Mobile video (Shopify)", "info": "Optional vertical video for phones." },
+        { "type": "video_url", "id": "video_url", "label": "YouTube or Vimeo link", "accept": ["youtube", "vimeo"], "info": "Used when no Shopify video is selected." },
+        { "type": "url", "id": "video_mp4_url", "label": "Other video link (MP4)", "info": "Any direct .mp4 link, for example from Content > Files or a CDN. Used when the two options above are empty." },
+        { "type": "header", "content": "Image" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Shown before the video loads, or as the slide when there is no video. 2400 x 1350px." },
+        { "type": "image_picker", "id": "image_mobile", "label": "Mobile image" },
+        { "type": "range", "id": "overlay", "label": "Overlay opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 25 },
+        { "type": "header", "content": "Text" },
+        { "type": "text", "id": "subheading", "label": "Subheading", "default": "Handmade" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Made to be lived in" },
+        { "type": "select", "id": "heading_size", "label": "Heading size", "default": "large", "options": [
+          { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" }, { "value": "xl", "label": "Extra large" }
+        ] },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Watch how every piece is cut, stitched and finished by hand.</p>" },
+        { "type": "range", "id": "text_width", "label": "Text width", "min": 360, "max": 900, "step": 20, "unit": "px", "default": 620 },
+        { "type": "select", "id": "text_position", "label": "Vertical text position", "default": "center", "options": [
+          { "value": "top", "label": "Top" }, { "value": "center", "label": "Middle" }, { "value": "bottom", "label": "Bottom" }
+        ] },
+        { "type": "select", "id": "text_align", "label": "Horizontal text position", "default": "left", "options": [
+          { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }
+        ] },
+        { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+        { "type": "header", "content": "Buttons" },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+        { "type": "url", "id": "link", "label": "Button link", "info": "Without a button label, the whole slide links here." },
+        { "type": "text", "id": "button_label_2", "label": "Second button label" },
+        { "type": "url", "id": "link_2", "label": "Second button link" },
+        { "type": "checkbox", "id": "show_watch_button", "label": "Show 'Watch video' button", "default": false, "info": "Opens the video in a popup with sound and player controls." },
+        { "type": "text", "id": "watch_label", "label": "Watch button label", "default": "Watch the film" },
+        { "type": "video_url", "id": "popup_video_url", "label": "Popup video (optional)", "accept": ["youtube", "vimeo"], "info": "A longer or different video for the popup. Leave empty to use the slide video." }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Video slideshow", "blocks": [ { "type": "slide" }, { "type": "slide" } ] }
+  ]
+}
+{% endschema %}
