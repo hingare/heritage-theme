@@ -1,0 +1,209 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "show_save": true,
+            "show_tax_note": true
+          }
+        },
+        "sku": {
+          "type": "sku",
+          "settings": {}
+        },
+        "inventory": {
+          "type": "inventory",
+          "settings": {
+            "low_threshold": 5
+          }
+        },
+        "divider": {
+          "type": "divider",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "dropdown",
+            "use_swatches": false
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_quantity": true,
+            "show_dynamic": true,
+            "show_installments": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "wishlist": {
+          "type": "wishlist",
+          "settings": {}
+        },
+        "pickup": {
+          "type": "pickup",
+          "settings": {}
+        },
+        "trust_badges": {
+          "type": "trust_badges",
+          "settings": {
+            "icon_1": "truck",
+            "text_1": "Free shipping over $150",
+            "icon_2": "return",
+            "text_2": "30-day returns",
+            "icon_3": "lock",
+            "text_3": "Secure checkout"
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "collapsible": false,
+            "title": "Description",
+            "open": true,
+            "full_width_desktop": true
+          }
+        },
+        "tab_specs": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Specifications",
+            "icon": "ruler",
+            "content": "<p>Add size, weight, material and other details here.</p>",
+            "open": false
+          }
+        },
+        "tab_shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & returns",
+            "icon": "truck",
+            "content": "<p>Free US shipping on orders over $150. Returns accepted within 30 days of delivery. See our <a href=\"/policies/shipping-policy\">shipping policy</a> and <a href=\"/policies/refund-policy\">refund policy</a>.</p>",
+            "open": false
+          }
+        },
+        "popup": {
+          "type": "popup",
+          "settings": {
+            "label": "Ask a question",
+            "icon": "chat",
+            "heading": "Have a question about this product?",
+            "show_contact_form": true
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "price",
+        "sku",
+        "inventory",
+        "divider",
+        "variant_picker",
+        "buy_buttons",
+        "wishlist",
+        "pickup",
+        "trust_badges",
+        "description",
+        "tab_specs",
+        "tab_shipping",
+        "popup",
+        "share"
+      ],
+      "settings": {
+        "gallery_layout": "thumbnails",
+        "show_badges": true,
+        "media_size": "small",
+        "image_ratio": "square",
+        "enable_zoom": true,
+        "sticky_info": true,
+        "sticky_atc": true,
+        "show_breadcrumbs": true
+      }
+    },
+    "features": {
+      "type": "text-columns",
+      "blocks": {
+        "c1": {
+          "type": "column",
+          "settings": {
+            "icon": "truck",
+            "title": "Fast shipping",
+            "text": "<p>Ships within 1 to 2 business days.</p>",
+            "link_label": ""
+          }
+        },
+        "c2": {
+          "type": "column",
+          "settings": {
+            "icon": "return",
+            "title": "Easy returns",
+            "text": "<p>Return within 30 days of delivery.</p>",
+            "link_label": ""
+          }
+        },
+        "c3": {
+          "type": "column",
+          "settings": {
+            "icon": "lock",
+            "title": "Secure checkout",
+            "text": "<p>Your payment details stay safe.</p>",
+            "link_label": ""
+          }
+        }
+      },
+      "block_order": [
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "settings": {
+        "heading": "",
+        "align": "center",
+        "image_ratio": "landscape",
+        "alt_bg": true,
+        "color_scheme": "scheme-1",
+        "mobile_compact": true
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You may also like",
+        "intent": "related",
+        "limit": 4,
+        "columns": 4
+      }
+    },
+    "recently-viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "heading": "Recently viewed",
+        "limit": 4,
+        "columns": 4
+      }
+    }
+  },
+  "order": [
+    "main",
+    "features",
+    "recommendations",
+    "recently-viewed"
+  ]
+}

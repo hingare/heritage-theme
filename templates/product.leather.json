@@ -1,0 +1,341 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "rating": {
+          "type": "rating",
+          "settings": {
+            "show_empty": false,
+            "link": "#shopify-product-reviews"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "show_save": true,
+            "show_tax_note": true
+          }
+        },
+        "inventory": {
+          "type": "inventory",
+          "settings": {
+            "low_threshold": 5
+          }
+        },
+        "divider": {
+          "type": "divider",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "use_swatches": true
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_quantity": true,
+            "show_dynamic": true,
+            "show_installments": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "wishlist": {
+          "type": "wishlist",
+          "settings": {}
+        },
+        "delivery": {
+          "type": "delivery",
+          "settings": {
+            "text": "Order today, delivered",
+            "min_days": 3,
+            "max_days": 7,
+            "skip_weekends": true,
+            "cutoff_hour": 14
+          }
+        },
+        "icons": {
+          "type": "icon_with_text",
+          "settings": {
+            "layout": "horizontal",
+            "icon_1": "leather",
+            "heading_1": "Full-grain leather",
+            "text_1": "",
+            "icon_2": "hand",
+            "heading_2": "Hand-stitched",
+            "text_2": "",
+            "icon_3": "star",
+            "heading_3": "Ages beautifully",
+            "text_3": ""
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "collapsible": true,
+            "title": "Description",
+            "open": true,
+            "full_width_desktop": true
+          }
+        },
+        "tab_material": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Leather & craftsmanship",
+            "icon": "leather",
+            "content": "<p>Genuine cowhide leather, cut, stitched and edge-finished by hand. Natural marks and grain differences are part of real leather, so every piece is a little different.</p>",
+            "open": false
+          }
+        },
+        "tab_dimensions": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Size & dimensions",
+            "icon": "ruler",
+            "content": "<p>See the description for exact measurements. Contact us if you need a size checked before you order.</p>",
+            "open": false
+          }
+        },
+        "tab_care": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Leather care",
+            "icon": "hand",
+            "content": "<ul><li>Wipe with a soft dry cloth.</li><li>Condition every 3 to 6 months.</li><li>Keep away from direct heat and long sun exposure.</li><li>If it gets wet, let it dry naturally at room temperature.</li></ul>",
+            "open": false
+          }
+        },
+        "tab_shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & returns",
+            "icon": "truck",
+            "content": "<p>Free US shipping on orders over $150. Returns accepted within 30 days of delivery. See our <a href=\"/policies/shipping-policy\">shipping policy</a> and <a href=\"/policies/refund-policy\">refund policy</a>.</p>",
+            "open": false
+          }
+        },
+        "complementary": {
+          "type": "complementary",
+          "settings": {
+            "heading": "Pairs well with",
+            "limit": 3
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "rating",
+        "price",
+        "inventory",
+        "divider",
+        "variant_picker",
+        "buy_buttons",
+        "wishlist",
+        "delivery",
+        "icons",
+        "description",
+        "tab_material",
+        "tab_dimensions",
+        "tab_care",
+        "tab_shipping",
+        "complementary",
+        "share"
+      ],
+      "settings": {
+        "gallery_layout": "thumbnails_left",
+        "show_badges": true,
+        "media_size": "large",
+        "image_ratio": "product",
+        "enable_zoom": true,
+        "sticky_info": true,
+        "sticky_atc": true,
+        "show_breadcrumbs": true
+      }
+    },
+    "icon-bar": {
+      "type": "icon-bar",
+      "blocks": {
+        "i1": {
+          "type": "item",
+          "settings": {
+            "icon": "leather",
+            "title": "Genuine cowhide",
+            "text": "Full-grain and top-grain leather"
+          }
+        },
+        "i2": {
+          "type": "item",
+          "settings": {
+            "icon": "hand",
+            "title": "Handmade",
+            "text": "Cut and stitched by artisans"
+          }
+        },
+        "i3": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Free US shipping",
+            "text": "On orders over $150"
+          }
+        },
+        "i4": {
+          "type": "item",
+          "settings": {
+            "icon": "return",
+            "title": "30-day returns",
+            "text": "Easy and hassle free"
+          }
+        }
+      },
+      "block_order": [
+        "i1",
+        "i2",
+        "i3",
+        "i4"
+      ],
+      "settings": {
+        "bg_color": "#f4efe8",
+        "text_color": "#1c1a17"
+      }
+    },
+    "compare": {
+      "type": "comparison-table",
+      "blocks": {
+        "r1": {
+          "type": "row",
+          "settings": {
+            "label": "Genuine cowhide leather",
+            "value_1": "yes",
+            "value_2": "no",
+            "value_3": ""
+          }
+        },
+        "r2": {
+          "type": "row",
+          "settings": {
+            "label": "Hand-stitched seams",
+            "value_1": "yes",
+            "value_2": "no",
+            "value_3": ""
+          }
+        },
+        "r3": {
+          "type": "row",
+          "settings": {
+            "label": "Develops a rich patina",
+            "value_1": "yes",
+            "value_2": "no",
+            "value_3": ""
+          }
+        },
+        "r4": {
+          "type": "row",
+          "settings": {
+            "label": "Lasts for years",
+            "value_1": "yes",
+            "value_2": "no",
+            "value_3": ""
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3",
+        "r4"
+      ],
+      "settings": {
+        "subheading": "Why real leather",
+        "heading": "Genuine leather vs. faux leather",
+        "column_1": "Ours",
+        "column_2": "Faux / PU",
+        "column_3": "",
+        "highlight_first": true,
+        "alt_bg": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "Is this real leather?",
+            "answer": "<p>Yes. We only use genuine cowhide leather. No PU or bonded leather.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "Will the color change over time?",
+            "answer": "<p>Yes, in a good way. Real leather darkens and develops a patina with use.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "How do I care for it?",
+            "answer": "<p>Wipe it clean with a dry cloth and use a leather conditioner every few months.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3"
+      ],
+      "settings": {
+        "subheading": "Help",
+        "heading": "Leather questions",
+        "open_first": true,
+        "contact_text": "<p>Still have a question? <a href=\"/pages/contact\">Contact us</a>.</p>",
+        "enable_schema": false,
+        "alt_bg": true,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You may also like",
+        "intent": "related",
+        "limit": 4,
+        "columns": 4
+      }
+    },
+    "recently-viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "heading": "Recently viewed",
+        "limit": 4,
+        "columns": 4
+      }
+    }
+  },
+  "order": [
+    "main",
+    "icon-bar",
+    "compare",
+    "faq",
+    "recommendations",
+    "recently-viewed"
+  ]
+}
