@@ -1,8 +1,18 @@
 {%- liquid
   assign menu = section.settings.menu
   assign logo_left = false
+  assign nav_inline = false
+  assign left_below = false
   if section.settings.logo_position == 'left'
     assign logo_left = true
+    assign nav_inline = true
+  elsif section.settings.logo_position == 'left-below'
+    assign logo_left = true
+    assign left_below = true
+  endif
+  assign overhang = false
+  if left_below and section.settings.logo_overhang
+    assign overhang = true
   endif
 -%}
 {%- liquid
@@ -35,7 +45,7 @@
 </style>
 
 <div class="site-header-wrapper{% if section.settings.sticky %} is-sticky{% endif %}{% if transparent %} site-header-wrapper--transparent{% endif %}" data-header-wrapper>
-  <header class="site-header{% if logo_left %} site-header--logo-left{% endif %}{% if section.settings.bg_image != blank %} site-header--has-bg{% endif %}{% if search_bar %} site-header--search-bar{% if section.settings.search_mobile_bar %} site-header--search-bar-mobile{% endif %}{% endif %}" role="banner">
+  <header class="site-header{% if logo_left %} site-header--logo-left{% endif %}{% if left_below %} site-header--left-below{% endif %}{% if overhang %} site-header--overhang{% endif %}{% if section.settings.bg_image != blank %} site-header--has-bg{% endif %}{% if search_bar %} site-header--search-bar{% if section.settings.search_mobile_bar %} site-header--search-bar-mobile{% endif %}{% endif %}" role="banner">
     {%- if section.settings.bg_image != blank -%}
       <div class="site-header__bg" aria-hidden="true">
         {{ section.settings.bg_image | image_url: width: 2400 | image_tag: loading: 'eager', widths: '750, 1100, 1500, 2000, 2400', sizes: '100vw', alt: '' }}
@@ -53,10 +63,25 @@
         {%- endif -%}
       </div>
 
-      {%- if logo_left -%}
+      {%- if nav_inline -%}
         <nav class="site-nav--desktop" aria-label="Primary">
           {% render 'header-nav', menu: menu, section: section, inline: true %}
         </nav>
+      {%- elsif left_below -%}
+        <div class="site-header__tagline">
+          {%- if section.settings.tagline_heading != blank -%}
+            <p class="site-header__tagline-heading">{{ section.settings.tagline_heading }}</p>
+          {%- endif -%}
+          {%- if section.settings.tagline_items != blank -%}
+            <ul class="site-header__tagline-items">
+              {%- assign tagline_items = section.settings.tagline_items | split: '|' -%}
+              {%- for item in tagline_items -%}
+                {%- assign item = item | strip -%}
+                {%- if item != blank -%}<li>{{ item }}</li>{%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
       {%- else -%}
         {% render 'header-logo', section: section, request: request %}
       {%- endif -%}
@@ -95,8 +120,15 @@
         </button>
       </div>
     {%- endif -%}
-    {%- unless logo_left -%}
-      <div class="site-header__nav-row{% if section.settings.nav_bg_image != blank %} site-header__nav-row--has-bg{% endif %}">
+    {%- unless nav_inline -%}
+      {%- liquid
+        assign nav_bg = section.settings.nav_bg_color
+        if nav_bg != blank and nav_bg.alpha == 0
+          assign nav_bg = blank
+        endif
+      -%}
+      <div class="site-header__nav-row{% if section.settings.nav_bg_image != blank %} site-header__nav-row--has-bg{% endif %}{% if nav_bg != blank %} site-header__nav-row--color{% endif %}"
+        {%- if nav_bg != blank %} style="--nav-bg: {{ nav_bg }}; --nav-text: {{ section.settings.nav_text_color }};"{% endif %}>
         {%- if section.settings.nav_bg_image != blank -%}
           <div class="site-header__bg" aria-hidden="true">
             {{ section.settings.nav_bg_image | image_url: width: 2400 | image_tag: loading: 'eager', widths: '1100, 1500, 2000, 2400', sizes: '100vw', alt: '' }}
@@ -262,8 +294,31 @@
         {
           "value": "center-below",
           "label": "Logo center, menu below"
+        },
+        {
+          "value": "left-below",
+          "label": "Logo left, menu below"
         }
       ]
+    },
+    {
+      "type": "checkbox",
+      "id": "logo_overhang",
+      "label": "Let the logo hang over the menu bar",
+      "info": "Layout: logo left, menu below. Works best with a badge-shaped logo.",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "tagline_heading",
+      "label": "Tagline heading",
+      "info": "Layout: logo left, menu below. Shows next to the logo on desktop."
+    },
+    {
+      "type": "text",
+      "id": "tagline_items",
+      "label": "Tagline points",
+      "info": "Separate with |  e.g. Genuine leather | Handmade | Free shipping"
     },
     {
       "type": "link_list",
@@ -314,7 +369,19 @@
       "type": "image_picker",
       "id": "nav_bg_image",
       "label": "Menu bar background image",
-      "info": "Shows behind the menu row (layout: logo center, menu below)."
+      "info": "Shows behind the menu row (layouts with the menu below)."
+    },
+    {
+      "type": "color",
+      "id": "nav_bg_color",
+      "label": "Menu bar background color",
+      "info": "Leave empty for no color. Example: leather brown #6b3e26."
+    },
+    {
+      "type": "color",
+      "id": "nav_text_color",
+      "label": "Menu bar text color",
+      "default": "#ffffff"
     },
     {
       "type": "range",
