@@ -71,13 +71,16 @@
             </div>
           {%- when 'description' -%}
             {%- if product.description != blank -%}
+              {%- if block.settings.full_width_desktop -%}
+                {%- assign desc_block = block -%}
+              {%- endif -%}
               {%- if block.settings.collapsible -%}
-                <details class="collapsible" {% if block.settings.open %}open{% endif %} {{ block.shopify_attributes }}>
+                <details class="collapsible{% if block.settings.full_width_desktop %} product__desc--inline{% endif %}" {% if block.settings.open %}open{% endif %} {{ block.shopify_attributes }}>
                   <summary><span class="collapsible__label">{{ block.settings.title }}</span>{% render 'icon', name: 'chevron-down' %}</summary>
                   <div class="collapsible__content rte">{{ product.description }}</div>
                 </details>
               {%- else -%}
-                <div class="product__description rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
+                <div class="product__description rte{% if block.settings.full_width_desktop %} product__desc--inline{% endif %}" {{ block.shopify_attributes }}>{{ product.description }}</div>
               {%- endif -%}
             {%- endif -%}
           {%- when 'collapsible_tab' -%}
@@ -276,6 +279,13 @@
     </div>
   </div>
 
+  {%- if desc_block -%}
+    <div class="product-desc-full">
+      <h2 class="product-desc-full__heading">{{ desc_block.settings.title | default: 'Description' }}</h2>
+      <div class="product-desc-full__body rte">{{ product.description }}</div>
+    </div>
+  {%- endif -%}
+
   <script type="application/json" data-product-json>{{ product | json }}</script>
 </div>
 
@@ -387,7 +397,8 @@
     { "type": "description", "name": "Description", "limit": 1, "settings": [
       { "type": "checkbox", "id": "collapsible", "label": "Show as collapsible tab", "default": false },
       { "type": "text", "id": "title", "label": "Tab heading", "default": "Description" },
-      { "type": "checkbox", "id": "open", "label": "Open by default", "default": true }
+      { "type": "checkbox", "id": "open", "label": "Open by default", "default": true },
+      { "type": "checkbox", "id": "full_width_desktop", "label": "Full width below on desktop", "info": "On desktop the description moves under the photos and info and uses the full page width. Phones keep it in place.", "default": true }
     ] },
     { "type": "collapsible_tab", "name": "Collapsible tab", "settings": [
       { "type": "text", "id": "heading", "label": "Heading", "default": "Shipping & returns" },

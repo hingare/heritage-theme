@@ -979,3 +979,11 @@ svg[viewBox="0 0 24 24"][stroke="currentColor"] { stroke-width: var(--icon-strok
 }
 .site-header__nav-row--color { background: var(--nav-bg); color: var(--nav-text, #fff); border-top-color: transparent; }
 .site-header__nav-row--color .mega-menu, .site-header__nav-row--color .site-nav__dropdown { color: var(--color-header-text); }
+.product-desc-full { display: none; }
+@media (min-width: 990px) {
+  .product__desc--inline { display: none !important; }
+  .product__desc--inline + .collapsible { border-top: 1px solid var(--color-border); }
+  .product-desc-full { display: block; border-top: 1px solid var(--color-border); padding: 3rem 0 4rem; }
+  .product-desc-full__heading { font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; font-family: var(--font-body-family, inherit); font-weight: 600; margin: 0 0 1.5rem; }
+  .product-desc-full__body { font-size: 1.02rem; line-height: 1.75; }
+}
