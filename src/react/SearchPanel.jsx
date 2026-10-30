@@ -5,14 +5,52 @@ const RECENT_KEY = 'heritage-recent-searches';
 
 // Live search for the header overlay: suggestions, products and collections as you type,
 // recent and popular searches when the box is empty, and full keyboard control.
-export default function SearchPanel({ popular, strings, unavailable = 'last' }) {
+// Best sellers for the empty state, fetched once through the Section Rendering API.
+async function loadFeatured(featured, signal) {
+  const res = await fetch(`${featured.url}?sort_by=best-selling&section_id=search-products`, { signal });
+  if (!res.ok) return [];
+  const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+  const data = doc.querySelector('[data-search-products]');
+  return data ? JSON.parse(data.textContent).slice(0, featured.limit || 4) : [];
+}
+
+function ProductGrid({ products, linkProps }) {
+  return (
+    <div className="predictive-search__products">
+      {products.map((p, i) => (
+        <a key={p.id} className="predictive-search__item search-product tw-animate-tile-in" style={{ animationDelay: `${i * 40}ms` }} {...linkProps({ href: p.url })}>
+          <span className="media media--product">
+            {p.image ? <img src={sizedImage(p.image, 300)} alt={p.alt} loading="lazy" /> : null}
+          </span>
+          <span>{p.title}</span>
+          <span className="price">
+            <span className={p.compareAt > p.price ? 'price__sale' : 'price__regular'}>{money(p.price, { cents: p.cents })}</span>
+            {p.compareAt > p.price ? <s className="price__compare">{money(p.compareAt, { cents: p.cents })}</s> : null}
+          </span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+export default function SearchPanel({ popular, strings, unavailable = 'last', featured = null }) {
   const [q, setQ] = useState('');
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [recent, setRecent] = useState(() => storage.get(RECENT_KEY, []));
   const [active, setActive] = useState(-1);
+  const [best, setBest] = useState([]);
   const inputRef = useRef(null);
   const listRef = useRef(null);
+
+  useEffect(() => {
+    if (!featured || !featured.show || !featured.url) return undefined;
+    const controller = new AbortController();
+    loadFeatured(featured, controller.signal)
+      .then((list) => setBest(list.map((p) => ({ ...p, cents: true }))))
+      .catch(() => {});
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const modal = document.getElementById('SearchModal');
@@ -61,7 +99,10 @@ export default function SearchPanel({ popular, strings, unavailable = 'last' }) 
   // Every link in the panel, in the order it renders, for arrow-key navigation.
   const items = useMemo(() => {
     if (!results) {
-      return [...recent.map((t) => ({ href: searchUrl(t), term: t })), ...popular.map((t) => ({ href: searchUrl(t), term: t }))];
+      return [...recent.map((t) => ({ href: searchUrl(t), term: t })), ...popular.map((t) => ({ href: searchUrl(t), term: t })), ...best.map((p) => ({ href: p.url }))];
+    }
+    if (!results.queries.length && !results.products.length && !results.collections.length && !results.pages.length) {
+      return best.map((p) => ({ href: p.url }));
     }
     return [
       ...results.queries.map((s) => ({ href: searchUrl(s.text), term: s.text })),
@@ -69,7 +110,7 @@ export default function SearchPanel({ popular, strings, unavailable = 'last' }) 
       ...results.pages.map((pg) => ({ href: pg.url })),
       ...results.products.map((p) => ({ href: p.url }))
     ];
-  }, [results, recent, popular]);
+  }, [results, recent, popular, best]);
 
   const go = (item) => {
     if (item.term) remember(item.term);
@@ -162,9 +203,23 @@ export default function SearchPanel({ popular, strings, unavailable = 'last' }) 
                 </div>
               </div>
             ) : null}
+            {best.length ? (
+              <div className="md:tw-col-span-2">
+                <p className="predictive-search__heading">{featured.title || strings.products}</p>
+                <ProductGrid products={best} linkProps={linkProps} />
+              </div>
+            ) : null}
           </div>
         ) : empty ? (
-          <p>{strings.noResults.replace('{{ terms }}', q)}</p>
+          <div className="tw-grid tw-gap-6">
+            <p>{strings.noResults.replace('{{ terms }}', q)}</p>
+            {best.length ? (
+              <div>
+                <p className="predictive-search__heading">{featured.title || strings.products}</p>
+                <ProductGrid products={best} linkProps={linkProps} />
+              </div>
+            ) : null}
+          </div>
         ) : (
           <div className="tw-grid tw-gap-8 lg:tw-grid-cols-[1fr_3fr] tw-animate-fade-up">
             <div className="tw-space-y-6">
@@ -193,20 +248,7 @@ export default function SearchPanel({ popular, strings, unavailable = 'last' }) 
             {results.products.length ? (
               <div>
                 <p className="predictive-search__heading">{strings.products}</p>
-                <div className="predictive-search__products">
-                  {results.products.map((p, i) => (
-                    <a key={p.id} className="predictive-search__item search-product tw-animate-tile-in" style={{ animationDelay: `${i * 40}ms` }} {...linkProps({ href: p.url })}>
-                      <span className="media media--product">
-                        {p.image ? <img src={sizedImage(p.image, 300)} alt={p.alt} loading="lazy" /> : null}
-                      </span>
-                      <span>{p.title}</span>
-                      <span className="price">
-                        <span className={p.compareAt > p.price ? 'price__sale' : 'price__regular'}>{money(p.price)}</span>
-                        {p.compareAt > p.price ? <s className="price__compare">{money(p.compareAt)}</s> : null}
-                      </span>
-                    </a>
-                  ))}
-                </div>
+                <ProductGrid products={results.products} linkProps={linkProps} />
               </div>
             ) : null}
           </div>

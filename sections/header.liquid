@@ -11,7 +11,20 @@
     assign transparent = true
   endif
 -%}
+{%- liquid
+  assign search_bar = false
+  if section.settings.search_style == 'bar'
+    assign search_bar = true
+  endif
+  assign best_collection = section.settings.search_products_collection
+  if best_collection == blank
+    assign best_url = routes.all_products_collection_url
+  else
+    assign best_url = best_collection.url
+  endif
+-%}
 <style>
+  #shopify-section-{{ section.id }} { --header-bg-overlay: {{ section.settings.bg_overlay | divided_by: 100.0 }}; --header-bg-text: {{ section.settings.bg_text_color }}; }
   #shopify-section-{{ section.id }} { --logo-width: {{ section.settings.logo_width }}px; --logo-width-mobile: {{ section.settings.logo_width_mobile }}px; }
   {%- if section.settings.sticky %}
   #shopify-section-{{ section.id }} { position: sticky; top: 0; z-index: 30; }
@@ -22,7 +35,12 @@
 </style>
 
 <div class="site-header-wrapper{% if section.settings.sticky %} is-sticky{% endif %}{% if transparent %} site-header-wrapper--transparent{% endif %}" data-header-wrapper>
-  <header class="site-header{% if logo_left %} site-header--logo-left{% endif %}" role="banner">
+  <header class="site-header{% if logo_left %} site-header--logo-left{% endif %}{% if section.settings.bg_image != blank %} site-header--has-bg{% endif %}{% if search_bar %} site-header--search-bar{% if section.settings.search_mobile_bar %} site-header--search-bar-mobile{% endif %}{% endif %}" role="banner">
+    {%- if section.settings.bg_image != blank -%}
+      <div class="site-header__bg" aria-hidden="true">
+        {{ section.settings.bg_image | image_url: width: 2400 | image_tag: loading: 'eager', widths: '750, 1100, 1500, 2000, 2400', sizes: '100vw', alt: '' }}
+      </div>
+    {%- endif -%}
     <div class="page-width site-header__inner">
       <div class="site-header__left">
         <button type="button" class="header-icon site-header__mobile-toggle" data-open="MobileNav" aria-controls="MobileNav" aria-label="{{ 'general.menu' | t }}">
@@ -31,7 +49,7 @@
         {%- if logo_left -%}
           {% render 'header-logo', section: section, request: request %}
         {%- else -%}
-          <button type="button" class="header-icon" data-open="SearchModal" aria-label="{{ 'general.search' | t }}">{% render 'icon', name: 'search' %}</button>
+          <button type="button" class="header-icon header-icon--search" data-open="SearchModal" aria-label="{{ 'general.search' | t }}">{% render 'icon', name: 'search' %}</button>
         {%- endif -%}
       </div>
 
@@ -44,8 +62,13 @@
       {%- endif -%}
 
       <div class="site-header__icons">
+        {%- if search_bar -%}
+          <button type="button" class="header-search-bar" data-open="SearchModal" data-search-trigger aria-label="{{ 'general.search' | t }}">
+            {% render 'icon', name: 'search' %}<span>{{ 'header.search_placeholder' | t }}</span>
+          </button>
+        {%- endif -%}
         {%- if logo_left -%}
-          <button type="button" class="header-icon" data-open="SearchModal" aria-label="{{ 'general.search' | t }}">{% render 'icon', name: 'search' %}</button>
+          <button type="button" class="header-icon header-icon--search" data-open="SearchModal" aria-label="{{ 'general.search' | t }}">{% render 'icon', name: 'search' %}</button>
         {%- endif -%}
         {%- if shop.customer_accounts_enabled -%}
           <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header-icon header-icon--account" aria-label="{{ 'general.account' | t }}">
@@ -65,8 +88,20 @@
       </div>
     </div>
 
+    {%- if search_bar and section.settings.search_mobile_bar -%}
+      <div class="page-width site-header__mobile-search">
+        <button type="button" class="header-search-bar" data-open="SearchModal" data-search-trigger aria-label="{{ 'general.search' | t }}">
+          {% render 'icon', name: 'search' %}<span>{{ 'header.search_placeholder' | t }}</span>
+        </button>
+      </div>
+    {%- endif -%}
     {%- unless logo_left -%}
-      <div class="site-header__nav-row">
+      <div class="site-header__nav-row{% if section.settings.nav_bg_image != blank %} site-header__nav-row--has-bg{% endif %}">
+        {%- if section.settings.nav_bg_image != blank -%}
+          <div class="site-header__bg" aria-hidden="true">
+            {{ section.settings.nav_bg_image | image_url: width: 2400 | image_tag: loading: 'eager', widths: '1100, 1500, 2000, 2400', sizes: '100vw', alt: '' }}
+          </div>
+        {%- endif -%}
         <nav class="page-width site-nav--desktop" aria-label="Primary">
           {% render 'header-nav', menu: menu, section: section, inline: false %}
         </nav>
@@ -127,12 +162,18 @@
 </div>
 
 {%- comment -%} Search overlay {%- endcomment -%}
-<div id="SearchModal" class="search-modal" aria-hidden="true" role="dialog" aria-label="{{ 'general.search' | t }}">
+<div id="SearchModal" class="search-modal{% if search_bar %} search-modal--dropdown{% endif %}" aria-hidden="true" role="dialog" aria-label="{{ 'general.search' | t }}">
   {%- comment -%} React live search (src/react/SearchPanel.jsx) replaces this markup once loaded. {%- endcomment -%}
   <div{% if settings.predictive_search_enabled %} data-react-island="search" data-island-lazy{% endif %}>
   <script type="application/json" data-island-props>
     {
       "unavailable": {{ settings.search_unavailable | default: 'last' | json }},
+      "featured": {
+        "show": {{ section.settings.search_show_products | json }},
+        "url": {{ best_url | json }},
+        "title": {{ section.settings.search_products_title | json }},
+        "limit": {{ section.settings.search_products_limit | json }}
+      },
       "popular": [
         {%- assign popular = section.settings.popular_searches | split: ',' -%}
         {%- for term in popular -%}{{ term | strip | json }}{% unless forloop.last %},{% endunless %}{%- endfor -%}
@@ -258,6 +299,91 @@
       "id": "logo_transparent",
       "label": "Logo on transparent header",
       "info": "Optional light version of your logo"
+    },
+    {
+      "type": "header",
+      "content": "Background images"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Header background image",
+      "info": "Shows behind the logo and icons. 2400 x 300px works well."
+    },
+    {
+      "type": "image_picker",
+      "id": "nav_bg_image",
+      "label": "Menu bar background image",
+      "info": "Shows behind the menu row (layout: logo center, menu below)."
+    },
+    {
+      "type": "range",
+      "id": "bg_overlay",
+      "label": "Image overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "bg_text_color",
+      "label": "Text and icon color on images",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Search"
+    },
+    {
+      "type": "select",
+      "id": "search_style",
+      "label": "Search style",
+      "default": "bar",
+      "options": [
+        {
+          "value": "bar",
+          "label": "Visible search box"
+        },
+        {
+          "value": "icon",
+          "label": "Icon only"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "search_mobile_bar",
+      "label": "Show search box below the header on mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "search_show_products",
+      "label": "Show products when search opens",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_products_title",
+      "label": "Products heading",
+      "default": "Best sellers"
+    },
+    {
+      "type": "collection",
+      "id": "search_products_collection",
+      "label": "Products from collection",
+      "info": "Sorted by best selling. Leave empty to use all products."
+    },
+    {
+      "type": "range",
+      "id": "search_products_limit",
+      "label": "Number of products",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
     },
     {
       "type": "text",

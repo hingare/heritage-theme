@@ -17,8 +17,13 @@
   let activePanel = null;
   let lastFocus = null;
 
-  function openPanel(panel) {
+  function openPanel(panel, opener) {
     if (!panel) return;
+    // A visible search box opens the search as a dropdown just below it.
+    if (panel.id === 'SearchModal') {
+      const trigger = opener?.closest('[data-search-trigger]') || $$('[data-search-trigger]').find((t) => t.offsetParent);
+      if (trigger) panel.style.setProperty('--search-top', `${Math.round(trigger.getBoundingClientRect().bottom + 8)}px`);
+    }
     if (activePanel && activePanel !== panel) closePanel(activePanel, false);
     lastFocus = document.activeElement;
     activePanel = panel;
@@ -47,7 +52,7 @@
     const opener = e.target.closest('[data-open]');
     if (opener) {
       e.preventDefault();
-      openPanel(document.getElementById(opener.dataset.open));
+      openPanel(document.getElementById(opener.dataset.open), opener);
       return;
     }
     if (e.target.closest('[data-close]') || e.target.matches('[data-overlay]') || e.target.matches('.modal__backdrop')) {
