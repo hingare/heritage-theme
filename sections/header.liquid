@@ -45,7 +45,18 @@
 </style>
 
 <div class="site-header-wrapper{% if section.settings.sticky %} is-sticky{% endif %}{% if transparent %} site-header-wrapper--transparent{% endif %}" data-header-wrapper>
-  <header class="site-header{% if logo_left %} site-header--logo-left{% endif %}{% if left_below %} site-header--left-below{% endif %}{% if overhang %} site-header--overhang{% endif %}{% if section.settings.bg_image != blank %} site-header--has-bg{% endif %}{% if search_bar %} site-header--search-bar{% if section.settings.search_mobile_bar %} site-header--search-bar-mobile{% endif %}{% endif %}" role="banner">
+  <header class="site-header{% if logo_left %} site-header--logo-left{% endif %}{% if left_below %} site-header--left-below{% endif %}{% if overhang %} site-header--overhang{% endif %}{% if section.settings.bg_image != blank %} site-header--has-bg{% endif %}{% if search_bar %} site-header--search-bar{% if section.settings.search_mobile_bar %} site-header--search-bar-mobile{% endif %}{% endif %}" role="banner"
+    {%- liquid
+      assign hdr_bg = section.settings.header_bg_color
+      if hdr_bg != blank and hdr_bg.alpha == 0
+        assign hdr_bg = blank
+      endif
+      assign hdr_text = section.settings.header_text_color
+      if hdr_text != blank and hdr_text.alpha == 0
+        assign hdr_text = blank
+      endif
+    -%}
+    {%- if hdr_bg != blank or hdr_text != blank %} style="{% if hdr_bg != blank %}--color-header-bg: {{ hdr_bg }};{% endif %}{% if hdr_text != blank %} --color-header-text: {{ hdr_text }};{% endif %}"{% endif %}>
     {%- if section.settings.bg_image != blank -%}
       <div class="site-header__bg" aria-hidden="true">
         {{ section.settings.bg_image | image_url: width: 2400 | image_tag: loading: 'eager', widths: '750, 1100, 1500, 2000, 2400', sizes: '100vw', alt: '' }}
@@ -370,6 +381,18 @@
       "id": "nav_bg_image",
       "label": "Menu bar background image",
       "info": "Shows behind the menu row (layouts with the menu below)."
+    },
+    {
+      "type": "color",
+      "id": "header_bg_color",
+      "label": "Header background color",
+      "info": "Color of the logo, search and cart area. Leave empty to use Theme settings > Colors."
+    },
+    {
+      "type": "color",
+      "id": "header_text_color",
+      "label": "Header text and icon color",
+      "info": "Leave empty to use Theme settings > Colors."
     },
     {
       "type": "color",
