@@ -51,7 +51,7 @@
         class="vslide{% if forloop.first %} is-active{% endif %}"
         data-kind="{{ kind }}"
         data-index="{{ forloop.index0 }}"
-        style="--overlay-opacity: {{ b.overlay | divided_by: 100.0 }}; color: {{ b.text_color }};"
+        style="--overlay-opacity: {% if b.custom_overlay %}{{ b.overlay | divided_by: 100.0 }}{% else %}{{ s.overlay_opacity | divided_by: 100.0 }}{% endif %}; color: {{ b.text_color }};"
         role="group"
         aria-roledescription="slide"
         aria-label="{{ forloop.index }} / {{ section.blocks.size }}"
@@ -237,6 +237,7 @@
       { "value": "slide", "label": "Slide" }
     ] },
     { "type": "color", "id": "overlay_color", "label": "Overlay color", "default": "#000000" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 25, "info": "0% shows the video clearly, 100% shows only the color. Applies to all slides." },
     { "type": "header", "content": "Video playback" },
     { "type": "select", "id": "video_end", "label": "When a video ends", "default": "loop", "options": [
       { "value": "loop", "label": "Repeat the same video" },
@@ -276,7 +277,8 @@
         { "type": "header", "content": "Image" },
         { "type": "image_picker", "id": "image", "label": "Image", "info": "Shown before the video loads, or as the slide when there is no video. 2400 x 1350px." },
         { "type": "image_picker", "id": "image_mobile", "label": "Mobile image" },
-        { "type": "range", "id": "overlay", "label": "Overlay opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 25 },
+        { "type": "checkbox", "id": "custom_overlay", "label": "Use a different overlay opacity for this slide", "default": false },
+        { "type": "range", "id": "overlay", "label": "Slide overlay opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 25 },
         { "type": "header", "content": "Text" },
         { "type": "text", "id": "subheading", "label": "Subheading", "default": "Handmade" },
         { "type": "text", "id": "heading", "label": "Heading", "default": "Made to be lived in" },
