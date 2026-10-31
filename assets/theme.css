@@ -1000,3 +1000,9 @@ svg[viewBox="0 0 24 24"][stroke="currentColor"] { stroke-width: var(--icon-strok
 .blog-posts__footer--right { justify-content: flex-end; }
 .blog-posts__link { background: none; border: 0; padding: 0; min-height: 0; color: inherit; border-bottom: 1px solid currentColor; border-radius: 0; }
 .blog-posts__link:hover { background: none; color: inherit; opacity: 0.75; }
+@media (min-width: 990px) {
+  .product--media-right > .product__media-wrapper { order: 2; }
+  .product--media-right { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+  .product--media-right.product--media-small { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+.featured-product .product__desc--inline { display: block !important; }

@@ -1,0 +1,251 @@
+{%- comment -%}
+  One product info block, shared by the product page and the Featured product section.
+  - block, product, current_variant, section (required)
+  - title_tag: 'h1' (default) or 'h2'
+  - link_title: link the title to the product page
+{%- endcomment -%}
+{%- case block.type -%}
+  {%- when 'vendor' -%}
+    <div class="product__vendor" {{ block.shopify_attributes }}>{{ product.vendor | link_to_vendor }}</div>
+  {%- when 'title' -%}
+    {%- assign t_tag = title_tag | default: 'h1' -%}
+    <{{ t_tag }} class="product__title h2" {{ block.shopify_attributes }}>{%- if link_title -%}<a href="{{ product.url }}">{{ product.title }}</a>{%- else -%}{{ product.title }}{%- endif -%}</{{ t_tag }}>
+  {%- when 'price' -%}
+    <div {{ block.shopify_attributes }}>
+      <div data-update="price">{% render 'price', product: product, variant: current_variant, large: true, show_save: block.settings.show_save %}</div>
+      {%- if block.settings.show_tax_note -%}
+        <p class="product__tax">
+          {%- if cart.taxes_included -%}{{ 'products.product.tax_included' | t }} {% endif -%}
+          {{ 'products.product.shipping_calculated' | t }}
+        </p>
+      {%- endif -%}
+    </div>
+  {%- when 'sku' -%}
+    <p class="product__sku" data-update="sku" {{ block.shopify_attributes }}>{% if current_variant.sku != blank %}{{ 'products.product.sku' | t }}: {{ current_variant.sku }}{% endif %}</p>
+  {%- when 'inventory' -%}
+    <div data-update="inventory" {{ block.shopify_attributes }}>
+      {%- if current_variant.available -%}
+        {%- if current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= block.settings.low_threshold -%}
+          <p class="inventory inventory--low">{{ 'products.product.low_stock' | t: count: current_variant.inventory_quantity }}</p>
+        {%- else -%}
+          <p class="inventory">{{ 'products.product.in_stock' | t }}</p>
+        {%- endif -%}
+      {%- else -%}
+        <p class="inventory inventory--out">{{ 'products.product.sold_out' | t }}</p>
+      {%- endif -%}
+    </div>
+  {%- when 'variant_picker' -%}
+    <div {{ block.shopify_attributes }}>
+      {% render 'product-variant-picker', product: product, section: section, picker_type: block.settings.picker_type, use_swatches: block.settings.use_swatches, swatch_style: block.settings.swatch_style, swatch_shape: block.settings.swatch_shape, swatch_size: block.settings.swatch_size %}
+    </div>
+  {%- when 'buy_buttons' -%}
+    <div {{ block.shopify_attributes }}>
+      {% render 'product-buy-buttons', product: product, section: section, show_quantity: block.settings.show_quantity, show_dynamic: block.settings.show_dynamic, show_installments: block.settings.show_installments, show_recipient: block.settings.show_gift_card_recipient %}
+    </div>
+  {%- when 'description' -%}
+    {%- if product.description != blank -%}
+      {%- if block.settings.collapsible -%}
+        <details class="collapsible{% if block.settings.full_width_desktop %} product__desc--inline{% endif %}" {% if block.settings.open %}open{% endif %} {{ block.shopify_attributes }}>
+          <summary><span class="collapsible__label">{{ block.settings.title }}</span>{% render 'icon', name: 'chevron-down' %}</summary>
+          <div class="collapsible__content rte">{{ product.description }}</div>
+        </details>
+      {%- else -%}
+        <div class="product__description rte{% if block.settings.full_width_desktop %} product__desc--inline{% endif %}" {{ block.shopify_attributes }}>{{ product.description }}</div>
+      {%- endif -%}
+    {%- endif -%}
+  {%- when 'collapsible_tab' -%}
+    <details class="collapsible" {% if block.settings.open %}open{% endif %} {{ block.shopify_attributes }}>
+      <summary>
+        <span class="collapsible__label">{% if block.settings.icon != 'none' %}{% render 'icon', name: block.settings.icon %}{% endif %}{{ block.settings.heading }}</span>
+        {% render 'icon', name: 'chevron-down' %}
+      </summary>
+      <div class="collapsible__content rte">
+        {{ block.settings.content }}
+        {{ block.settings.page.content }}
+      </div>
+    </details>
+  {%- when 'text' -%}
+    <div class="rte" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+  {%- when 'trust_badges' -%}
+    <div class="trust-badges" {{ block.shopify_attributes }}>
+      {%- for i in (1..3) -%}
+        {%- liquid
+          assign icon_key = 'icon_' | append: i
+          assign text_key = 'text_' | append: i
+        -%}
+        {%- if block.settings[text_key] != blank -%}
+          <div class="trust-badge">{% render 'icon', name: block.settings[icon_key] %}<span>{{ block.settings[text_key] }}</span></div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- when 'share' -%}
+    {%- assign share_url = request.origin | append: product.url | url_encode -%}
+    <div class="product-share" {{ block.shopify_attributes }}>
+      <span>{{ 'products.product.share' | t }}:</span>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url }}" target="_blank" rel="noopener" aria-label="Facebook">{% render 'icon', name: 'facebook' %}</a>
+      <a href="https://twitter.com/intent/tweet?url={{ share_url }}&text={{ product.title | url_encode }}" target="_blank" rel="noopener" aria-label="X">{% render 'icon', name: 'twitter' %}</a>
+      <a href="https://pinterest.com/pin/create/button/?url={{ share_url }}{% if product.featured_image %}&media={{ product.featured_image | image_url: width: 1200 | prepend: 'https:' | url_encode }}{% endif %}&description={{ product.title | url_encode }}" target="_blank" rel="noopener" aria-label="Pinterest">{% render 'icon', name: 'pinterest' %}</a>
+      <a href="mailto:?subject={{ product.title | url_encode }}&body={{ share_url }}" aria-label="Email">{% render 'icon', name: 'email' %}</a>
+    </div>
+  {%- when 'divider' -%}
+    <hr class="product__divider" {{ block.shopify_attributes }}>
+  {%- when 'wishlist' -%}
+    <div {{ block.shopify_attributes }}>
+      {%- if settings.wishlist_enabled -%}
+        <button type="button" class="wishlist-btn wishlist-btn--inline" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false" data-label-add="{{ 'wishlist.add' | t | escape }}" data-label-remove="{{ 'wishlist.remove' | t | escape }}">
+          {% render 'icon', name: 'heart' %}<span data-wishlist-label>{{ 'wishlist.add' | t }}</span>
+        </button>
+      {%- endif -%}
+    </div>
+  {%- when 'size_chart' -%}
+    {%- if block.settings.page != blank or block.settings.content != blank -%}
+      <div {{ block.shopify_attributes }}>
+        <button type="button" class="link-underline tw-inline-flex tw-items-center tw-gap-2 tw-text-sm" data-open="SizeChart-{{ block.id }}">
+          <span class="tw-w-5 tw-h-5">{% render 'icon', name: 'ruler' %}</span>{{ block.settings.label }}
+        </button>
+        <div id="SizeChart-{{ block.id }}" class="drawer drawer--right" aria-hidden="true" role="dialog" aria-label="{{ block.settings.label | escape }}">
+          <div class="drawer__header">
+            <span class="drawer__title h3">{{ block.settings.label }}</span>
+            <button type="button" class="drawer__close" data-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+          </div>
+          <div class="drawer__body rte size-chart">
+            {{ block.settings.content }}
+            {{ block.settings.page.content }}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- when 'pickup' -%}
+    <div class="pickup" data-update="pickup" {{ block.shopify_attributes }}>
+      {%- assign pick_up_availabilities = current_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+      {%- if pick_up_availabilities.size > 0 -%}
+        {%- assign closest = pick_up_availabilities.first -%}
+        <div class="tw-flex tw-gap-3 tw-text-sm">
+          <span class="tw-w-5 tw-h-5 tw-shrink-0 tw-mt-0.5">{% render 'icon', name: 'store' %}</span>
+          <div>
+            {%- if closest.available -%}
+              <p class="tw-m-0">{{ 'products.pickup.available_at' | t: location: closest.location.name }}</p>
+              <p class="tw-m-0 tw-opacity-75">{{ closest.pick_up_time }}</p>
+            {%- else -%}
+              <p class="tw-m-0">{{ 'products.pickup.unavailable_at' | t: location: closest.location.name }}</p>
+            {%- endif -%}
+            {%- if pick_up_availabilities.size > 1 -%}
+              <details class="tw-mt-1">
+                <summary class="link-underline tw-cursor-pointer tw-inline-block">{{ 'products.pickup.view_stores' | t }}</summary>
+                <ul class="tw-mt-2 tw-space-y-2">
+                  {%- for availability in pick_up_availabilities -%}
+                    <li><strong>{{ availability.location.name }}</strong><br>
+                      {%- if availability.available -%}{{ availability.pick_up_time }}{%- else -%}{{ 'products.pickup.unavailable' | t }}{%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- when 'delivery' -%}
+    <div class="tw-flex tw-gap-3 tw-items-start tw-text-sm" data-delivery-estimate data-min="{{ block.settings.min_days }}" data-max="{{ block.settings.max_days }}" data-skip-weekends="{{ block.settings.skip_weekends }}" data-cutoff="{{ block.settings.cutoff_hour }}" {{ block.shopify_attributes }}>
+      <span class="tw-w-5 tw-h-5 tw-shrink-0 tw-mt-0.5">{% render 'icon', name: 'truck' %}</span>
+      <p class="tw-m-0">{{ block.settings.text }} <strong data-delivery-range></strong></p>
+    </div>
+  {%- when 'complementary' -%}
+    {%- assign comp_url = routes.product_recommendations_url | append: '?section_id=product-complementary&product_id=' | append: product.id | append: '&limit=' | append: block.settings.limit | append: '&intent=complementary' -%}
+    <div class="tw-hidden" data-lazy-products="{{ comp_url }}" {{ block.shopify_attributes }}>
+      <p class="tw-text-sm tw-font-semibold tw-tracking-wider tw-uppercase tw-mb-3">{{ block.settings.heading }}</p>
+      <div class="tw-flex tw-flex-col tw-gap-3" data-lazy-products-target></div>
+    </div>
+  {%- when 'countdown' -%}
+    {%- assign pc_end = block.settings.end_date | append: 'T' | append: block.settings.end_time | append: ':00' -%}
+    <div class="product-countdown" data-countdown="{{ pc_end | escape }}" data-countdown-hide="true" {{ block.shopify_attributes }}>
+      <span class="tw-text-sm tw-font-semibold">{{ block.settings.text }}</span>
+      <span class="tw-flex tw-gap-2" data-countdown-timer>
+        <span class="countdown__unit countdown__unit--small"><span class="countdown__value" data-countdown-days>00</span><span class="countdown__label">{{ 'countdown.days' | t }}</span></span>
+        <span class="countdown__unit countdown__unit--small"><span class="countdown__value" data-countdown-hours>00</span><span class="countdown__label">{{ 'countdown.hours' | t }}</span></span>
+        <span class="countdown__unit countdown__unit--small"><span class="countdown__value" data-countdown-minutes>00</span><span class="countdown__label">{{ 'countdown.minutes' | t }}</span></span>
+        <span class="countdown__unit countdown__unit--small"><span class="countdown__value" data-countdown-seconds>00</span><span class="countdown__label">{{ 'countdown.seconds' | t }}</span></span>
+      </span>
+      <span class="tw-hidden" data-countdown-done></span>
+    </div>
+  {%- when 'rating' -%}
+    {%- assign rating = product.metafields.reviews.rating.value -%}
+    {%- assign rating_count = product.metafields.reviews.rating_count | default: 0 -%}
+    {%- if rating != blank or block.settings.show_empty -%}
+      {%- liquid
+        assign r_val = rating.rating | default: 0
+        assign r_max = rating.scale_max | default: 5
+      -%}
+      <a href="{{ block.settings.link | default: '#shopify-product-reviews' }}" class="product-rating" {{ block.shopify_attributes }}>
+        <span class="rating__stars" style="--rating: {{ r_val }}; --rating-max: {{ r_max }};" role="img" aria-label="{{ 'products.product.rating' | t: rating: r_val, max: r_max }}"></span>
+        <span class="product-rating__text">{% if rating_count > 0 %}{{ r_val | round: 1 }} ({{ 'products.product.rating_count' | t: count: rating_count }}){% else %}{{ 'products.product.rating_none' | t }}{% endif %}</span>
+      </a>
+    {%- endif -%}
+  {%- when 'popup' -%}
+    {%- if block.settings.label != blank -%}
+      <div {{ block.shopify_attributes }}>
+        <button type="button" class="link-underline tw-inline-flex tw-items-center tw-gap-2 tw-text-sm" data-open="Popup-{{ block.id }}">
+          {%- if block.settings.icon != 'none' -%}<span class="tw-w-5 tw-h-5">{% render 'icon', name: block.settings.icon %}</span>{%- endif -%}{{ block.settings.label }}
+        </button>
+        <div id="Popup-{{ block.id }}" class="drawer drawer--right" aria-hidden="true" role="dialog" aria-label="{{ block.settings.label | escape }}">
+          <div class="drawer__header">
+            <span class="drawer__title h3">{{ block.settings.heading | default: block.settings.label }}</span>
+            <button type="button" class="drawer__close" data-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+          </div>
+          <div class="drawer__body">
+            {%- if block.settings.content != blank or block.settings.page != blank -%}
+              <div class="rte">{{ block.settings.content }}{{ block.settings.page.content }}</div>
+            {%- endif -%}
+            {%- if block.settings.show_contact_form -%}
+              {%- assign pq_id = 'ProductQuestion-' | append: block.id -%}
+              {%- form 'contact', id: pq_id, class: 'product-question' -%}
+                {%- if form.posted_successfully? -%}
+                  <p class="form-success" role="status">{{ 'contact.success' | t }}</p>
+                {%- endif -%}
+                {%- if form.errors -%}<div class="form-error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+                <input type="hidden" name="contact[product]" value="{{ product.title | escape }} ({{ request.origin }}{{ product.url }})">
+                <div class="field">
+                  <label for="PQ-name-{{ block.id }}">{{ 'contact.name' | t }}</label>
+                  <input class="input" id="PQ-name-{{ block.id }}" type="text" name="contact[name]" autocomplete="name">
+                </div>
+                <div class="field">
+                  <label for="PQ-email-{{ block.id }}">{{ 'contact.email' | t }} *</label>
+                  <input class="input" id="PQ-email-{{ block.id }}" type="email" name="contact[email]" autocomplete="email" required>
+                </div>
+                <div class="field">
+                  <label for="PQ-body-{{ block.id }}">{{ 'contact.message' | t }}</label>
+                  <textarea class="input" id="PQ-body-{{ block.id }}" name="contact[body]" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn--full">{{ 'contact.send' | t }}</button>
+              {%- endform -%}
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- when 'icon_with_text' -%}
+    <div class="icon-text icon-text--{{ block.settings.layout }}" {{ block.shopify_attributes }}>
+      {%- for i in (1..3) -%}
+        {%- liquid
+          assign it_icon = 'icon_' | append: i
+          assign it_head = 'heading_' | append: i
+          assign it_text = 'text_' | append: i
+        -%}
+        {%- if block.settings[it_head] != blank or block.settings[it_text] != blank -%}
+          <div class="icon-text__item">
+            <span class="icon-text__icon">{% render 'icon', name: block.settings[it_icon] %}</span>
+            <div>
+              {%- if block.settings[it_head] != blank -%}<p class="icon-text__heading">{{ block.settings[it_head] }}</p>{%- endif -%}
+              {%- if block.settings[it_text] != blank -%}<p class="icon-text__text">{{ block.settings[it_text] }}</p>{%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- when 'custom_liquid' -%}
+    <div {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
+  {%- when 'view_details' -%}
+    <a href="{{ product.url }}" class="{% if block.settings.style == 'button' %}btn btn--secondary{% else %}link-underline{% endif %}" style="align-self: flex-start;" {{ block.shopify_attributes }}>
+      {%- if block.settings.label != blank -%}{{ block.settings.label }}{%- else -%}{{ 'products.product.view_details' | t }}{%- endif -%}
+    </a>
+{%- endcase -%}
