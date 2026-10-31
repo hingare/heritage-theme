@@ -3,7 +3,15 @@
   - product (required), section (required)
   - picker_type: 'button' | 'dropdown'
   - use_swatches: boolean
+  - swatch_style: 'color' | 'image' | 'image_label' (variant photo instead of colour)
+  - swatch_shape: 'circle' | 'square'
+  - swatch_size: number (px)
 {%- endcomment -%}
+{%- liquid
+  assign swatch_style = swatch_style | default: 'color'
+  assign swatch_shape = swatch_shape | default: 'circle'
+  assign swatch_size = swatch_size | default: 38
+-%}
 {%- unless product.has_only_default_variant -%}
   <div class="variant-picker" data-variant-picker>
     {%- for option in product.options_with_values -%}
@@ -28,13 +36,32 @@
       {%- else -%}
         <fieldset data-option-index="{{ option_index }}">
           <legend>{{ option.name }}:<span data-selected-value>{{ option.selected_value }}</span></legend>
-          <div class="variant-picker__options">
+          <div class="variant-picker__options{% if is_swatch %} variant-picker__options--{{ swatch_style }} variant-picker__options--{{ swatch_shape }}{% endif %}"{% if is_swatch %} style="--swatch-size: {{ swatch_size }}px;"{% endif %}>
             {%- for value in option.values -%}
-              <label class="{% if is_swatch %}variant-swatch{% else %}variant-pill{% endif %}" title="{{ value | escape }}">
+              {%- liquid
+                assign swatch_img = nil
+                if is_swatch and swatch_style != 'color'
+                  for v in product.variants
+                    if v.options[option_index] == value and v.featured_image
+                      assign swatch_img = v.featured_image
+                      break
+                    endif
+                  endfor
+                endif
+              -%}
+              <label class="{% if is_swatch %}variant-swatch{% if swatch_img %} variant-swatch--image{% endif %}{% else %}variant-pill{% endif %}" title="{{ value | escape }}">
                 <input type="radio" name="{{ section.id }}-{{ option.name | handle }}" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %}>
                 {%- if is_swatch -%}
-                  <span style="--swatch-color: {% render 'swatch-color', value: value %}"></span>
-                  <span class="visually-hidden">{{ value }}</span>
+                  {%- if swatch_img -%}
+                    <span class="variant-swatch__chip">{{ swatch_img | image_url: width: 200 | image_tag: loading: 'lazy', widths: '100, 200', sizes: '80px', alt: '' }}</span>
+                  {%- else -%}
+                    <span class="variant-swatch__chip" style="--swatch-color: {% render 'swatch-color', value: value %}"></span>
+                  {%- endif -%}
+                  {%- if swatch_style == 'image_label' -%}
+                    <span class="variant-swatch__label">{{ value }}</span>
+                  {%- else -%}
+                    <span class="visually-hidden">{{ value }}</span>
+                  {%- endif -%}
                 {%- else -%}
                   <span>{{ value }}</span>
                 {%- endif -%}

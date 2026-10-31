@@ -63,7 +63,7 @@
             </div>
           {%- when 'variant_picker' -%}
             <div {{ block.shopify_attributes }}>
-              {% render 'product-variant-picker', product: product, section: section, picker_type: block.settings.picker_type, use_swatches: block.settings.use_swatches %}
+              {% render 'product-variant-picker', product: product, section: section, picker_type: block.settings.picker_type, use_swatches: block.settings.use_swatches, swatch_style: block.settings.swatch_style, swatch_shape: block.settings.swatch_shape, swatch_size: block.settings.swatch_size %}
             </div>
           {%- when 'buy_buttons' -%}
             <div {{ block.shopify_attributes }}>
@@ -386,7 +386,17 @@
         { "value": "button", "label": "Buttons" },
         { "value": "dropdown", "label": "Dropdown" }
       ] },
-      { "type": "checkbox", "id": "use_swatches", "label": "Use colour swatches", "default": true }
+      { "type": "checkbox", "id": "use_swatches", "label": "Use colour swatches", "default": true },
+      { "type": "select", "id": "swatch_style", "label": "Swatch shows", "default": "color", "options": [
+        { "value": "color", "label": "Color" },
+        { "value": "image", "label": "Variant photo" },
+        { "value": "image_label", "label": "Variant photo with name" }
+      ], "info": "Variant photo uses the image assigned to each variant. Values without a photo fall back to color." },
+      { "type": "select", "id": "swatch_shape", "label": "Swatch shape", "default": "circle", "options": [
+        { "value": "circle", "label": "Circle" },
+        { "value": "square", "label": "Square" }
+      ] },
+      { "type": "range", "id": "swatch_size", "label": "Swatch size", "min": 30, "max": 90, "step": 2, "unit": "px", "default": 38 }
     ] },
     { "type": "buy_buttons", "name": "Buy buttons", "limit": 1, "settings": [
       { "type": "checkbox", "id": "show_quantity", "label": "Show quantity selector", "default": true },
