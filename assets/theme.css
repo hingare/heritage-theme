@@ -988,3 +988,8 @@ svg[viewBox="0 0 24 24"][stroke="currentColor"] { stroke-width: var(--icon-strok
   .product-desc-full__heading { font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; font-family: var(--font-body-family, inherit); font-weight: 600; margin: 0 0 1.5rem; }
   .product-desc-full__body { font-size: 1.02rem; line-height: 1.75; }
 }
+.blog-posts__footer { display: flex; justify-content: center; margin-top: 2.5rem; }
+.blog-posts__footer--left { justify-content: flex-start; }
+.blog-posts__footer--right { justify-content: flex-end; }
+.blog-posts__link { background: none; border: 0; padding: 0; min-height: 0; color: inherit; border-bottom: 1px solid currentColor; border-radius: 0; }
+.blog-posts__link:hover { background: none; color: inherit; opacity: 0.75; }

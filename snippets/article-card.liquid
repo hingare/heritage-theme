@@ -6,11 +6,18 @@
       {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
     {%- endif -%}
   </div>
-  <span class="article-card__meta">{{ article.published_at | time_tag: format: 'month_day_year' }}</span>
+  {%- unless show_date == false and show_author != true -%}
+    <span class="article-card__meta">
+      {%- unless show_date == false -%}{{ article.published_at | time_tag: format: 'month_day_year' }}{%- endunless -%}
+      {%- if show_author -%}{% unless show_date == false %} · {% endunless %}{{ article.author }}{%- endif -%}
+    </span>
+  {%- endunless -%}
   <h3 class="article-card__title">{{ article.title }}</h3>
-  {%- if article.excerpt != blank -%}
-    <p>{{ article.excerpt | strip_html | truncatewords: 22 }}</p>
-  {%- else -%}
-    <p>{{ article.content | strip_html | truncatewords: 22 }}</p>
-  {%- endif -%}
+  {%- unless show_excerpt == false -%}
+    {%- if article.excerpt != blank -%}
+      <p>{{ article.excerpt | strip_html | truncatewords: 22 }}</p>
+    {%- else -%}
+      <p>{{ article.content | strip_html | truncatewords: 22 }}</p>
+    {%- endif -%}
+  {%- endunless -%}
 </a>

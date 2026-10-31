@@ -1,17 +1,38 @@
-{%- assign blog = section.settings.blog -%}
-<div class="section color-{{ section.settings.color_scheme }}{% if section.settings.alt_bg %} section--alt{% endif %}">
+{%- liquid
+  assign blog = section.settings.blog
+  assign s = section.settings
+  assign post_limit = s.columns | times: s.rows
+  assign btn_label = 'general.view_all' | t
+  if s.button_label != blank
+    assign btn_label = s.button_label
+  endif
+  assign show_top = false
+  assign show_bottom = false
+  if blog != blank and s.button_position != 'none'
+    if s.button_position == 'top' or s.button_position == 'both'
+      assign show_top = true
+    endif
+    if s.button_position contains 'bottom' or s.button_position == 'both'
+      assign show_bottom = true
+    endif
+  endif
+  assign button_url = s.button_link | default: blog.url
+-%}
+<div class="section color-{{ s.color_scheme }}{% if s.alt_bg %} section--alt{% endif %}">
   <div class="page-width">
-    <div class="section-header">
-      <h2>{{ section.settings.heading }}</h2>
-      {%- if blog != blank -%}<a href="{{ blog.url }}" class="section-header__link">{{ 'general.view_all' | t }}</a>{%- endif -%}
-    </div>
-    <div class="grid grid--scroll-mobile" style="--cols: 3;">
+    {%- if s.heading != blank or show_top -%}
+      <div class="section-header{% if s.heading_align == 'center' %} section-header--center{% endif %}">
+        {%- if s.heading != blank -%}<h2>{{ s.heading }}</h2>{%- endif -%}
+        {%- if show_top -%}<a href="{{ button_url }}" class="section-header__link">{{ btn_label }}</a>{%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="grid blog-posts__grid{% if s.columns_mobile == 'scroll' %} grid--scroll-mobile{% endif %}" style="--cols: {{ s.columns }}; --cols-tablet: {{ s.columns | at_most: 2 }}; --cols-mobile: {% if s.columns_mobile == '2' %}2{% else %}1{% endif %};">
       {%- if blog != blank and blog.articles_count > 0 -%}
-        {%- for article in blog.articles limit: section.settings.limit -%}
-          {% render 'article-card', article: article %}
+        {%- for article in blog.articles limit: post_limit -%}
+          {% render 'article-card', article: article, show_date: s.show_date, show_excerpt: s.show_excerpt, show_author: s.show_author %}
         {%- endfor -%}
       {%- else -%}
-        {%- for i in (1..3) -%}
+        {%- for i in (1..post_limit) -%}
           <div class="article-card">
             <div class="media media--landscape">{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
             <h3 class="article-card__title">Blog post title</h3>
@@ -19,6 +40,11 @@
         {%- endfor -%}
       {%- endif -%}
     </div>
+    {%- if show_bottom -%}
+      <div class="blog-posts__footer blog-posts__footer--{{ s.button_position | remove: 'bottom-' | replace: 'both', 'center' }}">
+        <a href="{{ button_url }}" class="btn{% if s.button_style == 'secondary' %} btn--secondary{% elsif s.button_style == 'link' %} blog-posts__link{% endif %}">{{ btn_label }}</a>
+      </div>
+    {%- endif -%}
   </div>
 </div>
 
@@ -27,43 +53,45 @@
   "name": "Blog posts",
   "class": "section-blog-posts",
   "settings": [
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "From the journal"
-    },
-    {
-      "type": "blog",
-      "id": "blog",
-      "label": "Blog"
-    },
-    {
-      "type": "range",
-      "id": "limit",
-      "label": "Posts to show",
-      "min": 2,
-      "max": 6,
-      "step": 1,
-      "default": 3
-    },
-    {
-      "type": "checkbox",
-      "id": "alt_bg",
-      "label": "Use alternate background",
-      "default": false
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "Color scheme",
-      "default": "scheme-1"
-    }
+    { "type": "text", "id": "heading", "label": "Heading", "default": "From the journal" },
+    { "type": "select", "id": "heading_align", "label": "Heading alignment", "default": "left", "options": [
+      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }
+    ] },
+    { "type": "blog", "id": "blog", "label": "Blog" },
+    { "type": "header", "content": "Grid" },
+    { "type": "range", "id": "columns", "label": "Posts per row (desktop)", "min": 1, "max": 5, "step": 1, "default": 3 },
+    { "type": "range", "id": "rows", "label": "Number of rows", "min": 1, "max": 6, "step": 1, "default": 1, "info": "Posts shown = posts per row x rows." },
+    { "type": "select", "id": "columns_mobile", "label": "Mobile layout", "default": "scroll", "options": [
+      { "value": "scroll", "label": "Swipe slider" },
+      { "value": "1", "label": "1 per row" },
+      { "value": "2", "label": "2 per row" }
+    ] },
+    { "type": "header", "content": "Post details" },
+    { "type": "checkbox", "id": "show_date", "label": "Show date", "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": false },
+    { "type": "checkbox", "id": "show_excerpt", "label": "Show excerpt", "default": true },
+    { "type": "header", "content": "View all button" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "View all posts", "info": "Write any text, for example: Read the journal" },
+    { "type": "url", "id": "button_link", "label": "Button link", "info": "Leave empty to open the selected blog." },
+    { "type": "select", "id": "button_position", "label": "Button position", "default": "bottom-center", "options": [
+      { "value": "bottom-center", "label": "Below posts, center" },
+      { "value": "bottom-left", "label": "Below posts, left" },
+      { "value": "bottom-right", "label": "Below posts, right" },
+      { "value": "top", "label": "Next to heading" },
+      { "value": "both", "label": "Next to heading and below posts" },
+      { "value": "none", "label": "Hidden" }
+    ] },
+    { "type": "select", "id": "button_style", "label": "Button style", "default": "primary", "options": [
+      { "value": "primary", "label": "Solid" },
+      { "value": "secondary", "label": "Outline" },
+      { "value": "link", "label": "Text link" }
+    ] },
+    { "type": "header", "content": "Colors" },
+    { "type": "checkbox", "id": "alt_bg", "label": "Use alternate background", "default": false },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
   ],
   "presets": [
-    {
-      "name": "Blog posts"
-    }
+    { "name": "Blog posts" }
   ]
 }
 {% endschema %}
