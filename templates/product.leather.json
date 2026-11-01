@@ -135,6 +135,10 @@
         "share": {
           "type": "share",
           "settings": {}
+        },
+        "back_in_stock": {
+          "type": "back_in_stock",
+          "settings": {}
         }
       },
       "block_order": [
@@ -146,6 +150,7 @@
         "divider",
         "variant_picker",
         "buy_buttons",
+        "back_in_stock",
         "wishlist",
         "delivery",
         "icons",

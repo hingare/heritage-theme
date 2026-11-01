@@ -63,7 +63,7 @@
           "settings": {
             "heading": "Shipping & returns",
             "icon": "truck",
-            "content": "<p>Orders ship within 1–2 business days. Returns are accepted within 30 days of delivery.</p>",
+            "content": "<p>Orders ship within 1\u20132 business days. Returns are accepted within 30 days of delivery.</p>",
             "open": false
           }
         },
@@ -79,6 +79,10 @@
             "heading": "Pairs well with",
             "limit": 3
           }
+        },
+        "back_in_stock": {
+          "type": "back_in_stock",
+          "settings": {}
         }
       },
       "block_order": [
@@ -89,6 +93,7 @@
         "divider",
         "variant_picker",
         "buy_buttons",
+        "back_in_stock",
         "wishlist",
         "trust_badges",
         "description",

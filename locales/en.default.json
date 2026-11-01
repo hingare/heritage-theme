@@ -195,7 +195,8 @@
     "email": "Email",
     "message": "Message",
     "send": "Send",
-    "success": "Thanks for your message. We'll get back to you soon."
+    "success": "Thanks for your message. We'll get back to you soon.",
+    "error": "Something went wrong. Please try again."
   },
   "video": {
     "play": "Play video",

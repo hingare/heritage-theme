@@ -110,10 +110,52 @@
     {%- endif -%}
     {% render 'price', product: product %}
     {%- if swatch_option and swatch_option.values.size > 1 -%}
-      <div class="product-card__swatches">
-        {%- for value in swatch_option.values limit: 6 -%}
-          <span class="swatch-dot" title="{{ value | escape }}" style="--swatch-color: {% render 'swatch-color', value: value %}"></span>
+      {%- liquid
+        assign sw_index = swatch_option.position | minus: 1
+        assign sw_limit = settings.swatch_card_limit | default: 6
+        assign sw_image_style = false
+        if settings.swatch_card_style == 'image'
+          assign sw_image_style = true
+        endif
+        assign sw_switch = false
+        if settings.swatch_card_change_image and product.featured_media
+          assign sw_switch = true
+        endif
+      -%}
+      <div class="product-card__swatches{% if sw_image_style %} product-card__swatches--image{% endif %}"{% if sw_switch %} data-card-swatches{% endif %}>
+        {%- for value in swatch_option.values limit: sw_limit -%}
+          {%- liquid
+            assign sw_variant = nil
+            assign sw_image = nil
+            for v in product.variants
+              if v.options[sw_index] == value
+                if sw_variant == nil
+                  assign sw_variant = v
+                endif
+                if v.featured_image
+                  assign sw_variant = v
+                  assign sw_image = v.featured_image
+                  break
+                endif
+              endif
+            endfor
+          -%}
+          {%- capture sw_inner -%}
+            {%- if sw_image_style and sw_image -%}
+              {{ sw_image | image_url: width: 80, height: 80, crop: 'center' | image_tag: loading: 'lazy', alt: '', width: 40, height: 40 }}
+            {%- endif -%}
+          {%- endcapture -%}
+          {%- assign sw_class = 'swatch-dot' -%}
+          {%- if sw_image_style and sw_image -%}{%- assign sw_class = 'swatch-dot swatch-dot--image' -%}{%- endif -%}
+          {%- if sw_switch and sw_image -%}
+            <button type="button" class="{{ sw_class }}" title="{{ value | escape }}" aria-label="{{ value | escape }}" style="--swatch-color: {% render 'swatch-color', value: value %}" data-card-swatch data-href="{{ sw_variant.url }}" data-src="{{ sw_image | image_url: width: 900 }}" data-srcset="{{ sw_image | image_url: width: 300 }} 300w, {{ sw_image | image_url: width: 450 }} 450w, {{ sw_image | image_url: width: 600 }} 600w, {{ sw_image | image_url: width: 900 }} 900w">{{ sw_inner }}</button>
+          {%- else -%}
+            <span class="{{ sw_class }}" title="{{ value | escape }}" style="--swatch-color: {% render 'swatch-color', value: value %}">{{ sw_inner }}</span>
+          {%- endif -%}
         {%- endfor -%}
+        {%- if swatch_option.values.size > sw_limit -%}
+          <a href="{{ product.url }}" class="product-card__swatch-more" tabindex="-1">+{{ swatch_option.values.size | minus: sw_limit }}</a>
+        {%- endif -%}
       </div>
     {%- endif -%}
   </div>

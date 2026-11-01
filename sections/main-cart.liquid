@@ -4,7 +4,7 @@
     <form action="{{ routes.cart_url }}" method="post" novalidate>
       <div class="cart-page__layout">
         <div>
-          {% render 'free-shipping-bar' %}
+          {% render 'free-shipping-bar', location: 'cart' %}
           {% render 'cart-items' %}
         </div>
         <div class="cart-page__summary">

@@ -118,6 +118,10 @@
         "share": {
           "type": "share",
           "settings": {}
+        },
+        "back_in_stock": {
+          "type": "back_in_stock",
+          "settings": {}
         }
       },
       "block_order": [
@@ -129,6 +133,7 @@
         "size_chart",
         "inventory",
         "buy_buttons",
+        "back_in_stock",
         "wishlist",
         "delivery",
         "trust_badges",

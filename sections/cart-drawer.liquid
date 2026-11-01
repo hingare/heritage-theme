@@ -7,7 +7,7 @@
 
     <div class="drawer__body">
       {%- if cart.item_count > 0 -%}
-        {% render 'free-shipping-bar' %}
+        {% render 'free-shipping-bar', location: 'drawer' %}
         {% render 'cart-items' %}
         {%- if settings.cart_upsell_enabled -%}
           {%- liquid

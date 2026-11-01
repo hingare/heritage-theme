@@ -659,6 +659,69 @@
       "limit": 1
     },
     {
+      "type": "back_in_stock",
+      "name": "Back in stock form",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows only when the selected variant is sold out. Requests arrive as contact form emails with the product and variant. Hide the block to turn it off."
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Sold out? Get notified"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Leave your email and we'll let you know as soon as it's back in stock.</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_name",
+          "label": "Ask for name",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Notify me"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Button style",
+          "default": "primary",
+          "options": [
+            {
+              "value": "primary",
+              "label": "Primary"
+            },
+            {
+              "value": "secondary",
+              "label": "Secondary"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "success_text",
+          "label": "Success message",
+          "default": "Thanks! We'll email you when it's back."
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Small note",
+          "default": "We'll only use your email for this notification."
+        }
+      ]
+    },
+    {
       "type": "divider",
       "name": "Divider"
     },

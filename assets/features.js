@@ -206,14 +206,33 @@
     $$('[data-hotspots]', ctx).forEach((wrap) => {
       if (wrap.dataset.ready) return;
       wrap.dataset.ready = '1';
+      const popup = wrap.dataset.mode === 'popup';
       const activate = (index) => {
         $$('[data-hotspot]', wrap).forEach((h) => h.classList.toggle('is-active', h.dataset.hotspot === index));
         $$('[data-hotspot-card]', wrap).forEach((c) => c.classList.toggle('is-active', c.dataset.hotspotCard === index));
       };
+      const closePops = () => {
+        $$('[data-hotspot-pop]', wrap).forEach((p) => { p.hidden = true; });
+        $$('[data-hotspot]', wrap).forEach((h) => h.setAttribute('aria-expanded', 'false'));
+      };
+      const openPop = (index) => {
+        const pop = $(`[data-hotspot-pop="${index}"]`, wrap);
+        const spot = $(`[data-hotspot="${index}"]`, wrap);
+        const wasOpen = pop && !pop.hidden;
+        closePops();
+        if (!pop || wasOpen) return;
+        pop.hidden = false;
+        spot?.setAttribute('aria-expanded', 'true');
+      };
       wrap.addEventListener('click', (e) => {
+        if (e.target.closest('[data-hotspot-close]')) { closePops(); return; }
         const spot = e.target.closest('[data-hotspot]');
-        if (!spot) return;
+        if (!spot) {
+          if (popup && !e.target.closest('[data-hotspot-pop]')) closePops();
+          return;
+        }
         activate(spot.dataset.hotspot);
+        if (popup) { openPop(spot.dataset.hotspot); return; }
         const card = $(`[data-hotspot-card="${spot.dataset.hotspot}"]`, wrap);
         if (card && window.innerWidth < 990) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
@@ -221,6 +240,64 @@
         const item = e.target.closest('[data-hotspot], [data-hotspot-card]');
         if (item) activate(item.dataset.hotspot || item.dataset.hotspotCard);
       });
+      if (popup) {
+        document.addEventListener('click', (e) => { if (!wrap.contains(e.target)) closePops(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePops(); });
+      }
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Product card swatches: preview the variant photo                    */
+  /* ------------------------------------------------------------------ */
+  function initCardSwatches() {
+    const apply = (sw) => {
+      const card = sw.closest('.product-card');
+      const img = card && card.querySelector('.product-card__image--primary');
+      if (!img || !sw.dataset.src) return;
+      if (img.dataset.swatchSrc === sw.dataset.src) return;
+      img.dataset.swatchSrc = sw.dataset.src;
+      img.srcset = sw.dataset.srcset || '';
+      img.src = sw.dataset.src;
+      card.querySelector('.media')?.classList.add('is-swatched');
+      $$('[data-card-swatch]', card).forEach((s) => s.classList.toggle('is-active', s === sw));
+      if (sw.dataset.href) $$('a.product-card__media, a.product-card__title', card).forEach((a) => { a.href = sw.dataset.href; });
+    };
+    document.addEventListener('click', (e) => {
+      const sw = e.target.closest('[data-card-swatch]');
+      if (sw) { e.preventDefault(); apply(sw); }
+    });
+    if (window.matchMedia('(hover: hover)').matches) {
+      document.addEventListener('mouseover', (e) => {
+        const sw = e.target.closest && e.target.closest('[data-card-swatch]');
+        if (sw) apply(sw);
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Back in stock form: send without leaving the page                   */
+  /* ------------------------------------------------------------------ */
+  function initBackInStock() {
+    document.addEventListener('submit', async (e) => {
+      const form = e.target.closest('form.bis__form');
+      if (!form || form.dataset.native) return;
+      e.preventDefault();
+      const btn = form.querySelector('[type=submit]');
+      const ok = form.querySelector('.bis__success');
+      const err = form.querySelector('.bis__error');
+      if (btn) btn.disabled = true;
+      if (err) err.hidden = true;
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'text/html' } });
+        if (res.url && res.url.includes('/challenge')) { form.dataset.native = '1'; form.submit(); return; }
+        if (!res.ok) throw new Error(res.status);
+        $$('.bis__fields', form).forEach((f) => { f.hidden = true; });
+        if (ok) ok.hidden = false;
+      } catch (error) {
+        if (err) err.hidden = false;
+        if (btn) btn.disabled = false;
+      }
     });
   }
 
@@ -353,6 +430,8 @@
     initSection();
     initPopup();
     initBackToTop();
+    initCardSwatches();
+    initBackInStock();
     initLazySearch();
   }
 

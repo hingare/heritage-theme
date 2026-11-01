@@ -242,6 +242,38 @@
         {%- endif -%}
       {%- endfor -%}
     </div>
+  {%- when 'back_in_stock' -%}
+    <div class="bis" data-update="bis-{{ block.id }}" {{ block.shopify_attributes }}>
+      {%- unless current_variant.available or product.gift_card? -%}
+        {%- assign bis_id = 'BackInStock-' | append: section.id | append: '-' | append: block.id -%}
+        <div class="bis__box">
+          {%- if block.settings.heading != blank -%}<p class="bis__heading">{{ block.settings.heading }}</p>{%- endif -%}
+          {%- if block.settings.text != blank -%}<div class="bis__text">{{ block.settings.text }}</div>{%- endif -%}
+          {%- form 'contact', id: bis_id, class: 'bis__form' -%}
+            <input type="hidden" name="contact[request]" value="Back in stock">
+            <input type="hidden" name="contact[product]" value="{{ product.title | escape }}">
+            {%- unless product.has_only_default_variant -%}
+              <input type="hidden" name="contact[variant]" value="{{ current_variant.title | escape }}">
+            {%- endunless -%}
+            {%- if current_variant.sku != blank -%}<input type="hidden" name="contact[sku]" value="{{ current_variant.sku | escape }}">{%- endif -%}
+            <input type="hidden" name="contact[link]" value="{{ request.origin }}{{ current_variant.url | default: product.url }}">
+            <input type="hidden" name="contact[body]" value="Please email me when {{ product.title | escape }}{% unless product.has_only_default_variant %} ({{ current_variant.title | escape }}){% endunless %} is back in stock.">
+            <div class="bis__fields">
+              {%- if block.settings.show_name -%}
+                <label class="visually-hidden" for="{{ bis_id }}-name">{{ 'contact.name' | t }}</label>
+                <input class="input" id="{{ bis_id }}-name" type="text" name="contact[name]" autocomplete="name" placeholder="{{ 'contact.name' | t }}">
+              {%- endif -%}
+              <label class="visually-hidden" for="{{ bis_id }}-email">{{ 'contact.email' | t }}</label>
+              <input class="input" id="{{ bis_id }}-email" type="email" name="contact[email]" autocomplete="email" required placeholder="{{ 'contact.email' | t }}" value="{{ customer.email }}">
+              <button type="submit" class="btn{% if block.settings.button_style == 'secondary' %} btn--secondary{% endif %}">{{ block.settings.button_label | default: 'Notify me' }}</button>
+            </div>
+            <p class="bis__success" role="status" hidden>{{ block.settings.success_text | default: "Thanks! We'll email you when it's back." }}</p>
+            <p class="bis__error form-error" role="alert" hidden>{{ 'contact.error' | t }}</p>
+            {%- if block.settings.note != blank -%}<p class="bis__note">{{ block.settings.note }}</p>{%- endif -%}
+          {%- endform -%}
+        </div>
+      {%- endunless -%}
+    </div>
   {%- when 'custom_liquid' -%}
     <div {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
   {%- when 'view_details' -%}

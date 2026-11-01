@@ -490,6 +490,32 @@
       },
       {
         "type": "select",
+        "id": "swatch_card_style",
+        "label": "Swatch style on cards",
+        "default": "image",
+        "options": [
+          { "value": "color", "label": "Color dots" },
+          { "value": "image", "label": "Variant photos" }
+        ],
+        "info": "Variant photos fall back to a color dot when a variant has no image."
+      },
+      {
+        "type": "checkbox",
+        "id": "swatch_card_change_image",
+        "label": "Change card image when a swatch is hovered or tapped",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "swatch_card_limit",
+        "label": "Swatches shown per card",
+        "min": 3,
+        "max": 10,
+        "step": 1,
+        "default": 6
+      },
+      {
+        "type": "select",
         "id": "product_card_image_fit",
         "label": "Image fit",
         "default": "cover",
@@ -682,6 +708,28 @@
         "default": true
       },
       {
+        "type": "header",
+        "content": "Free shipping bar"
+      },
+      {
+        "type": "checkbox",
+        "id": "free_shipping_enabled",
+        "label": "Show free shipping progress bar",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "free_shipping_drawer",
+        "label": "Show in cart drawer",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "free_shipping_cart_page",
+        "label": "Show on cart page",
+        "default": true
+      },
+      {
         "type": "range",
         "id": "free_shipping_threshold",
         "label": "Free shipping threshold",
@@ -690,7 +738,29 @@
         "step": 5,
         "unit": "$",
         "default": 150,
-        "info": "Set to 0 to hide the free shipping bar"
+        "info": "In your store currency. Set to 0 to hide the bar."
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_text",
+        "label": "Progress message",
+        "info": "Use [amount] for the amount left. Leave blank for the default text."
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_success_text",
+        "label": "Success message",
+        "info": "Leave blank for the default text."
+      },
+      {
+        "type": "color",
+        "id": "free_shipping_bar_color",
+        "label": "Bar color",
+        "info": "Leave empty to use the accent color."
+      },
+      {
+        "type": "header",
+        "content": "Checkout terms"
       },
       {
         "type": "text",
