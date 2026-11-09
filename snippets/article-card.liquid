@@ -1,23 +1,66 @@
-<a href="{{ article.url }}" class="article-card" data-reveal>
-  <div class="media media--landscape">
+{%- comment -%}
+  Blog post card.
+  - article (required)
+  - show_date (default true), show_author (default false), show_excerpt (default true)
+  - show_read_time (default false), show_tag (default false), large (default false)
+{%- endcomment -%}
+{%- liquid
+  assign card_author = article.author
+  if article.user.first_name != blank
+    assign card_author = article.user.first_name | append: ' ' | append: article.user.last_name | strip
+  endif
+  assign card_alt = article.image.alt | default: article.title | escape
+  assign card_sizes = '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 90vw'
+  if large
+    assign card_sizes = '(min-width: 990px) 60vw, 100vw'
+  endif
+-%}
+<a href="{{ article.url }}" class="article-card{% if large %} article-card--large{% endif %}" data-reveal>
+  <div class="media media--landscape article-card__media">
     {%- if article.image -%}
-      {{ article.image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 33vw, 70vw', widths: '300, 600, 900', alt: article.title }}
+      {{ article.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: card_sizes, widths: '300, 450, 600, 900, 1200, 1400', alt: card_alt }}
     {%- else -%}
       {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
     {%- endif -%}
-  </div>
-  {%- unless show_date == false and show_author != true -%}
-    <span class="article-card__meta">
-      {%- unless show_date == false -%}{{ article.published_at | time_tag: format: 'month_day_year' }}{%- endunless -%}
-      {%- if show_author -%}{% unless show_date == false %} · {% endunless %}{{ article.author }}{%- endif -%}
-    </span>
-  {%- endunless -%}
-  <h3 class="article-card__title">{{ article.title }}</h3>
-  {%- unless show_excerpt == false -%}
-    {%- if article.excerpt != blank -%}
-      <p>{{ article.excerpt | strip_html | truncatewords: 22 }}</p>
-    {%- else -%}
-      <p>{{ article.content | strip_html | truncatewords: 22 }}</p>
+    {%- if show_tag and article.tags.size > 0 -%}
+      <span class="article-card__tag">{{ article.tags.first }}</span>
     {%- endif -%}
-  {%- endunless -%}
+  </div>
+  <div class="article-card__body">
+    {%- liquid
+      assign meta_parts = 0
+      unless show_date == false
+        assign meta_parts = meta_parts | plus: 1
+      endunless
+      if show_author
+        assign meta_parts = meta_parts | plus: 1
+      endif
+      if show_read_time
+        assign meta_parts = meta_parts | plus: 1
+      endif
+    -%}
+    {%- if meta_parts > 0 -%}
+      <span class="article-card__meta">
+        {%- assign sep = false -%}
+        {%- unless show_date == false -%}{{ article.published_at | time_tag: '%B %-d, %Y' }}{%- assign sep = true -%}{%- endunless -%}
+        {%- if show_author -%}{% if sep %} · {% endif %}{{ card_author }}{%- assign sep = true -%}{%- endif -%}
+        {%- if show_read_time -%}
+          {%- assign card_words = article.content | strip_html | split: ' ' | size -%}
+          {%- assign card_min = card_words | divided_by: 200 | floor | at_least: 1 -%}
+          {% if sep %} · {% endif %}{{ 'blogs.reading_time' | t: count: card_min }}
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+    <h3 class="article-card__title">{{ article.title }}</h3>
+    {%- unless show_excerpt == false -%}
+      {%- if article.excerpt != blank -%}
+        <p class="article-card__excerpt">{{ article.excerpt | strip_html | truncatewords: 24 }}</p>
+      {%- else -%}
+        <p class="article-card__excerpt">{{ article.content | strip_html | truncatewords: 24 }}</p>
+      {%- endif -%}
+    {%- endunless -%}
+    {%- if show_read_more -%}
+      <span class="article-card__more">{{ 'general.read_more' | t }} →</span>
+    {%- endif -%}
+  </div>
 </a>

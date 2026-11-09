@@ -1,18 +1,70 @@
-<div class="page-width" style="padding-bottom: 4rem;">
-  <div class="page-header"><h1>{{ blog.title }}</h1></div>
-  {%- paginate blog.articles by 9 -%}
-    <div class="grid" style="--cols: 3; --cols-mobile: 1;">
-      {%- for article in blog.articles -%}
-        {% render 'article-card', article: article %}
+{%- liquid
+  assign st = section.settings
+  assign per_page = st.posts_per_page | default: 9
+-%}
+<div class="blog-page page-width color-{{ st.color_scheme | default: 'scheme-1' }}">
+  <header class="blog-page__header">
+    {%- if st.subheading != blank -%}<span class="subheading">{{ st.subheading }}</span>{%- endif -%}
+    <h1 class="blog-page__title">{% if current_tags %}{{ current_tags.first }}{% else %}{{ blog.title }}{% endif %}</h1>
+    {%- if current_tags -%}
+      <p class="blog-page__intro"><a href="{{ blog.url }}" class="link-underline">{{ 'blogs.back' | t: title: blog.title }}</a></p>
+    {%- elsif st.intro != blank -%}
+      <div class="blog-page__intro rte">{{ st.intro }}</div>
+    {%- endif -%}
+  </header>
+
+  {%- if st.show_tags and blog.all_tags.size > 0 -%}
+    <nav class="blog-tags" aria-label="{{ 'blogs.tags' | t }}">
+      <a href="{{ blog.url }}" class="blog-tags__link{% unless current_tags %} is-active{% endunless %}"{% unless current_tags %} aria-current="page"{% endunless %}>{{ 'blogs.all_posts' | t }}</a>
+      {%- for tag in blog.all_tags -%}
+        {%- assign is_current = false -%}
+        {%- if current_tags contains tag -%}{%- assign is_current = true -%}{%- endif -%}
+        <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="blog-tags__link{% if is_current %} is-active{% endif %}"{% if is_current %} aria-current="page"{% endif %}>{{ tag }}</a>
       {%- endfor -%}
-    </div>
-    {% render 'pagination', paginate: paginate %}
+    </nav>
+  {%- endif -%}
+
+  {%- paginate blog.articles by per_page -%}
+    {%- if blog.articles.size == 0 -%}
+      <p class="blog-page__empty">{{ 'blogs.no_posts' | t }}</p>
+    {%- else -%}
+      {%- assign feature_first = false -%}
+      {%- if st.feature_first and paginate.current_page == 1 and blog.articles.size > 1 -%}{%- assign feature_first = true -%}{%- endif -%}
+      <div class="blog-grid" style="--cols: {{ st.columns }};">
+        {%- for article in blog.articles -%}
+          {%- if feature_first and forloop.first -%}
+            <div class="blog-grid__featured">
+              {% render 'article-card', article: article, large: true, show_date: st.show_date, show_author: st.show_author, show_excerpt: true, show_read_time: st.show_read_time, show_tag: st.show_card_tag, show_read_more: true %}
+            </div>
+          {%- else -%}
+            {% render 'article-card', article: article, show_date: st.show_date, show_author: st.show_author, show_excerpt: st.show_excerpt, show_read_time: st.show_read_time, show_tag: st.show_card_tag, show_read_more: st.show_read_more %}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      {%- if paginate.pages > 1 -%}{% render 'pagination', paginate: paginate %}{%- endif -%}
+    {%- endif -%}
   {%- endpaginate -%}
 </div>
 
 {% schema %}
 {
   "name": "Blog",
-  "settings": []
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "richtext", "id": "intro", "label": "Intro text", "default": "<p>Stories, care guides and news from our workshop.</p>" },
+    { "type": "checkbox", "id": "show_tags", "label": "Show tag filter", "default": true },
+    { "type": "header", "content": "Layout" },
+    { "type": "checkbox", "id": "feature_first", "label": "Show newest post large", "default": true },
+    { "type": "range", "id": "columns", "label": "Posts per row (desktop)", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "posts_per_page", "label": "Posts per page", "min": 4, "max": 24, "step": 1, "default": 10 },
+    { "type": "header", "content": "Post cards" },
+    { "type": "checkbox", "id": "show_date", "label": "Show date", "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
+    { "type": "checkbox", "id": "show_read_time", "label": "Show reading time", "default": true },
+    { "type": "checkbox", "id": "show_card_tag", "label": "Show first tag on image", "default": true },
+    { "type": "checkbox", "id": "show_excerpt", "label": "Show excerpt", "default": true },
+    { "type": "checkbox", "id": "show_read_more", "label": "Show \"Read more\"", "default": false },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ]
 }
 {% endschema %}

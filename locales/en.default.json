@@ -137,7 +137,9 @@
     "comment_posted": "Thanks! Your comment was posted.",
     "comment_moderated": "Thanks! Your comment will appear after it's approved.",
     "moderated_note": "Comments are reviewed before they appear.",
-    "post_comment": "Post comment"
+    "post_comment": "Post comment",
+    "all_posts": "All posts",
+    "no_posts": "No posts yet. Check back soon."
   },
   "newsletter": {
     "email": "Email address",
@@ -224,5 +226,10 @@
     "watch": "Watch video",
     "close": "Close video",
     "shop": "Shop now"
+  },
+  "date_formats": {
+    "month_day_year": "%B %-d, %Y",
+    "date": "%b %-d, %Y",
+    "date_at_time": "%b %-d, %Y at %-I:%M %p"
   }
 }

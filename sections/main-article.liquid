@@ -1,7 +1,7 @@
 {%- liquid
   assign st = section.settings
   assign words = article.content | strip_html | split: ' ' | size
-  assign read_min = words | divided_by: 200
+  assign read_min = words | divided_by: 200 | floor
   if read_min < 1
     assign read_min = 1
   endif
@@ -33,10 +33,10 @@
         </span>
       {%- endif -%}
       {%- if st.show_date -%}
-        <span class="article-meta__item">{{ article.published_at | time_tag: format: 'month_day_year' }}</span>
+        <span class="article-meta__item">{{ article.published_at | time_tag: '%B %-d, %Y' }}</span>
       {%- endif -%}
       {%- if updated -%}
-        <span class="article-meta__item">{{ 'blogs.updated' | t }} {{ article.updated_at | time_tag: format: 'month_day_year' }}</span>
+        <span class="article-meta__item">{{ 'blogs.updated' | t }} {{ article.updated_at | time_tag: '%B %-d, %Y' }}</span>
       {%- endif -%}
       {%- if st.show_reading_time -%}
         <span class="article-meta__item">{{ 'blogs.reading_time' | t: count: read_min }}</span>
@@ -159,7 +159,7 @@
             {%- for comment in article.comments -%}
               <div class="article-comment">
                 <div class="article-comment__body rte">{{ comment.content }}</div>
-                <p class="article-comment__meta">{{ comment.author }} · {{ comment.created_at | time_tag: format: 'month_day_year' }}</p>
+                <p class="article-comment__meta">{{ comment.author }} · {{ comment.created_at | time_tag: '%B %-d, %Y' }}</p>
               </div>
             {%- endfor -%}
             {%- if paginate.pages > 1 -%}{% render 'pagination', paginate: paginate %}{%- endif -%}

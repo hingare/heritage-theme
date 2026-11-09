@@ -2,14 +2,14 @@
   <div class="customer customer--wide">
     <p><a href="{{ routes.account_url }}" class="link-underline">{{ 'customer.account' | t }}</a></p>
     <h1>{{ 'customer.order' | t }} {{ order.name }}</h1>
-    <p>{{ order.created_at | time_tag: format: 'date_at_time' }}</p>
+    <p>{{ order.created_at | time_tag: '%b %-d, %Y %-I:%M %p' }}</p>
     {%- if order.cancelled -%}<p class="form-message form-message--error">Cancelled: {{ order.cancel_reason_label }}</p>{%- endif -%}
     <table>
       <thead><tr><th>Product</th><th>SKU</th><th>Price</th><th>{{ 'products.product.quantity' | t }}</th><th>{{ 'customer.total' | t }}</th></tr></thead>
       <tbody>
         {%- for line_item in order.line_items -%}
           <tr>
-            <td>{{ line_item.title | link_to: line_item.product.url }}{% if line_item.fulfillment %}<br><small>{{ line_item.fulfillment.created_at | time_tag: format: 'date' }}{% if line_item.fulfillment.tracking_url %} · <a href="{{ line_item.fulfillment.tracking_url }}">{{ line_item.fulfillment.tracking_number }}</a>{% endif %}</small>{% endif %}</td>
+            <td>{{ line_item.title | link_to: line_item.product.url }}{% if line_item.fulfillment %}<br><small>{{ line_item.fulfillment.created_at | time_tag: '%b %-d, %Y' }}{% if line_item.fulfillment.tracking_url %} · <a href="{{ line_item.fulfillment.tracking_url }}">{{ line_item.fulfillment.tracking_number }}</a>{% endif %}</small>{% endif %}</td>
             <td>{{ line_item.sku }}</td>
             <td>{{ line_item.final_price | money }}</td>
             <td>{{ line_item.quantity }}</td>
