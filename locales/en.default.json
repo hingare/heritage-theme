@@ -121,7 +121,23 @@
   "blogs": {
     "by": "by {{ author }}",
     "comments": "{{ count }} comments",
-    "back": "Back to {{ title }}"
+    "back": "Back to {{ title }}",
+    "updated": "Updated",
+    "reading_time": "{{ count }} min read",
+    "contents": "In this post",
+    "tags": "Tags",
+    "share": "Share",
+    "copy_link": "Copy link",
+    "link_copied": "Link copied",
+    "written_by": "Written by",
+    "more": "More posts",
+    "previous_post": "Previous post",
+    "next_post": "Next post",
+    "leave_comment": "Leave a comment",
+    "comment_posted": "Thanks! Your comment was posted.",
+    "comment_moderated": "Thanks! Your comment will appear after it's approved.",
+    "moderated_note": "Comments are reviewed before they appear.",
+    "post_comment": "Post comment"
   },
   "newsletter": {
     "email": "Email address",

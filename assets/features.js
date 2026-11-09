@@ -276,6 +276,72 @@
   }
 
   /* ------------------------------------------------------------------ */
+  /* Blog post: contents list, reading progress, copy link               */
+  /* ------------------------------------------------------------------ */
+  function initArticle(ctx = document) {
+    const root = $('[data-article]', ctx);
+    if (!root || root.dataset.ready) return;
+    root.dataset.ready = '1';
+    const content = $('[data-article-content]', root);
+    const toc = $('[data-article-toc]', root);
+    if (content && toc) {
+      const heads = $$('h2, h3', content).filter((h) => h.textContent.trim());
+      if (heads.length >= 3) {
+        const list = $('[data-article-toc-list]', toc);
+        const used = {};
+        heads.forEach((h) => {
+          if (!h.id) {
+            let id = h.textContent.trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') || 'section';
+            while (used[id] || document.getElementById(id)) id += '-2';
+            h.id = id;
+          }
+          used[h.id] = 1;
+          const li = document.createElement('li');
+          if (h.tagName === 'H3') li.className = 'is-sub';
+          const a = document.createElement('a');
+          a.href = `#${h.id}`;
+          a.textContent = h.textContent.trim();
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+        toc.hidden = false;
+        if (window.matchMedia('(max-width: 1199px)').matches) toc.querySelector('details')?.removeAttribute('open');
+        if ('IntersectionObserver' in window) {
+          const links = $$('a', list);
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach((e) => {
+              if (!e.isIntersecting) return;
+              links.forEach((l) => l.classList.toggle('is-active', l.getAttribute('href') === `#${e.target.id}`));
+            });
+          }, { rootMargin: '0px 0px -70% 0px' });
+          heads.forEach((h) => io.observe(h));
+        }
+      }
+    }
+    const bar = $('[data-article-progress]');
+    if (bar && content) {
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const r = content.getBoundingClientRect();
+        const total = r.height - window.innerHeight * 0.6;
+        const done = Math.min(1, Math.max(0, (window.innerHeight * 0.4 - r.top) / (total > 0 ? total : 1)));
+        bar.style.transform = `scaleX(${done})`;
+      };
+      window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+      update();
+    }
+    root.addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-copy-link]');
+      if (!btn) return;
+      try { await navigator.clipboard.writeText(btn.dataset.copyLink); } catch (err) { return; }
+      const old = btn.textContent;
+      btn.textContent = btn.dataset.copied;
+      setTimeout(() => { btn.textContent = old; }, 2000);
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
   /* Back in stock form: send without leaving the page                   */
   /* ------------------------------------------------------------------ */
   function initBackInStock() {
@@ -419,6 +485,7 @@
     initCountdowns(ctx);
     initDelivery(ctx);
     initHotspots(ctx);
+    initArticle(ctx);
     initBeforeAfter(ctx);
     initBanners(ctx);
     initIslands(ctx);

@@ -1,29 +1,283 @@
-<article class="page-width" style="padding-bottom: 4rem;">
-  <div class="article">
-    <div class="page-header">
-      <span class="article-card__meta">{{ article.published_at | time_tag: format: 'month_day_year' }}{% if section.settings.show_author %} · {{ 'blogs.by' | t: author: article.author }}{% endif %}</span>
-      <h1>{{ article.title }}</h1>
+{%- liquid
+  assign st = section.settings
+  assign words = article.content | strip_html | split: ' ' | size
+  assign read_min = words | divided_by: 200
+  if read_min < 1
+    assign read_min = 1
+  endif
+  assign author_name = article.author
+  if article.user.first_name != blank
+    assign author_name = article.user.first_name | append: ' ' | append: article.user.last_name | strip
+  endif
+  assign share_url = request.origin | append: article.url | url_encode
+  assign updated = false
+  assign pub_day = article.published_at | date: '%Y%m%d'
+  assign upd_day = article.updated_at | date: '%Y%m%d'
+  if st.show_updated and upd_day > pub_day
+    assign updated = true
+  endif
+-%}
+{%- if st.show_progress -%}
+  <div class="article-progress" aria-hidden="true"><span data-article-progress></span></div>
+{%- endif -%}
+
+<article class="article-page article-page--{{ st.hero_layout }} color-{{ st.color_scheme | default: 'scheme-1' }}" style="--article-width: {{ st.content_width }}px; --article-size: {{ st.text_size }}px; --article-leading: {{ st.line_height | divided_by: 10.0 }};" data-article>
+  {%- capture meta -%}
+    <div class="article-meta">
+      {%- if st.show_author -%}
+        <span class="article-meta__author">
+          {%- if st.show_avatar and article.user.image -%}
+            {{ article.user.image | image_url: width: 80, height: 80, crop: 'center' | image_tag: loading: 'eager', alt: author_name, class: 'article-meta__avatar', width: 36, height: 36 }}
+          {%- endif -%}
+          <span>{{ 'blogs.by' | t: author: author_name }}</span>
+        </span>
+      {%- endif -%}
+      {%- if st.show_date -%}
+        <span class="article-meta__item">{{ article.published_at | time_tag: format: 'month_day_year' }}</span>
+      {%- endif -%}
+      {%- if updated -%}
+        <span class="article-meta__item">{{ 'blogs.updated' | t }} {{ article.updated_at | time_tag: format: 'month_day_year' }}</span>
+      {%- endif -%}
+      {%- if st.show_reading_time -%}
+        <span class="article-meta__item">{{ 'blogs.reading_time' | t: count: read_min }}</span>
+      {%- endif -%}
+      {%- if st.show_comment_count and blog.comments_enabled? and article.comments_count > 0 -%}
+        <a class="article-meta__item" href="#Comments">{{ 'blogs.comments' | t: count: article.comments_count }}</a>
+      {%- endif -%}
     </div>
-    {%- if article.image -%}
-      <div class="article__image media media--wide">
-        {{ article.image | image_url: width: 1800 | image_tag: loading: 'eager', sizes: '(min-width: 820px) 800px, 100vw', widths: '600, 900, 1200, 1800', alt: article.title }}
+  {%- endcapture -%}
+
+  {%- assign hero_alt = article.image.alt | default: article.title | escape -%}
+  {%- capture hero_image -%}
+    {%- if st.show_image and article.image -%}
+      <div class="article-page__image{% unless st.hero_layout == 'overlay' %} media media--{{ st.image_ratio }}{% endunless %}">
+        {{ article.image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1200px) 1200px, 100vw', widths: '600, 900, 1200, 1800, 2400', alt: hero_alt }}
       </div>
     {%- endif -%}
-    <div class="rte">{{ article.content }}</div>
-    {%- if article.tags.size > 0 -%}
-      <p style="margin-top: 2rem; font-size: 0.85rem;">
-        {%- for tag in article.tags -%}<a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="badge" style="margin-right: 0.4rem;">{{ tag }}</a>{%- endfor -%}
-      </p>
+  {%- endcapture -%}
+
+  <header class="article-page__header{% if st.hero_layout == 'overlay' and hero_image != blank %} article-page__header--overlay{% endif %}"{% if st.hero_layout == 'overlay' %} style="--overlay: {{ st.overlay_opacity | divided_by: 100.0 }}"{% endif %}>
+    {%- if st.hero_layout == 'overlay' -%}{{ hero_image }}{%- endif -%}
+    <div class="article-page__head page-width">
+      {%- if st.show_breadcrumb -%}
+        <nav class="article-crumbs" aria-label="Breadcrumb">
+          <a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span>
+          <a href="{{ blog.url }}">{{ blog.title }}</a>
+        </nav>
+      {%- endif -%}
+      {%- if st.show_tags_top and article.tags.size > 0 -%}
+        <div class="article-tags article-tags--top">
+          {%- for tag in article.tags limit: 3 -%}<a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{%- endfor -%}
+        </div>
+      {%- endif -%}
+      <h1 class="article-page__title">{{ article.title }}</h1>
+      {%- if st.show_excerpt and article.excerpt != blank -%}
+        <div class="article-page__lead">{{ article.excerpt | strip_html }}</div>
+      {%- endif -%}
+      {{ meta }}
+    </div>
+    {%- if st.hero_layout == 'below' -%}<div class="page-width article-page__image-wrap">{{ hero_image }}</div>{%- endif -%}
+  </header>
+  {%- if st.hero_layout == 'above' and hero_image != blank -%}
+    <div class="page-width article-page__image-wrap article-page__image-wrap--above">{{ hero_image }}</div>
+  {%- endif -%}
+
+  <div class="article-page__layout page-width{% if st.show_toc %} article-page__layout--toc{% endif %}">
+    {%- if st.show_toc -%}
+      <aside class="article-toc" data-article-toc hidden>
+        <details open>
+          <summary>{{ 'blogs.contents' | t }}</summary>
+          <ol data-article-toc-list></ol>
+        </details>
+      </aside>
     {%- endif -%}
-    <p style="margin-top: 2.5rem;"><a href="{{ blog.url }}" class="link-underline">{{ 'blogs.back' | t: title: blog.title }}</a></p>
+
+    <div class="article-page__body">
+      <div class="rte article-content{% if st.drop_cap %} article-content--dropcap{% endif %}" data-article-content>
+        {{ article.content }}
+      </div>
+
+      {%- if st.show_tags and article.tags.size > 0 -%}
+        <div class="article-tags">
+          <span class="article-tags__label">{{ 'blogs.tags' | t }}:</span>
+          {%- for tag in article.tags -%}<a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if st.show_share -%}
+        <div class="article-share">
+          <span>{{ 'blogs.share' | t }}</span>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url }}" target="_blank" rel="noopener" aria-label="Facebook">{% render 'icon', name: 'facebook' %}</a>
+          <a href="https://twitter.com/intent/tweet?url={{ share_url }}&text={{ article.title | url_encode }}" target="_blank" rel="noopener" aria-label="X">{% render 'icon', name: 'twitter' %}</a>
+          <a href="https://pinterest.com/pin/create/button/?url={{ share_url }}{% if article.image %}&media={{ article.image | image_url: width: 1200 | prepend: 'https:' | url_encode }}{% endif %}&description={{ article.title | url_encode }}" target="_blank" rel="noopener" aria-label="Pinterest">{% render 'icon', name: 'pinterest' %}</a>
+          <a href="https://wa.me/?text={{ article.title | url_encode }}%20{{ share_url }}" target="_blank" rel="noopener" aria-label="WhatsApp">{% render 'icon', name: 'whatsapp' %}</a>
+          <a href="mailto:?subject={{ article.title | url_encode }}&body={{ share_url }}" aria-label="Email">{% render 'icon', name: 'email' %}</a>
+          <button type="button" class="article-share__copy" data-copy-link="{{ request.origin }}{{ article.url }}" data-copied="{{ 'blogs.link_copied' | t | escape }}">{{ 'blogs.copy_link' | t }}</button>
+        </div>
+      {%- endif -%}
+
+      {%- if st.show_author_box -%}
+        <div class="article-author">
+          {%- if article.user.image -%}
+            {{ article.user.image | image_url: width: 160, height: 160, crop: 'center' | image_tag: loading: 'lazy', alt: author_name, class: 'article-author__img', width: 72, height: 72 }}
+          {%- else -%}
+            <span class="article-author__img article-author__img--initial" aria-hidden="true">{{ author_name | slice: 0 }}</span>
+          {%- endif -%}
+          <div>
+            <span class="article-author__label">{{ 'blogs.written_by' | t }}</span>
+            <p class="article-author__name">{{ author_name }}</p>
+            {%- if article.user.bio != blank -%}
+              <div class="article-author__bio">{{ article.user.bio }}</div>
+            {%- elsif st.author_fallback != blank -%}
+              <div class="article-author__bio">{{ st.author_fallback }}</div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if st.show_prev_next and blog.previous_article or st.show_prev_next and blog.next_article -%}
+        <nav class="article-pager" aria-label="{{ 'blogs.more' | t }}">
+          {%- if blog.next_article -%}
+            <a class="article-pager__link" href="{{ blog.next_article.url }}">
+              <span class="article-pager__dir">← {{ 'blogs.previous_post' | t }}</span>
+              <span class="article-pager__title">{{ blog.next_article.title }}</span>
+            </a>
+          {%- else -%}<span></span>{%- endif -%}
+          {%- if blog.previous_article -%}
+            <a class="article-pager__link article-pager__link--next" href="{{ blog.previous_article.url }}">
+              <span class="article-pager__dir">{{ 'blogs.next_post' | t }} →</span>
+              <span class="article-pager__title">{{ blog.previous_article.title }}</span>
+            </a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+
+      {%- if blog.comments_enabled? and st.show_comments -%}
+        <section id="Comments" class="article-comments">
+          <h2 class="h3">{{ 'blogs.comments' | t: count: article.comments_count }}</h2>
+          {%- paginate article.comments by 10 -%}
+            {%- for comment in article.comments -%}
+              <div class="article-comment">
+                <div class="article-comment__body rte">{{ comment.content }}</div>
+                <p class="article-comment__meta">{{ comment.author }} · {{ comment.created_at | time_tag: format: 'month_day_year' }}</p>
+              </div>
+            {%- endfor -%}
+            {%- if paginate.pages > 1 -%}{% render 'pagination', paginate: paginate %}{%- endif -%}
+          {%- endpaginate -%}
+          {%- form 'new_comment', article, class: 'article-comment-form' -%}
+            <h3 class="h4">{{ 'blogs.leave_comment' | t }}</h3>
+            {%- if form.posted_successfully? -%}
+              <p class="form-success" role="status">{% if blog.moderated? %}{{ 'blogs.comment_moderated' | t }}{% else %}{{ 'blogs.comment_posted' | t }}{% endif %}</p>
+            {%- endif -%}
+            {%- if form.errors -%}<div class="form-error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+            <div class="article-comment-form__row">
+              <div class="field">
+                <label for="CommentAuthor">{{ 'contact.name' | t }}</label>
+                <input class="input" id="CommentAuthor" type="text" name="comment[author]" value="{{ form.author }}" autocomplete="name" required>
+              </div>
+              <div class="field">
+                <label for="CommentEmail">{{ 'contact.email' | t }}</label>
+                <input class="input" id="CommentEmail" type="email" name="comment[email]" value="{{ form.email }}" autocomplete="email" required>
+              </div>
+            </div>
+            <div class="field">
+              <label for="CommentBody">{{ 'contact.message' | t }}</label>
+              <textarea class="input" id="CommentBody" name="comment[body]" rows="5" required>{{ form.body }}</textarea>
+            </div>
+            {%- if blog.moderated? -%}<p class="article-comment-form__note">{{ 'blogs.moderated_note' | t }}</p>{%- endif -%}
+            <button type="submit" class="btn">{{ 'blogs.post_comment' | t }}</button>
+          {%- endform -%}
+        </section>
+      {%- endif -%}
+    </div>
   </div>
+
+  {%- if st.show_related -%}
+    {%- liquid
+      assign related_count = 0
+      for a in blog.articles
+        if a.id != article.id
+          assign related_count = related_count | plus: 1
+        endif
+      endfor
+    -%}
+    {%- if related_count > 0 -%}
+      <section class="article-related page-width">
+        <div class="article-related__head">
+          <h2 class="h3">{{ st.related_heading }}</h2>
+          <a href="{{ blog.url }}" class="link-underline">{{ 'blogs.back' | t: title: blog.title }}</a>
+        </div>
+        <div class="article-related__grid">
+          {%- assign shown = 0 -%}
+          {%- for a in blog.articles -%}
+            {%- if a.id == article.id -%}{%- continue -%}{%- endif -%}
+            {% render 'article-card', article: a, show_date: true, show_author: false, show_excerpt: false %}
+            {%- assign shown = shown | plus: 1 -%}
+            {%- if shown >= 3 -%}{%- break -%}{%- endif -%}
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+  {%- endif -%}
 </article>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": {{ article.title | json }},
+    "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+    "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+    "author": { "@type": "Person", "name": {{ author_name | json }} },
+    "publisher": { "@type": "Organization", "name": {{ shop.name | json }} },
+    {%- if article.image -%}"image": {{ article.image | image_url: width: 1600 | prepend: 'https:' | json }},{%- endif -%}
+    "mainEntityOfPage": {{ request.origin | append: article.url | json }},
+    "wordCount": {{ words }}
+  }
+</script>
 
 {% schema %}
 {
   "name": "Blog post",
   "settings": [
-    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true }
+    { "type": "header", "content": "Top of the post" },
+    { "type": "select", "id": "hero_layout", "label": "Featured image layout", "default": "below", "options": [
+      { "value": "below", "label": "Title first, image below" },
+      { "value": "above", "label": "Image first, title below" },
+      { "value": "overlay", "label": "Title on top of image" }
+    ] },
+    { "type": "checkbox", "id": "show_image", "label": "Show featured image", "default": true },
+    { "type": "select", "id": "image_ratio", "label": "Image shape", "default": "wide", "options": [
+      { "value": "wide", "label": "Wide" }, { "value": "landscape", "label": "Landscape" }, { "value": "natural", "label": "Natural (no cropping)" }
+    ] },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay darkness (title on image)", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 40 },
+    { "type": "checkbox", "id": "show_breadcrumb", "label": "Show breadcrumb (Home / Blog)", "default": true },
+    { "type": "checkbox", "id": "show_tags_top", "label": "Show tags above title", "default": true },
+    { "type": "checkbox", "id": "show_excerpt", "label": "Show excerpt under title", "default": true },
+    { "type": "header", "content": "Post info" },
+    { "type": "checkbox", "id": "show_author", "label": "Show author name", "default": true },
+    { "type": "checkbox", "id": "show_avatar", "label": "Show author photo", "default": true, "info": "Photo comes from the staff account in Settings > Users." },
+    { "type": "checkbox", "id": "show_date", "label": "Show publish date", "default": true },
+    { "type": "checkbox", "id": "show_updated", "label": "Show updated date", "default": false },
+    { "type": "checkbox", "id": "show_reading_time", "label": "Show reading time", "default": true },
+    { "type": "checkbox", "id": "show_comment_count", "label": "Show comment count", "default": true },
+    { "type": "header", "content": "Reading" },
+    { "type": "range", "id": "content_width", "label": "Text width", "min": 600, "max": 900, "step": 20, "unit": "px", "default": 720 },
+    { "type": "range", "id": "text_size", "label": "Text size", "min": 15, "max": 22, "step": 1, "unit": "px", "default": 18 },
+    { "type": "range", "id": "line_height", "label": "Line spacing", "min": 14, "max": 22, "step": 1, "default": 18, "info": "18 = 1.8 line height." },
+    { "type": "checkbox", "id": "drop_cap", "label": "Large first letter", "default": false },
+    { "type": "checkbox", "id": "show_toc", "label": "Show table of contents", "default": true, "info": "Built from the post's headings. Shows only when there are 3 or more." },
+    { "type": "checkbox", "id": "show_progress", "label": "Show reading progress bar", "default": true },
+    { "type": "header", "content": "After the post" },
+    { "type": "checkbox", "id": "show_tags", "label": "Show tags", "default": true },
+    { "type": "checkbox", "id": "show_share", "label": "Show share buttons", "default": true },
+    { "type": "checkbox", "id": "show_author_box", "label": "Show author box", "default": true, "info": "Uses the bio from the staff account." },
+    { "type": "textarea", "id": "author_fallback", "label": "Author box text when there is no bio" },
+    { "type": "checkbox", "id": "show_prev_next", "label": "Show previous / next post", "default": true },
+    { "type": "checkbox", "id": "show_comments", "label": "Show comments", "default": true, "info": "Only when comments are turned on for the blog." },
+    { "type": "checkbox", "id": "show_related", "label": "Show more posts", "default": true },
+    { "type": "text", "id": "related_heading", "label": "More posts heading", "default": "Keep reading" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
   ]
 }
 {% endschema %}
