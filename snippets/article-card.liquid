@@ -3,6 +3,7 @@
   - article (required)
   - show_date (default true), show_author (default false), show_excerpt (default true)
   - show_read_time (default false), show_tag (default false), large (default false)
+  - heading_tag (default h3)
 {%- endcomment -%}
 {%- liquid
   assign card_author = article.author
@@ -51,7 +52,7 @@
         {%- endif -%}
       </span>
     {%- endif -%}
-    <h3 class="article-card__title">{{ article.title }}</h3>
+    <{{ heading_tag | default: 'h3' }} class="article-card__title">{{ article.title }}</{{ heading_tag | default: 'h3' }}>
     {%- unless show_excerpt == false -%}
       {%- if article.excerpt != blank -%}
         <p class="article-card__excerpt">{{ article.excerpt | strip_html | truncatewords: 24 }}</p>

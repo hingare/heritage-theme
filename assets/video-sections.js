@@ -179,6 +179,18 @@
       this.setupMusic();
       this.on(mobileQuery, 'change', () => this.startCurrent(true));
 
+      // Hold video and embed loading until the page itself has loaded, so the poster paints first.
+      this.pageReady = document.readyState === 'complete';
+      if (!this.pageReady) {
+        const ready = () => {
+          if (this.pageReady) return;
+          this.pageReady = true;
+          this.startCurrent();
+        };
+        this.on(window, 'load', () => setTimeout(ready, 300), { once: true });
+        ['pointerdown', 'keydown', 'touchstart'].forEach((type) => this.on(window, type, ready, { once: true, passive: true }));
+      }
+
       this.observer = new IntersectionObserver(([entry]) => {
         this.inView = entry.isIntersecting;
         if (this.inView) this.startCurrent(); else this.stopCurrent();
@@ -253,13 +265,13 @@
       // Warm up the next embed so switching feels instant.
       const upcoming = this.slides[(i + 1) % this.slides.length];
       const up = upcoming && upcoming !== this.current ? this.player(upcoming) : null;
-      if (up && up.load && this.inView) setTimeout(() => up.load(), 1500);
+      if (up && up.load && this.inView) setTimeout(() => { if (this.pageReady) up.load(); }, 1500);
       this.startCurrent();
     }
 
     startCurrent(force) {
       cancelAnimationFrame(this.raf);
-      if (!this.inView || !this.playing || this.modalOpen) return;
+      if (!this.pageReady || !this.inView || !this.playing || this.modalOpen) return;
       const slide = this.current;
       const p = this.player(slide);
       if (p) {

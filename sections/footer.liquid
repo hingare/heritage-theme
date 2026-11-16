@@ -27,8 +27,9 @@
               {%- endif -%}
             {%- when 'text' -%}
               {%- if block.settings.image != blank -%}
+                {%- assign footer_image_alt = block.settings.image.alt | default: shop.name | escape -%}
                 <div style="max-width: {{ block.settings.image_width }}px; margin-bottom: 1rem;">
-                  {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '300px' }}
+                  {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '300px', alt: footer_image_alt }}
                 </div>
               {%- endif -%}
               {%- if block.settings.title != blank -%}<h2 class="site-footer__heading">{{ block.settings.title }}</h2>{%- endif -%}

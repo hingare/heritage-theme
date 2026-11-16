@@ -547,6 +547,18 @@
   function initCollection() {
     const container = $('[data-collection-container]');
     if (!container) return;
+    // The filter panel is a drawer on small screens but a plain sidebar on desktop, where it must not be hidden from assistive tech.
+    const filterPanel = $('#FilterDrawer');
+    if (filterPanel) {
+      const desktop = window.matchMedia('(min-width: 990px)');
+      const syncFilterPanel = () => {
+        const asDrawer = !desktop.matches || !!filterPanel.closest('.collection--filter-drawer');
+        if (!asDrawer) filterPanel.removeAttribute('aria-hidden');
+        else if (!filterPanel.classList.contains('is-open')) filterPanel.setAttribute('aria-hidden', 'true');
+      };
+      syncFilterPanel();
+      desktop.addEventListener('change', syncFilterPanel);
+    }
     const sectionId = container.dataset.sectionId;
 
     const render = async (params) => {

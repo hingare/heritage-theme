@@ -38,6 +38,6 @@
         {{ 'cart.free_shipping_reached' | t }}
       {%- endif -%}
     {%- endif -%}
-    <div class="free-shipping__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress | round }}"><span style="width: {{ progress }}%"></span></div>
+    <div class="free-shipping__bar" role="progressbar" aria-label="{{ 'cart.free_shipping_label' | t }}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress | round }}"><span style="width: {{ progress }}%"></span></div>
   </div>
 {%- endif -%}

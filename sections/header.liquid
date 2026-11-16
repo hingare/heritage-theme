@@ -59,7 +59,7 @@
     {%- if hdr_bg != blank or hdr_text != blank %} style="{% if hdr_bg != blank %}--color-header-bg: {{ hdr_bg }};{% endif %}{% if hdr_text != blank %} --color-header-text: {{ hdr_text }};{% endif %}"{% endif %}>
     {%- if section.settings.bg_image != blank -%}
       <div class="site-header__bg" aria-hidden="true">
-        {{ section.settings.bg_image | image_url: width: 2400 | image_tag: loading: 'eager', widths: '750, 1100, 1500, 2000, 2400', sizes: '100vw', alt: '' }}
+        {{ section.settings.bg_image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'low', widths: '750, 1100, 1500, 2000, 2400', sizes: '100vw', alt: '' }}
       </div>
     {%- endif -%}
     <div class="page-width site-header__inner">
@@ -99,7 +99,7 @@
 
       <div class="site-header__icons">
         {%- if search_bar -%}
-          <button type="button" class="header-search-bar" data-open="SearchModal" data-search-trigger aria-label="{{ 'general.search' | t }}">
+          <button type="button" class="header-search-bar" data-open="SearchModal" data-search-trigger>
             {% render 'icon', name: 'search' %}<span>{{ 'header.search_placeholder' | t }}</span>
           </button>
         {%- endif -%}
@@ -117,8 +117,8 @@
             <span class="cart-count" data-wishlist-count data-count="0"></span>
           </a>
         {%- endif -%}
-        <a href="{{ routes.cart_url }}" class="header-icon" {% if settings.cart_type == 'drawer' %}data-open="CartDrawer"{% endif %} aria-label="{{ 'general.cart' | t }}">
-          {% render 'icon', name: 'cart' %}
+        <a href="{{ routes.cart_url }}" class="header-icon" {% if settings.cart_type == 'drawer' %}data-open="CartDrawer"{% endif %}>
+          {% render 'icon', name: 'cart' %}<span class="visually-hidden">{{ 'general.cart' | t }}</span>
           <span class="cart-count" data-cart-count data-count="{{ cart.item_count }}">{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
         </a>
       </div>
@@ -126,7 +126,7 @@
 
     {%- if search_bar and section.settings.search_mobile_bar -%}
       <div class="page-width site-header__mobile-search">
-        <button type="button" class="header-search-bar" data-open="SearchModal" data-search-trigger aria-label="{{ 'general.search' | t }}">
+        <button type="button" class="header-search-bar" data-open="SearchModal" data-search-trigger>
           {% render 'icon', name: 'search' %}<span>{{ 'header.search_placeholder' | t }}</span>
         </button>
       </div>
@@ -142,7 +142,7 @@
         {%- if nav_bg != blank %} style="--nav-bg: {{ nav_bg }}; --nav-text: {{ section.settings.nav_text_color }};"{% endif %}>
         {%- if section.settings.nav_bg_image != blank -%}
           <div class="site-header__bg" aria-hidden="true">
-            {{ section.settings.nav_bg_image | image_url: width: 2400 | image_tag: loading: 'eager', widths: '1100, 1500, 2000, 2400', sizes: '100vw', alt: '' }}
+            {{ section.settings.nav_bg_image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'low', widths: '1100, 1500, 2000, 2400', sizes: '100vw', alt: '' }}
           </div>
         {%- endif -%}
         <nav class="page-width site-nav--desktop" aria-label="Primary">

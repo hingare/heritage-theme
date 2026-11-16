@@ -34,10 +34,10 @@
         {%- for article in blog.articles -%}
           {%- if feature_first and forloop.first -%}
             <div class="blog-grid__featured">
-              {% render 'article-card', article: article, large: true, show_date: st.show_date, show_author: st.show_author, show_excerpt: true, show_read_time: st.show_read_time, show_tag: st.show_card_tag, show_read_more: true %}
+              {% render 'article-card', article: article, heading_tag: 'h2', large: true, show_date: st.show_date, show_author: st.show_author, show_excerpt: true, show_read_time: st.show_read_time, show_tag: st.show_card_tag, show_read_more: true %}
             </div>
           {%- else -%}
-            {% render 'article-card', article: article, show_date: st.show_date, show_author: st.show_author, show_excerpt: st.show_excerpt, show_read_time: st.show_read_time, show_tag: st.show_card_tag, show_read_more: st.show_read_more %}
+            {% render 'article-card', article: article, heading_tag: 'h2', show_date: st.show_date, show_author: st.show_author, show_excerpt: st.show_excerpt, show_read_time: st.show_read_time, show_tag: st.show_card_tag, show_read_more: st.show_read_more %}
           {%- endif -%}
         {%- endfor -%}
       </div>

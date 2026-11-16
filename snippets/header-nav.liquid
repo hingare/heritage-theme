@@ -67,9 +67,10 @@
                       assign promo_image = mega_block.settings[image_key]
                     -%}
                     {%- if promo_image != blank -%}
+                      {%- assign promo_alt = promo_image.alt | default: mega_block.settings[title_key] | escape -%}
                       <a href="{{ mega_block.settings[link_key] | default: link.url }}" class="mega-menu__promo">
                         <div class="media media--portrait">
-                          {{ promo_image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '300px', widths: '300, 450, 600' }}
+                          {{ promo_image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '300px', widths: '300, 450, 600', alt: promo_alt }}
                         </div>
                         {%- if mega_block.settings[title_key] != blank -%}
                           <p class="mega-menu__promo-title">{{ mega_block.settings[title_key] }}</p>

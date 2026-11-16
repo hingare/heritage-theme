@@ -103,7 +103,8 @@
     "free_shipping_remaining": "You're {{ amount }} away from free shipping",
     "free_shipping_reached": "You've unlocked free shipping!",
     "view_cart": "View cart",
-    "terms_required": "You must agree to the terms before checking out."
+    "terms_required": "You must agree to the terms before checking out.",
+    "free_shipping_label": "Progress to free shipping"
   },
   "search": {
     "title": "Search",

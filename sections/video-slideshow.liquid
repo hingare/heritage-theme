@@ -1,5 +1,11 @@
 {{ 'video-sections.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'video-sections.js' | asset_url }}" defer="defer"></script>
+{%- assign vs_first = section.blocks.first.settings -%}
+{%- if section.index <= 2 and vs_first.video == blank and vs_first.image == blank and vs_first.video_url.type == 'youtube' -%}
+  {%- # theme-check-disable RemoteAsset -%}
+  <link rel="preconnect" href="https://i.ytimg.com" crossorigin>
+  {%- # theme-check-enable RemoteAsset -%}
+{%- endif -%}
 
 {%- liquid
   assign s = section.settings
@@ -50,8 +56,12 @@
           assign ov_opacity = b.overlay
         endif
         assign media_loading = 'lazy'
+        assign media_priority = 'auto'
         if forloop.first
           assign media_loading = first_loading
+          if first_loading == 'eager' and section.index == 1
+            assign media_priority = 'high'
+          endif
         endif
       -%}
       <div
@@ -68,12 +78,12 @@
           {%- comment -%} Poster / image slide {%- endcomment -%}
           <div class="vslide__poster{% if b.image_mobile != blank %} vslide__poster--has-mobile{% endif %}">
             {%- if b.image != blank -%}
-              {{ b.image | image_url: width: 2400 | image_tag: loading: media_loading, sizes: '100vw', widths: '750, 1100, 1500, 1900, 2400', alt: b.image.alt, class: 'vslide__img vslide__img--desktop' }}
+              {{ b.image | image_url: width: 2400 | image_tag: loading: media_loading, fetchpriority: media_priority, sizes: '100vw', widths: '750, 1100, 1500, 1900, 2400', alt: b.image.alt, class: 'vslide__img vslide__img--desktop' }}
             {%- elsif kind == 'shopify' and b.video.preview_image -%}
               {{ b.video.preview_image | image_url: width: 1920 | image_tag: loading: media_loading, sizes: '100vw', alt: '', class: 'vslide__img vslide__img--desktop' }}
             {%- elsif kind == 'youtube' -%}
               {%- # theme-check-disable RemoteAsset -%}
-              <img class="vslide__img vslide__img--desktop" src="https://i.ytimg.com/vi/{{ b.video_url.id }}/maxresdefault.jpg" alt="" loading="{{ media_loading }}" width="1280" height="720">
+              <img class="vslide__img vslide__img--desktop" src="https://i.ytimg.com/vi/{{ b.video_url.id }}/maxresdefault.jpg" alt="" loading="{{ media_loading }}"{% if media_loading == 'eager' %} fetchpriority="high"{% endif %} decoding="async" width="1280" height="720">
               {%- # theme-check-enable RemoteAsset -%}
             {%- elsif kind == 'image' -%}
               {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg vslide__img' }}
