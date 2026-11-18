@@ -22,14 +22,16 @@
         el.addEventListener('timeupdate', () => { if (el === this.el && el.duration) host.setProgress(el.currentTime / el.duration); });
         el.addEventListener('ended', () => { if (el === this.el) host.onEnded(); });
         // MP4 links set to "Automatic" shape: learn the real shape once the file's size is known.
-        if (slide.hasAttribute('data-ar-auto')) {
+        // A separate phone video sets only the phone shape; otherwise the desktop video can set both.
+        const isMobileEl = !!el.closest('.vslide__video--mobile');
+        const setDesk = !isMobileEl && slide.hasAttribute('data-ar-auto');
+        const setMobile = slide.hasAttribute('data-ar-m-auto') && (isMobileEl || this.els.length < 2);
+        if (setDesk || setMobile) {
           el.addEventListener('loadedmetadata', () => {
             if (!el.videoWidth || !el.videoHeight) return;
             const r = (el.videoWidth / el.videoHeight).toFixed(4);
-            slide.dataset.ar = r;
-            slide.dataset.arM = r;
-            slide.style.setProperty('--vr', r);
-            slide.style.setProperty('--vr-m', r);
+            if (setDesk) { slide.dataset.ar = r; slide.style.setProperty('--vr', r); }
+            if (setMobile) { slide.dataset.arM = r; slide.style.setProperty('--vr-m', r); }
             if (slide.classList.contains('is-active')) host.applyShape(slide);
           });
         }
@@ -72,7 +74,7 @@
     }
     load() {
       if (this.iframe.src) return;
-      this.iframe.src = this.iframe.dataset.src;
+      this.iframe.src = (mobileQuery.matches && this.iframe.dataset.srcMobile) || this.iframe.dataset.src;
       this.iframe.addEventListener('load', () => this.handshake(), { once: true });
     }
     handshake() {

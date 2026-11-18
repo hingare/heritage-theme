@@ -1,0 +1,61 @@
+{%- comment -%}
+  Video slideshow helper: prints "desktop-ratio:mobile-ratio" (width / height) for one slide.
+  - b: the slide block's settings
+{%- endcomment -%}
+{%- liquid
+  assign k = 'image'
+  if b.video != blank
+    assign k = 'shopify'
+  elsif b.video_url != blank
+    assign k = b.video_url.type
+  elsif b.video_mp4_url != blank
+    assign k = 'mp4'
+  endif
+  assign r = 1.7778
+  case b.video_shape
+    when 'landscape'
+      assign r = 1.7778
+    when 'portrait'
+      assign r = 0.5625
+    when 'square'
+      assign r = 1.0
+    when 'portrait-45'
+      assign r = 0.8
+    when 'classic'
+      assign r = 1.3333
+    else
+      if k == 'shopify' and b.video.aspect_ratio > 0
+        assign r = b.video.aspect_ratio
+      elsif k == 'image' and b.image != blank
+        assign r = b.image.aspect_ratio
+      endif
+  endcase
+  assign rm = r
+  case b.video_shape_mobile
+    when 'landscape'
+      assign rm = 1.7778
+    when 'portrait'
+      assign rm = 0.5625
+    when 'square'
+      assign rm = 1.0
+    when 'portrait-45'
+      assign rm = 0.8
+    when 'classic'
+      assign rm = 1.3333
+    else
+      if k == 'shopify' or k == 'mp4'
+        if b.video_mobile != blank and b.video_mobile.aspect_ratio > 0
+          assign rm = b.video_mobile.aspect_ratio
+        elsif b.video_mp4_url_mobile != blank
+          assign rm = 0.5625
+        endif
+      elsif k == 'youtube' or k == 'vimeo'
+        if b.video_url_mobile != blank and b.video_url_mobile.type == k
+          assign rm = 1.7778
+        endif
+      elsif k == 'image' and b.image_mobile != blank
+        assign rm = b.image_mobile.aspect_ratio
+      endif
+  endcase
+-%}
+{{- r | round: 4 }}:{{ rm | round: 4 -}}

@@ -5,15 +5,20 @@
 .vslideshow--large { --vs-h: 780px; }
 .vslideshow--full { --vs-h: calc(100svh - var(--header-height, 120px)); }
 .vslideshow--ratio { --vs-h: 56.25vw; }
+.vslideshow--ratio-219 { --vs-h: 42.857vw; }
+.vslideshow--ratio-43 { --vs-h: 75vw; }
 /* Match each video's shape: height follows the active slide's video, capped at the screen height. */
-.vslideshow--adapt { --vs-h: min(calc(100vw / var(--vs-ar, 1.7778)), calc(100svh - var(--header-height, 120px))); }
+/* Horizontal videos always fit exactly; taller videos stop at the screen height. */
+.vslideshow--adapt { --vs-h: min(calc(100vw / var(--vs-ar, 1.7778)), max(calc(100svh - var(--header-height, 120px)), 56.25vw)); }
 @media (max-width: 749px) {
   .vslideshow--mobile-short { --vs-h: 56.25vw; }
-  .vslideshow--mobile-short .vslide { min-height: 320px; }
+  .vslideshow--mobile-classic { --vs-h: 75vw; }
+  .vslideshow--mobile-square { --vs-h: 100vw; }
   .vslideshow--mobile-tall { --vs-h: 125vw; }
+  .vslideshow--mobile-portrait { --vs-h: 133.333vw; }
+  .vslideshow--mobile-story { --vs-h: min(177.778vw, calc(100svh - var(--header-height, 70px))); }
   .vslideshow--mobile-full { --vs-h: calc(100svh - var(--header-height, 70px)); }
-  .vslideshow--mobile-adapt { --vs-h: min(calc(100vw / var(--vs-ar-m, 1.7778)), calc(100svh - var(--header-height, 70px))); }
-  .vslideshow--mobile-adapt .vslide { min-height: max(var(--vs-h), 200px); }
+  .vslideshow--mobile-adapt { --vs-h: min(calc(100vw / var(--vs-ar-m, 1.7778)), max(calc(100svh - var(--header-height, 70px)), 56.25vw)); }
 }
 
 .vslideshow__track { position: relative; }
@@ -257,4 +262,52 @@ html.vs-modal-open { overflow: hidden; }
   .vslide--fade-edge.vslide--split-right .vslide__edge, .vslide--fade-edge.vslide--split-left .vslide__edge { top: auto; bottom: -1px; left: 0; right: 0; width: auto; height: 45%; background: linear-gradient(to bottom, transparent, var(--vs-panel, #17110c)); }
   .vslide--split-right .vslide__content, .vslide--split-left .vslide__content { width: 100%; margin: 0; padding-top: 1.25rem; padding-bottom: 5rem; }
   .vslide--box .vslide__text { padding: 1.5rem; }
+}
+
+/* ---------- Video slideshow: custom text sizes (per slide, desktop and mobile) ---------- */
+.vslide--sized .vslide__heading { font-size: var(--fs-h); }
+.vslide--sized .subheading { font-size: var(--fs-sub); }
+.vslide--sized .vslide__subtext { font-size: var(--fs-text); }
+.vslide--sized .vslide__buttons .btn, .vslide--sized .vslide__watch { font-size: var(--fs-btn); }
+.vslide--sized .vslide__badge { font-size: var(--fs-badge); }
+.vslide--sized .vslide__rating { font-size: var(--fs-rating); }
+
+/* ---------- Video slideshow: mobile-only settings ---------- */
+@media (max-width: 749px) {
+  .vslide--sized .vslide__heading { font-size: var(--fs-h-m); }
+  .vslide--sized .subheading { font-size: var(--fs-sub-m); }
+  .vslide--sized .vslide__subtext { font-size: var(--fs-text-m); }
+  .vslide--sized .vslide__buttons .btn, .vslide--sized .vslide__watch { font-size: var(--fs-btn-m); }
+  .vslide--sized .vslide__badge { font-size: var(--fs-badge-m); }
+  .vslide--sized .vslide__rating { font-size: var(--fs-rating-m); }
+
+  /* Text below the video: the video area keeps the exact chosen shape, the text gets its own panel. */
+  .vslideshow--m-text-below .vslide { flex-direction: column; min-height: 0; background: var(--vs-m-panel, #17110c); }
+  .vslideshow--m-text-below .vslide .vslide__media { position: relative; inset: auto; width: 100%; height: var(--vs-h); flex: none; }
+  .vslideshow--m-text-below .vslide__edge { display: none; }
+  .vslideshow--m-text-below .vslide .vslide__content { width: 100%; margin: 0; padding-top: 1.5rem; padding-bottom: 1.75rem; align-items: flex-start; }
+  .vslideshow--m-text-below .vslide--box .vslide__text { background: none; padding: 0; }
+  .vslideshow--m-text-below .vslideshow__bar { bottom: auto; top: calc(var(--vs-h) - 3.5rem); }
+  .vslideshow--m-text-below .vslideshow__progress { bottom: auto; top: calc(var(--vs-h) - 3px); }
+  .vslideshow--m-text-below.vslideshow--m-no-text .vslide__content { display: none; }
+  /* Slides can differ in height here, so only the active slide sets the slideshow height. */
+  .vslideshow--m-text-below.vslideshow--fade .vslide:not(.is-active) { position: absolute; top: 0; left: 0; right: 0; }
+
+  .vslideshow--m-no-text .vslide__content { display: none; }
+  .vslideshow--m-color .vslide { color: var(--vs-m-text) !important; }
+
+  .vslideshow--m-align-left .vslide__content { justify-content: flex-start; text-align: left; }
+  .vslideshow--m-align-center .vslide__content { justify-content: center; text-align: center; }
+  .vslideshow--m-align-right .vslide__content { justify-content: flex-end; text-align: right; }
+  .vslideshow--m-align-left .vslide__buttons { justify-content: flex-start; }
+  .vslideshow--m-align-center .vslide__buttons { justify-content: center; }
+  .vslideshow--m-align-right .vslide__buttons { justify-content: flex-end; }
+  .vslideshow--m-pos-top .vslide__content { align-items: flex-start; }
+  .vslideshow--m-pos-center .vslide__content { align-items: center; }
+  .vslideshow--m-pos-bottom .vslide__content { align-items: flex-end; }
+
+  .vslideshow--m-overlay .vslide__overlay { opacity: var(--vs-m-overlay, 0.25); }
+  .vslideshow--m-no-dots .vslideshow__dots { display: none; }
+  .vslideshow--m-no-buttons .vslideshow__buttons { display: none; }
+  .vslideshow--m-no-progress .vslideshow__progress { display: none; }
 }

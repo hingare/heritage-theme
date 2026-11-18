@@ -20,41 +20,13 @@
 {%- endcomment -%}
 {%- capture vs_ratios -%}
   {%- for block in section.blocks -%}
-    {%- liquid
-      assign b = block.settings
-      assign r = 1.7778
-      case b.video_shape
-        when 'landscape'
-          assign r = 1.7778
-        when 'portrait'
-          assign r = 0.5625
-        when 'square'
-          assign r = 1.0
-        when 'portrait-45'
-          assign r = 0.8
-        when 'classic'
-          assign r = 1.3333
-        else
-          if b.video != blank and b.video.aspect_ratio > 0
-            assign r = b.video.aspect_ratio
-          elsif b.video == blank and b.video_url == blank and b.video_mp4_url == blank and b.image != blank
-            assign r = b.image.aspect_ratio
-          endif
-      endcase
-      assign rm = r
-      if b.video != blank and b.video_mobile != blank and b.video_mobile.aspect_ratio > 0
-        assign rm = b.video_mobile.aspect_ratio
-      elsif b.video == blank and b.video_url == blank and b.video_mp4_url == blank and b.image_mobile != blank
-        assign rm = b.image_mobile.aspect_ratio
-      endif
-    -%}
-    {{- r | round: 4 }}:{{ rm | round: 4 }}{% unless forloop.last %},{% endunless %}
+    {%- render 'video-slide-ratio', b: block.settings -%}{% unless forloop.last %},{% endunless %}
   {%- endfor -%}
 {%- endcapture -%}
 {%- assign vs_ratio_list = vs_ratios | strip | split: ',' -%}
 {%- assign vs_first_ratio = vs_ratio_list.first | split: ':' -%}
 <video-slideshow
-  class="vslideshow vslideshow--{{ s.height }} vslideshow--mobile-{{ s.mobile_height }} vslideshow--{{ s.transition }} vslideshow--fit-{{ s.video_fit | default: 'contain' }} vslideshow--fit-m-{{ s.mobile_video_fit | default: 'contain' }}{% if s.show_controls_hover %} vslideshow--controls-hover{% endif %}"
+  class="{% render 'video-slideshow-classes', s: s %}"
   data-video-end="{{ s.video_end }}"
   data-autoplay="{{ s.autoplay_images }}"
   data-speed="{{ s.speed }}"
@@ -63,7 +35,7 @@
   role="region"
   aria-roledescription="carousel"
   aria-label="{{ s.accessibility_label | escape }}"
-  style="--vs-overlay-color: {{ s.overlay_color }}; --vs-ui-color: {{ s.ui_color }}; --vs-fit-bg: {{ s.fit_bg_color | default: '#111111' }}; --vs-ar: {{ vs_first_ratio[0] | default: 1.7778 }}; --vs-ar-m: {{ vs_first_ratio[1] | default: 1.7778 }};"
+  style="--vs-overlay-color: {{ s.overlay_color }}; --vs-ui-color: {{ s.ui_color }}; --vs-fit-bg: {{ s.fit_bg_color | default: '#111111' }}; --vs-ar: {{ vs_first_ratio[0] | default: 1.7778 }}; --vs-ar-m: {{ vs_first_ratio[1] | default: 1.7778 }}; --vs-m-overlay: {{ s.mobile_overlay_opacity | default: 25 | divided_by: 100.0 }}; --vs-m-panel: {{ s.mobile_text_bg | default: '#17110c' }};{% if s.mobile_text_color != blank %} --vs-m-text: {{ s.mobile_text_color }};{% endif %}"
 >
   <div class="vslideshow__track">
     {%- for block in section.blocks -%}
@@ -96,9 +68,25 @@
         endif
         assign slide_ratio = vs_ratio_list[forloop.index0] | split: ':'
         assign ar_auto = false
-        if kind == 'mp4'
-          if b.video_shape == blank or b.video_shape == 'auto'
-            assign ar_auto = true
+        if kind == 'mp4' and b.video_shape == 'auto'
+          assign ar_auto = true
+        endif
+        assign m_html5 = false
+        if kind == 'shopify' or kind == 'mp4'
+          if b.video_mobile != blank or b.video_mp4_url_mobile != blank
+            assign m_html5 = true
+          endif
+        endif
+        assign m_embed_src = ''
+        if b.video_url_mobile != blank and b.video_url_mobile.type == kind
+          assign m_embed_src = b.video_url_mobile.id
+        endif
+        assign arm_auto = false
+        if b.video_shape_mobile == 'auto'
+          if b.video_mobile == blank and b.video_mp4_url_mobile != blank and m_html5
+            assign arm_auto = true
+          elsif m_html5 == false and ar_auto
+            assign arm_auto = true
           endif
         endif
         assign backdrop_url = ''
@@ -121,13 +109,14 @@
         endif
       -%}
       <div
-        class="vslide vslide--{{ layout }}{% if b.split_fade %} vslide--fade-edge{% endif %}{% if forloop.first %} is-active{% endif %}"
+        class="vslide vslide--{{ layout }}{% if b.split_fade %} vslide--fade-edge{% endif %}{% if b.custom_sizes %} vslide--sized{% endif %}{% if forloop.first %} is-active{% endif %}"
         data-kind="{{ kind }}"
         data-index="{{ forloop.index0 }}"
         data-ar="{{ slide_ratio[0] }}"
         data-ar-m="{{ slide_ratio[1] }}"
         {%- if ar_auto %} data-ar-auto{% endif %}
-        style="--vr: {{ slide_ratio[0] }}; --vr-m: {{ slide_ratio[1] }}; --overlay-opacity: {{ ov_opacity | divided_by: 100.0 }};{% if ov_color != blank %} --vs-overlay-color: {{ ov_color }};{% endif %} --vs-panel: {{ b.panel_color }}; --vs-media-w: {{ b.media_width }}%; --vs-btn-bg: {{ b.button_bg }}; --vs-btn-text: {{ b.button_text_color }}; --vs-badge-bg: {{ b.badge_bg }}; --vs-badge-text: {{ b.badge_text_color }}; --vs-star: {{ b.star_color }}; color: {{ b.text_color }};"
+        {%- if arm_auto %} data-ar-m-auto{% endif %}
+        style="--vr: {{ slide_ratio[0] }}; --vr-m: {{ slide_ratio[1] }};{% if b.custom_sizes %} --fs-h: {{ b.size_heading }}px; --fs-h-m: {{ b.size_heading_m }}px; --fs-sub: {{ b.size_subheading }}px; --fs-sub-m: {{ b.size_subheading_m }}px; --fs-text: {{ b.size_text }}px; --fs-text-m: {{ b.size_text_m }}px; --fs-btn: {{ b.size_button }}px; --fs-btn-m: {{ b.size_button_m }}px; --fs-badge: {{ b.size_badge }}px; --fs-badge-m: {{ b.size_badge_m }}px; --fs-rating: {{ b.size_rating }}px; --fs-rating-m: {{ b.size_rating_m }}px;{% endif %} --overlay-opacity: {{ ov_opacity | divided_by: 100.0 }};{% if ov_color != blank %} --vs-overlay-color: {{ ov_color }};{% endif %} --vs-panel: {{ b.panel_color }}; --vs-media-w: {{ b.media_width }}%; --vs-btn-bg: {{ b.button_bg }}; --vs-btn-text: {{ b.button_text_color }}; --vs-badge-bg: {{ b.badge_bg }}; --vs-badge-text: {{ b.badge_text_color }}; --vs-star: {{ b.star_color }}; color: {{ b.text_color }};"
         role="group"
         aria-roledescription="slide"
         aria-label="{{ forloop.index }} / {{ section.blocks.size }}"
@@ -139,7 +128,7 @@
             <div class="vslide__backdrop"{% if backdrop_url != blank %} style="background-image: url('{{ backdrop_url }}');"{% endif %} aria-hidden="true"></div>
           {%- endif -%}
           {%- comment -%} Poster / image slide {%- endcomment -%}
-          <div class="vslide__poster{% if b.image_mobile != blank %} vslide__poster--has-mobile{% endif %}">
+          <div class="vslide__poster{% if b.image_mobile != blank or m_embed_src != blank and kind == 'youtube' %} vslide__poster--has-mobile{% endif %}">
             {%- if b.image != blank -%}
               {{ b.image | image_url: width: 2400 | image_tag: loading: media_loading, fetchpriority: media_priority, sizes: '100vw', widths: '750, 1100, 1500, 1900, 2400', alt: b.image.alt, class: 'vslide__img vslide__img--desktop' }}
             {%- elsif kind == 'shopify' and b.video.preview_image -%}
@@ -151,34 +140,45 @@
             {%- elsif kind == 'image' -%}
               {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg vslide__img' }}
             {%- endif -%}
+            {%- if b.image_mobile == blank and kind == 'youtube' and m_embed_src != blank -%}
+              {%- # theme-check-disable RemoteAsset -%}
+              <img class="vslide__img vslide__img--mobile" src="https://i.ytimg.com/vi/{{ m_embed_src }}/hqdefault.jpg" alt="" loading="lazy" decoding="async" width="480" height="360">
+              {%- # theme-check-enable RemoteAsset -%}
+            {%- endif -%}
             {%- if b.image_mobile != blank -%}
               {{ b.image_mobile | image_url: width: 1100 | image_tag: loading: 'lazy', sizes: '100vw', widths: '550, 750, 1100', alt: b.image_mobile.alt, class: 'vslide__img vslide__img--mobile' }}
             {%- endif -%}
           </div>
 
           {%- case kind -%}
-            {%- when 'shopify' -%}
-              <div class="vslide__video{% if b.video_mobile != blank %} vslide__video--desktop{% endif %}">
-                {{ b.video | video_tag: muted: true, playsinline: true, loop: loop_attr, preload: 'none', controls: false, image_size: '1920x', class: 'vslide__el' }}
+            {%- when 'shopify', 'mp4' -%}
+              <div class="vslide__video{% if m_html5 %} vslide__video--desktop{% endif %}">
+                {%- if kind == 'shopify' -%}
+                  {{ b.video | video_tag: muted: true, playsinline: true, loop: loop_attr, preload: 'none', controls: false, image_size: '1920x', class: 'vslide__el' }}
+                {%- else -%}
+                  <video class="vslide__el" src="{{ b.video_mp4_url }}" muted playsinline preload="none"{% if loop_attr %} loop{% endif %}></video>
+                {%- endif -%}
               </div>
-              {%- if b.video_mobile != blank -%}
+              {%- if m_html5 -%}
                 <div class="vslide__video vslide__video--mobile">
-                  {{ b.video_mobile | video_tag: muted: true, playsinline: true, loop: loop_attr, preload: 'none', controls: false, image_size: '1100x', class: 'vslide__el' }}
+                  {%- if b.video_mobile != blank -%}
+                    {{ b.video_mobile | video_tag: muted: true, playsinline: true, loop: loop_attr, preload: 'none', controls: false, image_size: '1100x', class: 'vslide__el' }}
+                  {%- else -%}
+                    <video class="vslide__el" src="{{ b.video_mp4_url_mobile }}" muted playsinline preload="none"{% if loop_attr %} loop{% endif %}></video>
+                  {%- endif -%}
                 </div>
               {%- endif -%}
-            {%- when 'mp4' -%}
-              <div class="vslide__video">
-                <video class="vslide__el" src="{{ b.video_mp4_url }}" muted playsinline preload="none"{% if loop_attr %} loop{% endif %}></video>
-              </div>
             {%- when 'youtube' -%}
               {%- capture yt_src -%}https://www.youtube-nocookie.com/embed/{{ b.video_url.id }}?enablejsapi=1&autoplay=0&mute=1&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&origin={{ request.origin | url_encode }}{% if loop_attr %}&loop=1&playlist={{ b.video_url.id }}{% endif %}{%- endcapture -%}
               <div class="vslide__video vslide__video--embed">
-                <iframe class="vslide__el" data-src="{{ yt_src }}" title="{{ b.heading | default: 'Video' | escape }}" allow="autoplay; encrypted-media; picture-in-picture" tabindex="-1"></iframe>
+                {%- if m_embed_src != blank -%}{%- capture yt_src_m -%}https://www.youtube-nocookie.com/embed/{{ m_embed_src }}?enablejsapi=1&autoplay=0&mute=1&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&origin={{ request.origin | url_encode }}{% if loop_attr %}&loop=1&playlist={{ m_embed_src }}{% endif %}{%- endcapture -%}{%- endif -%}
+                <iframe class="vslide__el" data-src="{{ yt_src }}"{% if m_embed_src != blank %} data-src-mobile="{{ yt_src_m }}"{% endif %} title="{{ b.heading | default: 'Video' | escape }}" allow="autoplay; encrypted-media; picture-in-picture" tabindex="-1"></iframe>
               </div>
             {%- when 'vimeo' -%}
               {%- capture vm_src -%}https://player.vimeo.com/video/{{ b.video_url.id }}?autoplay=0&muted=1&controls=0&title=0&byline=0&portrait=0&dnt=1&autopause=0&playsinline=1{% if loop_attr %}&loop=1{% endif %}{%- endcapture -%}
               <div class="vslide__video vslide__video--embed">
-                <iframe class="vslide__el" data-src="{{ vm_src }}" title="{{ b.heading | default: 'Video' | escape }}" allow="autoplay; fullscreen; picture-in-picture" tabindex="-1"></iframe>
+                {%- if m_embed_src != blank -%}{%- capture vm_src_m -%}https://player.vimeo.com/video/{{ m_embed_src }}?autoplay=0&muted=1&controls=0&title=0&byline=0&portrait=0&dnt=1&autopause=0&playsinline=1{% if loop_attr %}&loop=1{% endif %}{%- endcapture -%}{%- endif -%}
+                <iframe class="vslide__el" data-src="{{ vm_src }}"{% if m_embed_src != blank %} data-src-mobile="{{ vm_src_m }}"{% endif %} title="{{ b.heading | default: 'Video' | escape }}" allow="autoplay; fullscreen; picture-in-picture" tabindex="-1"></iframe>
               </div>
           {%- endcase -%}
           <div class="vslide__overlay"></div>
@@ -310,40 +310,72 @@
   "max_blocks": 8,
   "settings": [
     { "type": "text", "id": "accessibility_label", "label": "Slideshow description", "default": "Featured videos" },
-    { "type": "header", "content": "Layout" },
+    { "type": "header", "content": "Desktop layout" },
     { "type": "select", "id": "height", "label": "Height", "default": "large", "options": [
       { "value": "small", "label": "Small" },
       { "value": "medium", "label": "Medium" },
       { "value": "large", "label": "Large" },
       { "value": "full", "label": "Full screen" },
-      { "value": "ratio", "label": "Video ratio (16:9)" },
+      { "value": "ratio", "label": "Horizontal (16:9)" },
+      { "value": "ratio-219", "label": "Cinema (21:9)" },
+      { "value": "ratio-43", "label": "Classic (4:3)" },
       { "value": "adapt", "label": "Match each video's shape" }
-    ], "info": "'Match each video's shape' sizes the slideshow to the video, so horizontal and vertical videos both show in full." },
-    { "type": "select", "id": "mobile_height", "label": "Mobile height", "default": "tall", "options": [
-      { "value": "short", "label": "Short (16:9)" },
-      { "value": "tall", "label": "Tall (4:5)" },
-      { "value": "full", "label": "Full screen" },
-      { "value": "adapt", "label": "Match each video's shape" }
-    ] },
-    { "type": "select", "id": "video_fit", "label": "Video fit (desktop)", "default": "contain", "options": [
+    ], "info": "'Match each video's shape' sizes the slideshow to the video, so there is no empty space around it." },
+    { "type": "select", "id": "video_fit", "label": "Video fit", "default": "contain", "options": [
       { "value": "contain", "label": "Show the whole video" },
       { "value": "cover", "label": "Fill the slide (edges may be cut off)" }
     ] },
-    { "type": "select", "id": "mobile_video_fit", "label": "Video fit (mobile)", "default": "contain", "options": [
-      { "value": "contain", "label": "Show the whole video" },
-      { "value": "cover", "label": "Fill the slide (edges may be cut off)" }
-    ] },
-    { "type": "select", "id": "fit_background", "label": "Space around the video", "default": "blur", "options": [
-      { "value": "blur", "label": "Blurred copy of the video image" },
-      { "value": "color", "label": "Solid color" }
-    ], "info": "Shown beside a vertical video on desktop, or above and below a horizontal video on phones." },
-    { "type": "color", "id": "fit_bg_color", "label": "Space color", "default": "#111111" },
     { "type": "select", "id": "transition", "label": "Slide transition", "default": "fade", "options": [
       { "value": "fade", "label": "Fade" },
       { "value": "slide", "label": "Slide" }
     ] },
     { "type": "color", "id": "overlay_color", "label": "Overlay color", "default": "#000000" },
     { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 25, "info": "0% shows the video clearly, 100% shows only the color. Applies to all slides." },
+    { "type": "select", "id": "fit_background", "label": "Space around the video", "default": "blur", "options": [
+      { "value": "blur", "label": "Blurred copy of the video image" },
+      { "value": "color", "label": "Solid color" }
+    ], "info": "Only seen when the video's shape differs from the slideshow's shape." },
+    { "type": "color", "id": "fit_bg_color", "label": "Space color", "default": "#111111" },
+    { "type": "header", "content": "Mobile layout" },
+    { "type": "paragraph", "content": "Phone settings are separate from desktop. For no empty space, choose 'Match each video's shape' and put the text below the video." },
+    { "type": "select", "id": "mobile_height", "label": "Mobile height", "default": "tall", "options": [
+      { "value": "short", "label": "Horizontal (16:9)" },
+      { "value": "classic", "label": "Classic (4:3)" },
+      { "value": "square", "label": "Square (1:1)" },
+      { "value": "tall", "label": "Tall (4:5)" },
+      { "value": "portrait", "label": "Portrait (3:4)" },
+      { "value": "story", "label": "Vertical (9:16)" },
+      { "value": "full", "label": "Full screen" },
+      { "value": "adapt", "label": "Match each video's shape" }
+    ] },
+    { "type": "select", "id": "mobile_video_fit", "label": "Mobile video fit", "default": "contain", "options": [
+      { "value": "contain", "label": "Show the whole video" },
+      { "value": "cover", "label": "Fill the slide (edges may be cut off)" }
+    ] },
+    { "type": "select", "id": "mobile_text_placement", "label": "Mobile text", "default": "overlay", "options": [
+      { "value": "overlay", "label": "Over the video" },
+      { "value": "below", "label": "Below the video" }
+    ], "info": "'Below the video' keeps the video at its exact shape with no empty space." },
+    { "type": "checkbox", "id": "mobile_hide_text", "label": "Hide text on mobile", "default": false },
+    { "type": "select", "id": "mobile_text_align", "label": "Mobile text alignment", "default": "same", "options": [
+      { "value": "same", "label": "Same as desktop" },
+      { "value": "left", "label": "Left" },
+      { "value": "center", "label": "Center" },
+      { "value": "right", "label": "Right" }
+    ] },
+    { "type": "select", "id": "mobile_text_position", "label": "Mobile vertical text position", "default": "same", "options": [
+      { "value": "same", "label": "Same as desktop" },
+      { "value": "top", "label": "Top" },
+      { "value": "center", "label": "Middle" },
+      { "value": "bottom", "label": "Bottom" }
+    ], "info": "Used when the text is over the video." },
+    { "type": "color", "id": "mobile_text_bg", "label": "Mobile text background", "default": "#17110c", "info": "Used when the text is below the video." },
+    { "type": "color", "id": "mobile_text_color", "label": "Mobile text color", "info": "Leave empty to use each slide's text color." },
+    { "type": "checkbox", "id": "mobile_custom_overlay", "label": "Use a different overlay on mobile", "default": false },
+    { "type": "range", "id": "mobile_overlay_opacity", "label": "Mobile overlay opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 25 },
+    { "type": "checkbox", "id": "mobile_show_dots", "label": "Show slide navigation on mobile", "default": true },
+    { "type": "checkbox", "id": "mobile_show_buttons", "label": "Show sound, play and music buttons on mobile", "default": true },
+    { "type": "checkbox", "id": "mobile_show_progress", "label": "Show video progress bar on mobile", "default": true },
     { "type": "header", "content": "Video playback" },
     { "type": "select", "id": "video_end", "label": "When a video ends", "default": "loop", "options": [
       { "value": "loop", "label": "Repeat the same video" },
@@ -388,6 +420,18 @@
           { "value": "square", "label": "Square (1:1)" },
           { "value": "classic", "label": "Classic (4:3)" }
         ], "info": "Automatic reads Shopify and MP4 videos. For a vertical YouTube video (Shorts) or Vimeo video, choose Vertical." },
+        { "type": "header", "content": "Mobile video" },
+        { "type": "paragraph", "content": "Optional: a different video for phones, for example a vertical cut. Use the same kind as the desktop video (Shopify or MP4 with Shopify or MP4, YouTube with YouTube, Vimeo with Vimeo)." },
+        { "type": "video_url", "id": "video_url_mobile", "label": "Mobile YouTube or Vimeo link", "accept": ["youtube", "vimeo"] },
+        { "type": "url", "id": "video_mp4_url_mobile", "label": "Mobile video link (MP4)", "info": "Used when 'Mobile video (Shopify)' is empty." },
+        { "type": "select", "id": "video_shape_mobile", "label": "Mobile video shape", "default": "auto", "options": [
+          { "value": "auto", "label": "Automatic" },
+          { "value": "landscape", "label": "Horizontal (16:9)" },
+          { "value": "portrait", "label": "Vertical (9:16)" },
+          { "value": "portrait-45", "label": "Vertical (4:5)" },
+          { "value": "square", "label": "Square (1:1)" },
+          { "value": "classic", "label": "Classic (4:3)" }
+        ], "info": "Automatic uses the mobile video's shape, or the desktop video's shape when there is no mobile video." },
         { "type": "header", "content": "Layout" },
         { "type": "select", "id": "layout", "label": "Slide layout", "default": "overlay", "options": [
           { "value": "overlay", "label": "Text over the video" },
@@ -422,6 +466,20 @@
           { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }
         ] },
         { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+        { "type": "header", "content": "Text sizes" },
+        { "type": "checkbox", "id": "custom_sizes", "label": "Use custom text sizes", "default": false, "info": "Turn on to size each text below, separately for desktop and mobile." },
+        { "type": "range", "id": "size_heading", "label": "Heading (desktop)", "min": 16, "max": 100, "step": 2, "unit": "px", "default": 48 },
+        { "type": "range", "id": "size_heading_m", "label": "Heading (mobile)", "min": 14, "max": 64, "step": 1, "unit": "px", "default": 30 },
+        { "type": "range", "id": "size_subheading", "label": "Subheading (desktop)", "min": 10, "max": 30, "step": 1, "unit": "px", "default": 13 },
+        { "type": "range", "id": "size_subheading_m", "label": "Subheading (mobile)", "min": 9, "max": 24, "step": 1, "unit": "px", "default": 12 },
+        { "type": "range", "id": "size_text", "label": "Text (desktop)", "min": 11, "max": 32, "step": 1, "unit": "px", "default": 17 },
+        { "type": "range", "id": "size_text_m", "label": "Text (mobile)", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 15 },
+        { "type": "range", "id": "size_button", "label": "Buttons (desktop)", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 14 },
+        { "type": "range", "id": "size_button_m", "label": "Buttons (mobile)", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 13 },
+        { "type": "range", "id": "size_badge", "label": "Badge (desktop)", "min": 9, "max": 22, "step": 1, "unit": "px", "default": 12 },
+        { "type": "range", "id": "size_badge_m", "label": "Badge (mobile)", "min": 9, "max": 18, "step": 1, "unit": "px", "default": 11 },
+        { "type": "range", "id": "size_rating", "label": "Rating line (desktop)", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 14 },
+        { "type": "range", "id": "size_rating_m", "label": "Rating line (mobile)", "min": 9, "max": 20, "step": 1, "unit": "px", "default": 13 },
         { "type": "header", "content": "Buttons" },
         { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
         { "type": "url", "id": "link", "label": "Button link", "info": "Without a button label, the whole slide links here." },
