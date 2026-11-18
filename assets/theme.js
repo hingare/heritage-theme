@@ -409,11 +409,23 @@
     const sticky = $('[data-sticky-atc]');
     const mainButton = form?.querySelector('[type=submit]');
     if (sticky && mainButton && root.dataset.updateUrl === 'true') {
+      // Show the bar once the main button has scrolled away, and hide it again
+      // while the footer is on screen so it never covers the footer menus.
+      let pastButton = false;
+      let footerInView = false;
+      const update = () => sticky.classList.toggle('is-visible', pastButton && !footerInView);
       const io = new IntersectionObserver(([entry]) => {
-        const past = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        sticky.classList.toggle('is-visible', past);
+        pastButton = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        update();
       });
       io.observe(mainButton);
+      const footer = document.querySelector('.shopify-section-group-footer-group') || document.querySelector('.site-footer');
+      if (footer) {
+        new IntersectionObserver(([entry]) => {
+          footerInView = entry.isIntersecting;
+          update();
+        }).observe(footer);
+      }
       sticky.querySelector('[data-sticky-atc-button]')?.addEventListener('click', (e) => {
         e.preventDefault();
         if (picker && product.variants.length > 1 && !idInput.value) {
