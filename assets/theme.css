@@ -724,7 +724,8 @@ details[open] > .facets__summary svg { transform: rotate(180deg); }
 /* Reveal animations ------------------------------------------------------ */
 .js .animations-enabled [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
 .js .animations-enabled [data-reveal].is-revealed { opacity: 1; transform: none; }
-.js .animations-enabled .main-content > .shopify-section:first-child [data-reveal] { opacity: 1; transform: none; transition: none; }
+/* Sections near the top of the page show at once, so the first thing a shopper sees (and LCP) is never held back by the scroll animation. */
+.js .animations-enabled .main-content > .shopify-section:nth-child(-n+3) [data-reveal] { opacity: 1; transform: none; transition: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   .js .animations-enabled [data-reveal] { opacity: 1; transform: none; }

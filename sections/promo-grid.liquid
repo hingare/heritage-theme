@@ -21,7 +21,7 @@
               {%- if block.settings.image != blank -%}
                 <div class="promo-grid__media">
                   {%- liquid
-                    assign promo_sizes = span | times: 8.33 | round | append: 'vw'
+                    assign promo_sizes = span | times: 8.33 | round | append: 'vw' | prepend: '(max-width: 749px) 92vw, '
                     assign promo_loading = 'lazy'
                     assign promo_priority = 'auto'
                     if section.index == 1 and forloop.index <= 3
@@ -29,6 +29,12 @@
                       if forloop.first
                         assign promo_priority = 'high'
                       endif
+                    elsif section.index <= 3 and forloop.first
+                      comment
+                        Near the top (for example under a short video or a text bar): the first image is often
+                        the largest thing on a phone screen, so load it straight away.
+                      endcomment
+                      assign promo_loading = 'eager'
                     endif
                   -%}
                   {{ block.settings.image | image_url: width: 1800 | image_tag: loading: promo_loading, fetchpriority: promo_priority, widths: '450, 750, 1100, 1500, 1800', sizes: promo_sizes, alt: block.settings.image.alt }}
