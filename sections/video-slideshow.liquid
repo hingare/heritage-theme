@@ -14,8 +14,47 @@
     assign first_loading = 'eager'
   endif
 -%}
+{%- comment -%}
+  Each slide knows its video shape (width / height) so the slideshow can show the whole video:
+  --vr / data-ar for desktop, --vr-m / data-ar-m for phones.
+{%- endcomment -%}
+{%- capture vs_ratios -%}
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign b = block.settings
+      assign r = 1.7778
+      case b.video_shape
+        when 'landscape'
+          assign r = 1.7778
+        when 'portrait'
+          assign r = 0.5625
+        when 'square'
+          assign r = 1.0
+        when 'portrait-45'
+          assign r = 0.8
+        when 'classic'
+          assign r = 1.3333
+        else
+          if b.video != blank and b.video.aspect_ratio > 0
+            assign r = b.video.aspect_ratio
+          elsif b.video == blank and b.video_url == blank and b.video_mp4_url == blank and b.image != blank
+            assign r = b.image.aspect_ratio
+          endif
+      endcase
+      assign rm = r
+      if b.video != blank and b.video_mobile != blank and b.video_mobile.aspect_ratio > 0
+        assign rm = b.video_mobile.aspect_ratio
+      elsif b.video == blank and b.video_url == blank and b.video_mp4_url == blank and b.image_mobile != blank
+        assign rm = b.image_mobile.aspect_ratio
+      endif
+    -%}
+    {{- r | round: 4 }}:{{ rm | round: 4 }}{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- assign vs_ratio_list = vs_ratios | strip | split: ',' -%}
+{%- assign vs_first_ratio = vs_ratio_list.first | split: ':' -%}
 <video-slideshow
-  class="vslideshow vslideshow--{{ s.height }} vslideshow--mobile-{{ s.mobile_height }} vslideshow--{{ s.transition }}{% if s.show_controls_hover %} vslideshow--controls-hover{% endif %}"
+  class="vslideshow vslideshow--{{ s.height }} vslideshow--mobile-{{ s.mobile_height }} vslideshow--{{ s.transition }} vslideshow--fit-{{ s.video_fit | default: 'contain' }} vslideshow--fit-m-{{ s.mobile_video_fit | default: 'contain' }}{% if s.show_controls_hover %} vslideshow--controls-hover{% endif %}"
   data-video-end="{{ s.video_end }}"
   data-autoplay="{{ s.autoplay_images }}"
   data-speed="{{ s.speed }}"
@@ -24,7 +63,7 @@
   role="region"
   aria-roledescription="carousel"
   aria-label="{{ s.accessibility_label | escape }}"
-  style="--vs-overlay-color: {{ s.overlay_color }}; --vs-ui-color: {{ s.ui_color }};"
+  style="--vs-overlay-color: {{ s.overlay_color }}; --vs-ui-color: {{ s.ui_color }}; --vs-fit-bg: {{ s.fit_bg_color | default: '#111111' }}; --vs-ar: {{ vs_first_ratio[0] | default: 1.7778 }}; --vs-ar-m: {{ vs_first_ratio[1] | default: 1.7778 }};"
 >
   <div class="vslideshow__track">
     {%- for block in section.blocks -%}
@@ -55,6 +94,23 @@
           assign ov_color = b.overlay_color_slide
           assign ov_opacity = b.overlay
         endif
+        assign slide_ratio = vs_ratio_list[forloop.index0] | split: ':'
+        assign ar_auto = false
+        if kind == 'mp4'
+          if b.video_shape == blank or b.video_shape == 'auto'
+            assign ar_auto = true
+          endif
+        endif
+        assign backdrop_url = ''
+        if s.fit_background != 'color' and kind != 'image'
+          if b.image != blank
+            assign backdrop_url = b.image | image_url: width: 480
+          elsif kind == 'shopify' and b.video.preview_image
+            assign backdrop_url = b.video.preview_image | image_url: width: 480
+          elsif kind == 'youtube'
+            assign backdrop_url = 'https://i.ytimg.com/vi/' | append: b.video_url.id | append: '/hqdefault.jpg'
+          endif
+        endif
         assign media_loading = 'lazy'
         assign media_priority = 'auto'
         if forloop.first
@@ -68,13 +124,20 @@
         class="vslide vslide--{{ layout }}{% if b.split_fade %} vslide--fade-edge{% endif %}{% if forloop.first %} is-active{% endif %}"
         data-kind="{{ kind }}"
         data-index="{{ forloop.index0 }}"
-        style="--overlay-opacity: {{ ov_opacity | divided_by: 100.0 }};{% if ov_color != blank %} --vs-overlay-color: {{ ov_color }};{% endif %} --vs-panel: {{ b.panel_color }}; --vs-media-w: {{ b.media_width }}%; --vs-btn-bg: {{ b.button_bg }}; --vs-btn-text: {{ b.button_text_color }}; --vs-badge-bg: {{ b.badge_bg }}; --vs-badge-text: {{ b.badge_text_color }}; --vs-star: {{ b.star_color }}; color: {{ b.text_color }};"
+        data-ar="{{ slide_ratio[0] }}"
+        data-ar-m="{{ slide_ratio[1] }}"
+        {%- if ar_auto %} data-ar-auto{% endif %}
+        style="--vr: {{ slide_ratio[0] }}; --vr-m: {{ slide_ratio[1] }}; --overlay-opacity: {{ ov_opacity | divided_by: 100.0 }};{% if ov_color != blank %} --vs-overlay-color: {{ ov_color }};{% endif %} --vs-panel: {{ b.panel_color }}; --vs-media-w: {{ b.media_width }}%; --vs-btn-bg: {{ b.button_bg }}; --vs-btn-text: {{ b.button_text_color }}; --vs-badge-bg: {{ b.badge_bg }}; --vs-badge-text: {{ b.badge_text_color }}; --vs-star: {{ b.star_color }}; color: {{ b.text_color }};"
         role="group"
         aria-roledescription="slide"
         aria-label="{{ forloop.index }} / {{ section.blocks.size }}"
         {{ block.shopify_attributes }}
       >
         <div class="vslide__media">
+          {%- if kind != 'image' -%}
+            {%- comment -%} Shown around the video when the whole video is fitted inside the slide. {%- endcomment -%}
+            <div class="vslide__backdrop"{% if backdrop_url != blank %} style="background-image: url('{{ backdrop_url }}');"{% endif %} aria-hidden="true"></div>
+          {%- endif -%}
           {%- comment -%} Poster / image slide {%- endcomment -%}
           <div class="vslide__poster{% if b.image_mobile != blank %} vslide__poster--has-mobile{% endif %}">
             {%- if b.image != blank -%}
@@ -167,7 +230,13 @@
                       assign p_src = b.video_mp4_url
                     endif
                   -%}
-                  <button type="button" class="vslide__watch" data-vs-watch data-kind="{{ p_kind }}" data-id="{{ p_id }}" data-src="{{ p_src }}">
+                  {%- liquid
+                    assign p_ar = slide_ratio[0]
+                    if b.popup_video_url != blank
+                      assign p_ar = 1.7778
+                    endif
+                  -%}
+                  <button type="button" class="vslide__watch" data-vs-watch data-kind="{{ p_kind }}" data-id="{{ p_id }}" data-src="{{ p_src }}" data-ar="{{ p_ar }}">
                     <span class="vslide__watch-icon">{% render 'icon', name: 'play' %}</span>
                     <span>{% if b.watch_label != blank %}{{ b.watch_label }}{% else %}{{ 'video.watch' | t }}{% endif %}</span>
                   </button>
@@ -247,13 +316,28 @@
       { "value": "medium", "label": "Medium" },
       { "value": "large", "label": "Large" },
       { "value": "full", "label": "Full screen" },
-      { "value": "ratio", "label": "Video ratio (16:9)" }
-    ] },
+      { "value": "ratio", "label": "Video ratio (16:9)" },
+      { "value": "adapt", "label": "Match each video's shape" }
+    ], "info": "'Match each video's shape' sizes the slideshow to the video, so horizontal and vertical videos both show in full." },
     { "type": "select", "id": "mobile_height", "label": "Mobile height", "default": "tall", "options": [
       { "value": "short", "label": "Short (16:9)" },
       { "value": "tall", "label": "Tall (4:5)" },
-      { "value": "full", "label": "Full screen" }
+      { "value": "full", "label": "Full screen" },
+      { "value": "adapt", "label": "Match each video's shape" }
     ] },
+    { "type": "select", "id": "video_fit", "label": "Video fit (desktop)", "default": "contain", "options": [
+      { "value": "contain", "label": "Show the whole video" },
+      { "value": "cover", "label": "Fill the slide (edges may be cut off)" }
+    ] },
+    { "type": "select", "id": "mobile_video_fit", "label": "Video fit (mobile)", "default": "contain", "options": [
+      { "value": "contain", "label": "Show the whole video" },
+      { "value": "cover", "label": "Fill the slide (edges may be cut off)" }
+    ] },
+    { "type": "select", "id": "fit_background", "label": "Space around the video", "default": "blur", "options": [
+      { "value": "blur", "label": "Blurred copy of the video image" },
+      { "value": "color", "label": "Solid color" }
+    ], "info": "Shown beside a vertical video on desktop, or above and below a horizontal video on phones." },
+    { "type": "color", "id": "fit_bg_color", "label": "Space color", "default": "#111111" },
     { "type": "select", "id": "transition", "label": "Slide transition", "default": "fade", "options": [
       { "value": "fade", "label": "Fade" },
       { "value": "slide", "label": "Slide" }
@@ -296,6 +380,14 @@
         { "type": "video", "id": "video_mobile", "label": "Mobile video (Shopify)", "info": "Optional vertical video for phones." },
         { "type": "video_url", "id": "video_url", "label": "YouTube or Vimeo link", "accept": ["youtube", "vimeo"], "info": "Used when no Shopify video is selected." },
         { "type": "url", "id": "video_mp4_url", "label": "Other video link (MP4)", "info": "Any direct .mp4 link, for example from Content > Files or a CDN. Used when the two options above are empty." },
+        { "type": "select", "id": "video_shape", "label": "Video shape", "default": "auto", "options": [
+          { "value": "auto", "label": "Automatic" },
+          { "value": "landscape", "label": "Horizontal (16:9)" },
+          { "value": "portrait", "label": "Vertical (9:16)" },
+          { "value": "portrait-45", "label": "Vertical (4:5)" },
+          { "value": "square", "label": "Square (1:1)" },
+          { "value": "classic", "label": "Classic (4:3)" }
+        ], "info": "Automatic reads Shopify and MP4 videos. For a vertical YouTube video (Shorts) or Vimeo video, choose Vertical." },
         { "type": "header", "content": "Layout" },
         { "type": "select", "id": "layout", "label": "Slide layout", "default": "overlay", "options": [
           { "value": "overlay", "label": "Text over the video" },

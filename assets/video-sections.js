@@ -21,6 +21,18 @@
         el.addEventListener('playing', () => { if (el === this.el) slide.classList.add('is-playing'); });
         el.addEventListener('timeupdate', () => { if (el === this.el && el.duration) host.setProgress(el.currentTime / el.duration); });
         el.addEventListener('ended', () => { if (el === this.el) host.onEnded(); });
+        // MP4 links set to "Automatic" shape: learn the real shape once the file's size is known.
+        if (slide.hasAttribute('data-ar-auto')) {
+          el.addEventListener('loadedmetadata', () => {
+            if (!el.videoWidth || !el.videoHeight) return;
+            const r = (el.videoWidth / el.videoHeight).toFixed(4);
+            slide.dataset.ar = r;
+            slide.dataset.arM = r;
+            slide.style.setProperty('--vr', r);
+            slide.style.setProperty('--vr-m', r);
+            if (slide.classList.contains('is-active')) host.applyShape(slide);
+          });
+        }
       });
     }
     get el() {
@@ -249,7 +261,14 @@
       if (byUser && !this.playing && !reduceMotion) this.setPlaying(true);
     }
 
+    applyShape(slide) {
+      if (!slide) return;
+      if (slide.dataset.ar) this.style.setProperty('--vs-ar', slide.dataset.ar);
+      if (slide.dataset.arM) this.style.setProperty('--vs-ar-m', slide.dataset.arM);
+    }
+
     activate(i) {
+      this.applyShape(this.slides[i]);
       this.slides.forEach((s, k) => {
         const active = k === i;
         s.classList.toggle('is-active', active);
@@ -403,8 +422,15 @@
       else if (src) html = '<video controls autoplay playsinline></video>';
       if (!html) return;
       body.innerHTML = html;
+      const box = modal.querySelector('.vslideshow__modal-box');
+      box.style.setProperty('--pop-ar', btn.dataset.ar || '1.7778');
       const v = body.querySelector('video');
-      if (v) v.src = src;
+      if (v) {
+        v.addEventListener('loadedmetadata', () => {
+          if (v.videoWidth && v.videoHeight) box.style.setProperty('--pop-ar', (v.videoWidth / v.videoHeight).toFixed(4));
+        }, { once: true });
+        v.src = src;
+      }
       this.modalOpen = true;
       this.wasPlaying = this.playing;
       this.wasMusic = this.musicOn;

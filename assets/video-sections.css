@@ -5,11 +5,15 @@
 .vslideshow--large { --vs-h: 780px; }
 .vslideshow--full { --vs-h: calc(100svh - var(--header-height, 120px)); }
 .vslideshow--ratio { --vs-h: 56.25vw; }
+/* Match each video's shape: height follows the active slide's video, capped at the screen height. */
+.vslideshow--adapt { --vs-h: min(calc(100vw / var(--vs-ar, 1.7778)), calc(100svh - var(--header-height, 120px))); }
 @media (max-width: 749px) {
   .vslideshow--mobile-short { --vs-h: 56.25vw; }
   .vslideshow--mobile-short .vslide { min-height: 320px; }
   .vslideshow--mobile-tall { --vs-h: 125vw; }
   .vslideshow--mobile-full { --vs-h: calc(100svh - var(--header-height, 70px)); }
+  .vslideshow--mobile-adapt { --vs-h: min(calc(100vw / var(--vs-ar-m, 1.7778)), calc(100svh - var(--header-height, 70px))); }
+  .vslideshow--mobile-adapt .vslide { min-height: max(var(--vs-h), 200px); }
 }
 
 .vslideshow__track { position: relative; }
@@ -32,6 +36,33 @@
 /* Embeds have no object-fit: oversize the 16:9 frame so it always covers the slide. */
 .vslide__video--embed { overflow: hidden; pointer-events: none; }
 .vslide__video--embed .vslide__el { position: absolute; top: 50%; left: 50%; width: max(100%, calc(var(--vs-h) * 16 / 9)); height: max(100%, 56.25vw); min-height: 100%; transform: translate(-50%, -50%) scale(1.02); }
+
+/* Show the whole video ("Video fit: Show the whole video"). The video keeps its own shape and the
+   space around it shows a blurred copy of the video image, or a solid color. */
+.vslide__media { overflow: hidden; }
+.vslide__backdrop { display: none; position: absolute; inset: -40px; z-index: 0; background-color: var(--vs-fit-bg, #111); background-size: cover; background-position: center; filter: blur(28px) brightness(0.72); transform: scale(1.08); }
+@media (min-width: 750px) {
+  .vslideshow--fit-contain .vslide__backdrop { display: block; }
+  .vslideshow--fit-contain .vslide:not([data-kind="image"]) .vslide__el,
+  .vslideshow--fit-contain .vslide:not([data-kind="image"]) .vslide__img { object-fit: contain; }
+  .vslideshow--fit-contain .vslide__video--embed { container-type: size; }
+  .vslideshow--fit-contain .vslide__video--embed .vslide__el { width: min(100cqw, calc(100cqh * var(--vr, 1.7778))); height: min(100cqh, calc(100cqw / var(--vr, 1.7778))); min-height: 0; transform: translate(-50%, -50%); }
+}
+@media (max-width: 749px) {
+  .vslideshow--fit-m-contain .vslide__backdrop { display: block; }
+  .vslideshow--fit-m-contain .vslide:not([data-kind="image"]) .vslide__el,
+  .vslideshow--fit-m-contain .vslide:not([data-kind="image"]) .vslide__img { object-fit: contain; }
+  .vslideshow--fit-m-contain .vslide__video--embed { container-type: size; }
+  .vslideshow--fit-m-contain .vslide__video--embed .vslide__el { width: min(100cqw, calc(100cqh * var(--vr-m, 1.7778))); height: min(100cqh, calc(100cqw / var(--vr-m, 1.7778))); min-height: 0; transform: translate(-50%, -50%); }
+  /* Embeds in "Fill" mode on phones: cover using the video's own shape. */
+  .vslideshow--fit-m-cover .vslide__video--embed { container-type: size; }
+  .vslideshow--fit-m-cover .vslide__video--embed .vslide__el { width: max(100cqw, calc(100cqh * var(--vr-m, 1.7778))); height: max(100cqh, calc(100cqw / var(--vr-m, 1.7778))); min-height: 0; }
+}
+@media (min-width: 750px) {
+  .vslideshow--fit-cover .vslide__video--embed { container-type: size; }
+  .vslideshow--fit-cover .vslide__video--embed .vslide__el { width: max(100cqw, calc(100cqh * var(--vr, 1.7778))); height: max(100cqh, calc(100cqw / var(--vr, 1.7778))); min-height: 0; }
+}
+
 @media (max-width: 749px) {
   .vslide__poster--has-mobile .vslide__img--desktop { display: none; }
   .vslide__poster--has-mobile .vslide__img--mobile { display: block; }
@@ -121,7 +152,8 @@
 .vslideshow__modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 1rem; }
 .vslideshow__modal[hidden] { display: none; }
 .vslideshow__modal-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.85); }
-.vslideshow__modal-box { position: relative; width: min(1100px, 100%); aspect-ratio: 16 / 9; max-height: 85vh; background: #000; }
+.vslideshow__modal-box { position: relative; width: min(1100px, 100%, calc(85vh * var(--pop-ar, 1.7778))); aspect-ratio: var(--pop-ar, 1.7778); background: #000; }
+.vslideshow__modal-body video { object-fit: contain; }
 .vslideshow__modal-body, .vslideshow__modal-body iframe, .vslideshow__modal-body video { width: 100%; height: 100%; border: 0; display: block; }
 .vslideshow__modal-close { position: absolute; right: 0; top: -48px; width: 40px; height: 40px; display: grid; place-items: center; color: #fff; background: none; border: 0; cursor: pointer; }
 .vslideshow__modal-close svg { width: 22px; height: 22px; }
